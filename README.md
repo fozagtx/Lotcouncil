@@ -15,10 +15,20 @@ The screenshots use the built-in practice markets (made-up prices), because the 
 
 ## Quick start
 
+The court and API are Python (FastAPI). The page is a SvelteKit app (Svelte 5, TypeScript, Tailwind CSS 4) built to static files that the Python server serves.
+
 ```bash
 pip install -r requirements.txt
+(cd frontend && npm ci && npm run build)       # builds frontend/build
 uvicorn lotcouncil.server:app --port 8000      # or: python -m lotcouncil serve
 # open http://localhost:8000
+```
+
+Working on the page? Keep the API running on port 8000 and start the Svelte dev server, which proxies `/api` to it:
+
+```bash
+cd frontend && npm run dev                     # http://localhost:5173, hot reload
+npm run check                                  # svelte-check: types and accessibility
 ```
 
 With no API key the app still works: a built-in keyword reader understands ideas and a template writes the explanation. To turn the AI on, copy `.env.example`, set `NEBIUS_API_KEY`, and export it before starting the server.
@@ -97,7 +107,7 @@ python scripts/fetch_candles.py --list       # which stock-token symbols Bitget 
 python -m lotcouncil mcp      # MCP server over stdio
 ```
 
-Example client config (Claude Desktop and most MCP clients use this shape):
+Example client config (most MCP clients use this shape):
 
 ```json
 {
@@ -142,17 +152,21 @@ Interactive docs are at `/api/docs`.
 
 ## Deploy
 
-The page is a FastAPI app plus static files, so any host that runs a Python web process works. Free options: Render or Railway (uses the `Procfile`), Hugging Face Spaces or Fly.io (use the `Dockerfile`; set `PORT`). Put `NEBIUS_API_KEY` in the host's secrets.
+Any host that runs a Docker image or a Python web process works. Put `NEBIUS_API_KEY` in the host's secrets.
+
+- **Docker** (Hugging Face Spaces, Fly.io, Railway, Render): the `Dockerfile` builds the Svelte app in a Node stage, then runs the Python server. Set `PORT` if the host needs it.
+- **Without Docker** (Render, Railway with the `Procfile`): build command `pip install -r requirements.txt && cd frontend && npm ci && npm run build`, start command from the `Procfile`.
 
 Before announcing the link, check from the host that Bitget answers: `python scripts/fetch_candles.py rAAPLUSDT`. If the host is blocked, commit snapshots made elsewhere and the app will use them.
 
-The PRD planned Streamlit Community Cloud. This build uses FastAPI with a custom page instead, because the design requirements (a ruling that fits the first screen on a 400px phone, live per-test progress, a copyable verdict card, an editable rule) are hard to meet in Streamlit, and Streamlit Cloud cannot host a FastAPI app.
+The PRD planned Streamlit Community Cloud. This build uses a SvelteKit page on a FastAPI server instead, because the design requirements (a ruling that fits the first screen on a 400px phone, live per-test progress, a copyable verdict card, an editable rule) are hard to meet in Streamlit, and Streamlit Cloud cannot host this stack.
 
 ## Tests and calibration
 
 ```bash
 pip install -r requirements-dev.txt
-pytest -q                                     # 128 tests
+pytest -q                                     # 129 tests: court, data, AI checks, API, audit, MCP
+(cd frontend && npm run check)                # svelte-check: 0 errors, 0 warnings
 python scripts/calibrate.py --real --out docs/calibration.md
 ```
 
@@ -174,10 +188,10 @@ What is done and checked here:
 | R1 | Hourly candles for Bitget stock tokens | Built, with paging, finished-candle filter, snapshot fallback. **Not tested against live Bitget**: the build environment's network blocks `api.bitget.com`. |
 | R2 | Plain English to rule | Built: AI path plus keyword reader; three types parse (tested). |
 | R3 | Three tests, PASS or FAIL | Built; same input gives the same ruling (tested). |
-| R4 | Ruling, tests and chart | Built: verdict hero, one visual per test, price chart with holding periods. |
+| R4 | Ruling, tests and chart | Built in Svelte: verdict hero, one visual per test, price chart with holding periods, loading skeletons. |
 | R5 | AI explanation from court numbers | Built with a number check. **Not tested with a live Nebius key.** |
 | R6 | Bad input never crashes | Built: every error becomes one plain message (tested). |
-| R7 | Public link on a phone | Ready to deploy (Docker / Procfile). No public link yet. Checked at 400px in light and dark, no sideways scroll. |
+| R7 | Public link on a phone | Ready to deploy (Docker / Procfile). No public link yet. Checked at 375, 400, 768 and 1280px in light and dark, no sideways scroll. |
 | R8 | Shareable verdict card | Built (image and link). |
 | R9 | Audit file anyone can re-run | Built (web and CLI); tampering is detected (tested). |
 | R10 | MCP `judge_strategy` | Built and checked over stdio. |
@@ -188,20 +202,23 @@ Next steps, in the PRD's build order: run `scripts/fetch_candles.py` from the re
 ## Project layout
 
 ```
-lotcouncil/
-  court.py        the three tests and the verdict (no AI)
-  rules.py        rule types, validation, positions
-  data.py         Bitget candles, snapshots, practice markets, data hash
-  parse.py        keyword reader (AI fallback)
-  ai.py           Nebius client, idea reading, explanation checks
-  audit.py        audit files and re-runs
-  service.py      one path from idea to ruling for web, CLI and MCP
-  server.py       FastAPI app and API
-  mcp_server.py   judge_strategy for agents
-  synthetic.py    made-up price series
-web/              the single page (HTML, CSS, SVG charts, card)
-scripts/          fetch_candles.py, calibrate.py
-tests/            pytest suite
+lotcouncil/            Python: the court and its API
+  court.py             the three tests and the verdict (no AI)
+  rules.py             rule types, validation, positions
+  data.py              Bitget candles, snapshots, practice markets, data hash
+  parse.py             keyword reader (AI fallback)
+  ai.py                Nebius client, idea reading, explanation checks
+  audit.py             audit files and re-runs
+  service.py           one path from idea to ruling for web, CLI and MCP
+  server.py            FastAPI app; serves frontend/build
+  mcp_server.py        judge_strategy for agents
+  synthetic.py         made-up price series
+frontend/              SvelteKit app (Svelte 5 runes, TypeScript, Tailwind 4)
+  src/routes/          the page, layout and design tokens (layout.css)
+  src/lib/             API client, run state, rules, formatting, verdict card
+  src/lib/components/  verdict, test cards, charts, rule editor, drawer
+scripts/               fetch_candles.py, calibrate.py
+tests/                 pytest suite
 ```
 
 ## Not financial advice

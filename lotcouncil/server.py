@@ -1,7 +1,9 @@
-"""The web app: a JSON API plus the single-page site in ``web/``.
+"""The web app: a JSON API plus the Svelte site built into ``frontend/build``.
 
-Run locally with ``uvicorn lotcouncil.server:app --reload`` (or ``python -m lotcouncil serve``).
-The Nebius key is read from the server's environment and never sent to the page.
+Run locally with ``uvicorn lotcouncil.server:app --reload`` (or ``python -m lotcouncil serve``)
+after ``cd frontend && npm ci && npm run build``. For frontend work, run ``npm run dev`` in
+``frontend/`` too: it proxies ``/api`` here. The Nebius key is read from the server's
+environment and never sent to the page.
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__
@@ -26,7 +28,12 @@ from .parse import ParseError
 from .rules import RuleError
 from .service import CourtService
 
-WEB_DIR = Path(__file__).resolve().parent.parent / "web"
+WEB_DIR = Path(os.environ.get("COURT_WEB_DIR", Path(__file__).resolve().parent.parent / "frontend" / "build"))
+NOT_BUILT = (
+    "<!doctype html><title>Lotcouncil</title><p>The page has not been built yet. Run "
+    "<code>cd frontend &amp;&amp; npm ci &amp;&amp; npm run build</code>, then restart the server. "
+    "The API is up at <a href='/api/docs'>/api/docs</a>.</p>"
+)
 MAX_BODY = 6_000_000
 
 
@@ -193,11 +200,20 @@ def create_app(service: CourtService | None = None) -> FastAPI:
             return error("Too many requests. Wait a few minutes and try again.", 429)
         return rerun_audit(data)
 
-    @app.get("/")
-    def index():
-        return FileResponse(WEB_DIR / "index.html", headers={"Cache-Control": "no-cache"})
+    index_file = WEB_DIR / "index.html"
+    if index_file.exists():
 
-    app.mount("/", StaticFiles(directory=WEB_DIR), name="web")
+        @app.get("/")
+        def index():
+            return FileResponse(index_file, headers={"Cache-Control": "no-cache"})
+
+        app.mount("/", StaticFiles(directory=WEB_DIR), name="web")
+    else:
+
+        @app.get("/")
+        def not_built():
+            return HTMLResponse(NOT_BUILT, status_code=503)
+
     return app
 
 

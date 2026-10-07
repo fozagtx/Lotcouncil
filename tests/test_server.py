@@ -25,8 +25,8 @@ def judge(client, **body):
 
 
 def test_page_and_markets(client):
-    assert "Lotcouncil" in client.get("/").text
-    assert client.get("/app.js").status_code == 200
+    page = client.get("/")
+    assert page.status_code in (200, 503) and "Lotcouncil" in page.text  # 503 until the Svelte app is built
     m = client.get("/api/markets").json()
     symbols = [t["symbol"] for t in m["tokens"]]
     assert "rAAPLUSDT" in symbols and "PRACTICE-TREND" in symbols
@@ -128,3 +128,14 @@ def test_unexpected_failure_still_ends_with_an_error_event(client, service, monk
     monkeypatch.setattr(service.store, "window", boom)
     evs = judge(client)
     assert evs[-1]["stage"] == "error" and "went wrong" in evs[-1]["message"]
+
+
+def test_serves_the_built_frontend(service, tmp_path, monkeypatch):
+    (tmp_path / "_app").mkdir()
+    (tmp_path / "index.html").write_text("<title>Lotcouncil</title>")
+    (tmp_path / "_app" / "x.js").write_text("console.log(1)")
+    monkeypatch.setattr("lotcouncil.server.WEB_DIR", tmp_path)
+    c = TestClient(create_app(service))
+    assert c.get("/").status_code == 200 and "Lotcouncil" in c.get("/").text
+    assert c.get("/_app/x.js").status_code == 200
+    assert c.get("/api/health").json()["ok"] is True
