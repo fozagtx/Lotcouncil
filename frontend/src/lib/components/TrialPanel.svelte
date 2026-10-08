@@ -81,7 +81,7 @@
 						class="min-h-14 flex-1 resize-none px-3 py-2.5 text-base leading-snug md:text-sm"
 						{onkeydown}
 					/>
-					<RadialGlowButton type="submit" class="w-full" disabled={session.running} aria-busy={session.running}>
+					<RadialGlowButton type="submit" class="w-full lg:w-fit" disabled={session.running} aria-busy={session.running}>
 						{#if session.running}<Spinner />{:else}<Icon name="gavel" class="size-[18px]" />{/if}
 						<span>{session.running ? 'Ruling…' : 'Put it on trial'}</span>
 					</RadialGlowButton>

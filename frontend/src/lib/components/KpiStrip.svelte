@@ -4,7 +4,6 @@
 	import Icon from './Icon.svelte';
 	import Card from './ui/Card.svelte';
 	import Skeleton from './ui/Skeleton.svelte';
-	import StatsCounter from './ui/StatsCounter.svelte';
 
 	let { result, class: className = '' }: { result: CourtResult | null; class?: string } = $props();
 
@@ -63,31 +62,27 @@
 		{#if result}
 			{#each kpis as k, i (k.label)}
 				<div
-					class="min-w-0 px-4 py-3
+					class="min-w-0 px-3 py-2
 						{i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t' : ''}
 						sm:border-t-0 sm:border-l-0 {i % 3 !== 0 ? 'sm:border-l' : ''} {i >= 3 ? 'sm:border-t' : ''}
 						lg:border-l-0 lg:border-t-0 {i !== 0 ? 'lg:border-l' : ''}"
 				>
-					<dt class="truncate text-[13px] text-muted-foreground">{k.label}</dt>
-					<dd class="m-0 mt-1 flex items-center gap-1.5 {TONE[k.tone]}">
-						{#if k.value === null}
-							<span class="text-[22px] leading-none font-semibold tracking-tight">—</span>
-						{:else}
-							<StatsCounter value={k.value} format={k.format} duration={1.1} class="text-[22px] leading-none font-semibold tracking-tight" />
-						{/if}
+					<dt class="truncate text-[11px] font-medium tracking-wide text-muted-foreground uppercase">{k.label}</dt>
+					<dd class="m-0 mt-0.5 flex items-center gap-1 {TONE[k.tone]}">
+						<span class="num text-lg leading-none font-semibold tracking-tight">{k.value === null ? '—' : k.format(k.value)}</span>
 						{#if k.tone !== 'plain'}
-							<Icon name={k.tone === 'pass' ? 'check' : 'x'} class="size-4 shrink-0" label={k.tone === 'pass' ? 'passed' : 'failed'} />
+							<Icon name={k.tone === 'pass' ? 'check' : 'x'} class="size-3.5 shrink-0" label={k.tone === 'pass' ? 'passed' : 'failed'} />
 						{/if}
 					</dd>
-					<p class="m-0 mt-1 truncate text-[11px] text-muted-foreground">{k.note}</p>
+					<p class="m-0 mt-0.5 truncate text-[11px] text-muted-foreground">{k.note}</p>
 				</div>
 			{/each}
 		{:else}
 			{#each Array.from({ length: 6 }, (_, i) => i) as i (i)}
-				<div class="grid gap-2 px-4 py-3" aria-hidden="true">
-					<Skeleton class="h-3.5 w-20" />
-					<Skeleton class="h-6 w-16" />
-					<Skeleton class="h-3 w-24" />
+				<div class="grid gap-1.5 px-3 py-2" aria-hidden="true">
+					<Skeleton class="h-2.5 w-16" />
+					<Skeleton class="h-5 w-14" />
+					<Skeleton class="h-2.5 w-20" />
 				</div>
 			{/each}
 		{/if}

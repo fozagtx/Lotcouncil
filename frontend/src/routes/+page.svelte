@@ -80,7 +80,7 @@
 <a href="#inspector" class="absolute top-2 -left-[999px] z-40 rounded-md border bg-card px-3 py-2 text-sm font-medium shadow-sm focus:left-2">Skip to the ruling</a>
 
 <div class="lg:flex lg:h-dvh lg:flex-col lg:overflow-hidden">
-	<TopBar {session} onhow={() => drawer?.open()} />
+	<TopBar onhow={() => drawer?.open()} />
 
 	<main class="mx-auto w-full max-w-[1760px] flex-1 px-4 pt-2 pb-4 lg:flex lg:min-h-0 lg:flex-col lg:gap-3 lg:px-5 lg:pb-3">
 		<div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 lg:mb-0 lg:flex-none">
