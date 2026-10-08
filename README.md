@@ -9,7 +9,7 @@ Type a trading idea in plain English. Lotcouncil tests it on hourly prices of Bi
 You need [Git](https://git-scm.com/downloads), [Python 3.10+](https://www.python.org/downloads/) and [Node.js 20+ (LTS)](https://nodejs.org/). On Windows, tick **"Add python.exe to PATH"** when installing Python.
 
 ```bash
-git clone -b claude/dreamy-newton-1s7ov4 https://github.com/fozagtx/Lotcouncil.git
+git clone https://github.com/fozagtx/Lotcouncil.git
 cd Lotcouncil
 py run.py          # Mac/Linux: python3 run.py
 ```
