@@ -17,6 +17,10 @@ The screenshots use the built-in practice markets (made-up prices), because the 
 
 ## Quick start
 
+> **New here, or setting it up on your own PC?** Follow [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md): a step-by-step guide for Windows, Mac and Linux. In short: install Git, Python 3.12 and Node.js LTS, clone the repo, then run `python3 run.py` (Windows: `py run.py`). It installs what's missing, builds the page and opens <http://localhost:8000>.
+
+By hand:
+
 The court and API are Python (FastAPI). The page is a SvelteKit app (Svelte 5, TypeScript, Tailwind CSS 4) built to static files that the Python server serves.
 
 ```bash
