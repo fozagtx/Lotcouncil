@@ -9,14 +9,15 @@ interface Props {
 	onaudit: () => void;
 	onrecent: () => void;
 	ontrial: () => void;
+	howOpen?: boolean;
 }
 
-export function Rail({ onhow, onaudit, onrecent, ontrial }: Props) {
+export function Rail({ onhow, onaudit, onrecent, ontrial, howOpen }: Props) {
 	const { theme, setTheme } = useTheme();
-	const items: { label: string; icon: IconName; action: () => void; current?: boolean }[] = [
+	const items: { label: string; icon: IconName; action: () => void; current?: boolean; open?: boolean }[] = [
 		{ label: 'Court: new trial', icon: 'scales', action: ontrial, current: true },
 		{ label: 'Recent rulings', icon: 'clock', action: onrecent },
-		{ label: 'How the court works', icon: 'book', action: onhow },
+		{ label: 'How the court works', icon: 'book', action: onhow, open: howOpen },
 		{ label: 'Check an audit file', icon: 'shield', action: onaudit }
 	];
 
@@ -31,9 +32,10 @@ export function Rail({ onhow, onaudit, onrecent, ontrial }: Props) {
 						<button
 							type="button"
 							className={cn(
-								'relative grid size-10 cursor-pointer place-items-center rounded-md text-rail-foreground transition-colors hover:bg-rail-active hover:text-white',
+								'relative grid size-10 cursor-pointer place-items-center rounded-md text-rail-foreground transition-colors hover:bg-rail-active hover:text-white data-[state=open]:bg-rail-active data-[state=open]:text-white',
 								item.current && 'bg-rail-active text-white'
 							)}
+							data-state={item.open ? 'open' : undefined}
 							aria-label={item.label}
 							aria-current={item.current ? 'page' : undefined}
 							onClick={item.action}

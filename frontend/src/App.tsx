@@ -20,9 +20,25 @@ import { getSession, useCourtSession } from '@/lib/useCourt';
 export default function App() {
 	const session = useCourtSession();
 	const [sheet, setSheet] = useState<'' | 'how' | 'audit'>('');
+	const openerRef = useRef<Element | null>(null);
+	function openSheet(kind: 'how' | 'audit') {
+		openerRef.current = document.activeElement;
+		setSheet(kind);
+	}
 	const ideaRef = useRef<HTMLTextAreaElement>(null);
 
 	const result = session.result;
+	const landedRef = useRef(false);
+	useEffect(() => {
+		const landed = !!(session.result || session.error);
+		const was = landedRef.current;
+		landedRef.current = landed;
+		if (!landed || was) return;
+		if (!window.matchMedia('(max-width: 1279px)').matches) return;
+		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		document.querySelector('[data-panel="inspector"]')?.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+	}, [session.result, session.error]);
+
 	const decimals = (() => {
 		const last = result?.chart.close.at(-1) ?? 100;
 		return last >= 100 ? 2 : last >= 1 ? 3 : 5;
@@ -52,11 +68,11 @@ export default function App() {
 
 	return (
 		<div className="flex h-screen overflow-hidden bg-background">
-			<Rail onhow={() => setSheet('how')} onaudit={() => setSheet('audit')} onrecent={showRecent} ontrial={focusTrial} />
+			<Rail onhow={() => openSheet('how')} onaudit={() => openSheet('audit')} onrecent={showRecent} ontrial={focusTrial} howOpen={sheet === 'how'} />
 			<NavColumn />
 
 			<main className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-4 [&>*]:shrink-0">
-				<TopBar onhow={() => setSheet('how')} />
+				<TopBar onhow={() => openSheet('how')} howOpen={sheet === 'how'} />
 
 				<CommandBar ref={ideaRef} onrun={runIdea} />
 
@@ -65,7 +81,7 @@ export default function App() {
 				<div className="grid grid-cols-1 gap-3 xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_440px]">
 					<div className="flex min-w-0 flex-col gap-3">
 						<ChartPanel />
-						<Card className="gap-0 py-0" aria-label="Evidence">
+						<Card className="gap-0 py-0" aria-label="Evidence" role="region">
 							<Tabs defaultValue="tests">
 								<TabsList className="w-full justify-start gap-0 rounded-none border-b border-border bg-transparent px-2 sm:px-3">
 									{(
@@ -102,6 +118,7 @@ export default function App() {
 								<TabsContent value="rule" className="m-0">
 									{result ? (
 										<RulePanel
+											key={session.reading ? JSON.stringify(session.reading.rule) : 'none'}
 											reading={session.reading}
 											ruleText={result.ruling.rule_text}
 											showNotice={!!session.markets?.ai_enabled}
@@ -143,7 +160,7 @@ export default function App() {
 							</Tabs>
 						</Card>
 					</div>
-					<Inspector />
+					<Inspector className="order-first xl:order-none" />
 				</div>
 			</main>
 
@@ -151,7 +168,7 @@ export default function App() {
 				{session.announcement}
 			</p>
 
-			<HowSheet open={sheet !== ''} onOpenChange={(v) => setSheet(v ? 'how' : '')} focusAudit={sheet === 'audit'} />
+			<HowSheet open={sheet !== ''} onOpenChange={(v) => setSheet(v ? 'how' : '')} focusAudit={sheet === 'audit'} returnFocus={openerRef} />
 		</div>
 	);
 }

@@ -172,7 +172,7 @@ export class CourtSession {
 			if (e instanceof DOMException && e.name === 'AbortError') return;
 			if (runId !== this.runId) return;
 			const err = e instanceof CourtApiError ? e : new CourtApiError('Something went wrong. Try again.', 'server');
-			this.fail(runId, err.message, err.kind, args);
+			this.fail(runId, err.message, err.kind);
 		} finally {
 			if (runId === this.runId) {
 				this.running = false;
@@ -253,12 +253,12 @@ export class CourtSession {
 				this.notify();
 				break;
 			case 'error':
-				this.fail(runId, ev.message, isDataProblem(ev.message) ? 'data' : isIdeaProblem(ev.message) ? 'idea' : 'server', args);
+				this.fail(runId, ev.message, isDataProblem(ev.message) ? 'data' : isIdeaProblem(ev.message) ? 'idea' : 'server');
 				break;
 		}
 	}
 
-	private fail(runId: number, message: string, kind: ErrorKind, _args: RunArgs) {
+	private fail(runId: number, message: string, kind: ErrorKind) {
 		if (runId !== this.runId) return;
 		this.running = false;
 		for (const k of Object.keys(this.steps) as StepKey[]) {

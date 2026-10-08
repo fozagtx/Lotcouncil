@@ -22,7 +22,7 @@ export function ChartPanel() {
 	const sourceLabel = !result ? '' : result.market.source === 'saved' ? 'Saved Bitget spot' : 'Bitget spot';
 
 	return (
-		<Card className="gap-0 py-0" aria-labelledby="chart-title" aria-busy={session.running && !result} data-panel="chart">
+		<Card className="gap-0 py-0" role="region" aria-labelledby="chart-title" aria-busy={session.running && !result} data-panel="chart">
 			<CardHeader className="flex min-h-10 flex-col gap-1.5 border-b border-border px-3 py-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between lg:px-4">
 				<div className="flex min-w-0 items-baseline gap-2">
 					<h2 id="chart-title" className={`m-0 text-[11px] font-bold tracking-[0.07em]${result ? '' : ' uppercase'}`}>

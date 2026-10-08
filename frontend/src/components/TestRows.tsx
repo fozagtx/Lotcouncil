@@ -29,11 +29,11 @@ export function TestRows({ result, markets }: { result: CourtResult | null; mark
 				const info = markets?.tests[key];
 				const st = status(t, !!result);
 				return (
-					<div key={key} className="flex min-h-[72px] items-center gap-3 px-3 py-2.5 lg:px-4">
+					<div key={key} className="flex min-h-[72px] flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2.5 max-sm:gap-x-2 max-sm:px-2.5 lg:px-4">
 						<span className="w-4 shrink-0 font-mono text-[13px] font-bold text-muted-foreground" aria-hidden="true">
 							{key}
 						</span>
-						<div className="min-w-0 flex-1">
+						<div className="min-w-0 flex-1 max-sm:basis-[calc(100%-1.75rem)]">
 							<p className="m-0 text-[13px] font-semibold">
 								{info?.name ?? ''}
 								<span className="font-normal text-muted-foreground">{' · '}{info?.question ?? ''}</span>
@@ -78,7 +78,7 @@ export function TestRows({ result, markets }: { result: CourtResult | null; mark
 								/>
 							) : null}
 						</div>
-						<span className="num w-16 shrink-0 text-right font-mono text-[15px] font-semibold">
+						<span className="num w-16 shrink-0 text-right font-mono text-[15px] font-semibold max-sm:ml-auto">
 							{key === 'A' ? (tests?.A ? score(tests.A.score_unseen) : '–') : key === 'B' ? (tests?.B ? pct(tests.B.beat_share_pct) : '–') : tests?.C ? score(tests.C.score_stress) : '–'}
 						</span>
 						<span className="w-[74px] shrink-0 text-right">

@@ -50,7 +50,7 @@ function stateBadge(state: StepState, passed: boolean | undefined): Step['badge'
 	return { tone: 'neutral', text: 'Waiting' };
 }
 
-export function Inspector() {
+export function Inspector({ className }: { className?: string }) {
 	const session = useCourtSession();
 	const result = session.result;
 	const ruling = result?.ruling;
@@ -106,7 +106,9 @@ export function Inspector() {
 
 	// ----- actions -----
 	const [toast, setToast] = useState('');
+	const [copied, setCopied] = useState(false);
 	const [auditBusy, setAuditBusy] = useState(false);
+	const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 	function say(message: string) {
 		setToast(message);
@@ -127,7 +129,10 @@ export function Inspector() {
 		const url = session.shareUrl();
 		try {
 			await navigator.clipboard.writeText(url);
-			say('Link copied: it re-runs this exact ruling.');
+			setCopied(true);
+			clearTimeout(copyTimer.current);
+			copyTimer.current = setTimeout(() => setCopied(false), 1500);
+			say('Link copied.');
 		} catch {
 			try {
 				await navigator.share({ url, title: 'Lotcouncil ruling' });
@@ -162,7 +167,7 @@ export function Inspector() {
 	}
 
 	return (
-		<Card className="flex flex-col gap-0 py-0" aria-labelledby="ruling-title" aria-busy={!result && !session.error} data-panel="inspector">
+		<Card className={cn('flex flex-col gap-0 py-0', className)} role="region" aria-labelledby="ruling-title" aria-busy={!result && !session.error} data-panel="inspector">
 			<CardHeader className="flex min-h-10 items-center justify-between border-b border-border px-3 py-2 lg:px-4">
 				<h2 id="ruling-title" className="m-0 text-[11px] font-bold tracking-[0.07em] uppercase">
 					Ruling inspector
@@ -184,7 +189,6 @@ export function Inspector() {
 									'swap m-0 font-mono text-[24px] leading-none font-semibold tracking-tight',
 									pass && judged ? 'text-success-foreground' : judged ? 'text-danger-foreground' : 'text-muted-foreground'
 								)}
-								aria-label={`Verdict: ${ruling.verdict}`}
 							>
 								{judged ? ruling.verdict : '–'}
 							</p>
@@ -256,8 +260,16 @@ export function Inspector() {
 						Export audit
 					</Button>
 					<Button variant="secondary" size="sm" onClick={copyLink} disabled={!result}>
-						<Icon name="link" className="size-4" />
-						Copy link
+						<span className="grid items-center [&>*]:col-start-1 [&>*]:row-start-1">
+							<span className={cn('inline-flex items-center gap-1.5', copied && 'invisible')} aria-hidden={copied}>
+								<Icon name="link" className="size-4" />
+								Copy link
+							</span>
+							<span className={cn('inline-flex items-center gap-1.5', !copied && 'invisible')} aria-hidden={!copied}>
+								<Icon name="check" className="size-4" />
+								Copied
+							</span>
+						</span>
 					</Button>
 					<Button variant="secondary" size="sm" className="hidden xl:inline-flex" onClick={copyCard} disabled={!result}>
 						<Icon name="image" className="size-4" />

@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Icon } from './Icon';
 import { cn } from '@/lib/utils';
 
-export function HowSheet({ open, onOpenChange, focusAudit }: { open: boolean; onOpenChange: (v: boolean) => void; focusAudit?: boolean }) {
+export function HowSheet({ open, onOpenChange, focusAudit, returnFocus }: { open: boolean; onOpenChange: (v: boolean) => void; focusAudit?: boolean; returnFocus?: React.RefObject<Element | null> }) {
 	const [rerun, setRerun] = useState<{ ok: boolean; text: string } | null>(null);
 	const [checking, setChecking] = useState(false);
 	const fileRef = useRef<HTMLInputElement>(null);
@@ -47,6 +47,11 @@ export function HowSheet({ open, onOpenChange, focusAudit }: { open: boolean; on
 						document.getElementById('check-title')?.scrollIntoView({ block: 'start' });
 						fileRef.current?.focus();
 					}
+				}}
+				onCloseAutoFocus={(e) => {
+					e.preventDefault();
+					const el = returnFocus?.current;
+					if (el instanceof HTMLElement) el.focus();
 				}}
 			>
 				<SheetHeader className="pb-2">

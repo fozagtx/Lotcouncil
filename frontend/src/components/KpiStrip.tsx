@@ -50,9 +50,15 @@ export function KpiStrip({ result, running = false }: { result: CourtResult | nu
 				{running && !result
 					? [0, 1, 2, 3].map((i) => (
 							<div key={i} className="grid gap-1.5 px-3 py-2.5 lg:px-4" aria-hidden="true">
-								<Skeleton className="h-2.5 w-20" />
-								<Skeleton className="h-5 w-14" />
-								<Skeleton className="h-2.5 w-24" />
+								<dt>
+									<Skeleton className="h-2.5 w-20" />
+								</dt>
+								<dd className="m-0">
+									<Skeleton className="h-5 w-14" />
+								</dd>
+								<dd className="m-0">
+									<Skeleton className="h-2.5 w-24" />
+								</dd>
 							</div>
 						))
 					: kpis.map((k, i) => (
@@ -76,7 +82,7 @@ export function KpiStrip({ result, running = false }: { result: CourtResult | nu
 										{k.value}
 									</span>
 								</dd>
-								<p className="m-0 mt-0.5 truncate text-[11px] text-muted-foreground">{k.note}</p>
+								<dd className="m-0 mt-0.5 truncate text-[11px] text-muted-foreground">{k.note}</dd>
 							</div>
 						))}
 			</dl>

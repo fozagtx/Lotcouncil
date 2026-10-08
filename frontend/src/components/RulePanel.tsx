@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { RULE_FIELDS, RULE_LABELS, ruleErrors, toRule } from '@/lib/rules';
 import type { Reading, Rule, RuleType } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -16,18 +16,13 @@ interface Props {
 const SOURCE: Record<Reading['source'], string> = { ai: 'Read by AI', keywords: 'Keyword reader', user: 'Your numbers' };
 
 export function RulePanel({ reading, ruleText, showNotice, running, onrun }: Props) {
-	const [type, setType] = useState<RuleType>('ma_cross');
-	const [values, setValues] = useState<Record<string, string>>({});
+	// The parent keys this component by the reading, so a new rule remounts it.
+	const [type, setType] = useState<RuleType>(reading?.rule.type ?? 'ma_cross');
+	const [values, setValues] = useState<Record<string, string>>(() =>
+		reading ? Object.fromEntries(RULE_FIELDS[reading.rule.type].map((f) => [f.key, String(reading.rule[f.key] ?? f.initial)])) : {}
+	);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const inputs = useRef<(HTMLInputElement | null)[]>([]);
-
-	// Reset the editor whenever the court reads a new rule.
-	useEffect(() => {
-		if (!reading) return;
-		setType(reading.rule.type);
-		setValues(Object.fromEntries(RULE_FIELDS[reading.rule.type].map((f) => [f.key, String(reading.rule[f.key] ?? f.initial)])));
-		setErrors({});
-	}, [reading]);
 
 	function changeType(next: string) {
 		const t = next as RuleType;

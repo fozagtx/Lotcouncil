@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useLayoutEffect } from 'react';
 import { Icon } from './Icon';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Textarea } from '@/components/ui/textarea';
 import { feeLabel } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import { useCourtSession } from '@/lib/useCourt';
 
 function grow(el: HTMLTextAreaElement | null) {
@@ -20,14 +21,25 @@ export const CommandBar = forwardRef<HTMLTextAreaElement, { onrun: (idea: string
 
 	function submit(e: React.FormEvent) {
 		e.preventDefault();
+		if (session.running) return;
 		const idea = session.idea.trim();
 		if (!idea) return;
 		onrun(idea);
 	}
 
 	const ref = (textareaRef as React.RefObject<HTMLTextAreaElement | null>) ?? null;
-	useEffect(() => {
-		grow(ref?.current);
+	useLayoutEffect(() => {
+		const el = ref?.current;
+		if (!el) return;
+		grow(el);
+		const ro = new ResizeObserver(() => grow(el));
+		ro.observe(el);
+		const onResize = () => grow(el);
+		window.addEventListener('resize', onResize);
+		return () => {
+			ro.disconnect();
+			window.removeEventListener('resize', onResize);
+		};
 	}, [session.idea, ref]);
 
 	return (
@@ -52,7 +64,7 @@ export const CommandBar = forwardRef<HTMLTextAreaElement, { onrun: (idea: string
 					required
 					aria-label="Your idea"
 					placeholder="buy when the 10 hour average crosses above the 40 hour average"
-					className="min-h-9 flex-1 resize-none overflow-hidden py-1.5 text-[13.5px] leading-[1.4]"
+					className="min-h-9 lg:flex-1 resize-none overflow-hidden py-1.5 text-[13.5px] leading-[1.4]"
 				/>
 				<div className="flex flex-wrap items-center gap-2 max-lg:w-full">
 					{markets && (
@@ -99,9 +111,22 @@ export const CommandBar = forwardRef<HTMLTextAreaElement, { onrun: (idea: string
 						</>
 					)}
 				</div>
-				<Button type="submit" className="min-h-9 px-4 text-[13.5px] max-lg:w-full lg:shrink-0" disabled={session.running} aria-busy={session.running}>
-					<Icon name={session.running ? 'spinner' : 'gavel'} className="size-4" />
-					<span>{session.running ? 'Ruling…' : 'Judge'}</span>
+				<Button
+					type="submit"
+					className="min-h-9 px-4 text-[13.5px] max-lg:w-full lg:shrink-0 aria-disabled:opacity-60"
+					aria-disabled={session.running}
+					aria-busy={session.running}
+				>
+					<span className="grid items-center [&>*]:col-start-1 [&>*]:row-start-1">
+						<span className={cn('inline-flex items-center gap-2', session.running && 'invisible')} aria-hidden={session.running}>
+							<Icon name="gavel" className="size-4" />
+							Judge
+						</span>
+						<span className={cn('inline-flex items-center gap-2', !session.running && 'invisible')} aria-hidden={!session.running}>
+							<Icon name="spinner" className="size-4" />
+							Ruling…
+						</span>
+					</span>
 				</Button>
 			</form>
 		</Card>

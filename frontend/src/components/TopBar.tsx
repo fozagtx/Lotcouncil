@@ -19,7 +19,7 @@ function StatusBadge({ tone, live, children }: { tone: 'success' | 'warning' | '
 	);
 }
 
-export function TopBar({ onhow }: { onhow: () => void }) {
+export function TopBar({ onhow, howOpen }: { onhow: () => void; howOpen?: boolean }) {
 	const session = useCourtSession();
 	const market = session.result?.market;
 	const source = (() => {
@@ -45,7 +45,7 @@ export function TopBar({ onhow }: { onhow: () => void }) {
 						{session.markets.ai_enabled ? `AI · ${session.markets.ai_model?.split('/').at(-1) ?? 'on'}` : 'AI off'}
 					</StatusBadge>
 				)}
-				<Button variant="secondary" size="sm" onClick={onhow}>
+				<Button variant="secondary" size="sm" onClick={onhow} data-state={howOpen ? 'open' : undefined} className="data-[state=open]:bg-accent" aria-expanded={howOpen}>
 					How it works
 				</Button>
 			</div>
