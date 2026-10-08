@@ -1,155 +1,232 @@
 @import 'tailwindcss';
 
 /*
- * Lotcouncil design tokens: a trading-terminal look (white panels on
- * cool gray, burnt-orange actions, teal/red verdicts). Every colour comes from
- * here, and every text pair passes WCAG AA in both themes (see brand.md).
+ * Lotcouncil theme: the VengeanceUI token set (zinc neutrals, a monochrome
+ * primary, 4/6/8px radii, 150ms transitions), extended with the status colours
+ * a court needs (PASS, FAIL, never-seen data, warnings). Light and dark are each
+ * chosen, not flipped, and every text pair passes WCAG AA (see brand.md).
+ * VengeanceUI: https://github.com/Ashutoshx7/VengeanceUI (MIT).
  */
+
+/* `dark:` follows the saved choice first, then the system setting. */
+@custom-variant dark {
+	&:where([data-theme='dark'], [data-theme='dark'] *) {
+		@slot;
+	}
+	@media (prefers-color-scheme: dark) {
+		&:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
+			@slot;
+		}
+	}
+}
+
 :root {
 	color-scheme: light;
-	--background: #f3f4f6;
-	--foreground: #0f172a;
+	/* VengeanceUI tokens */
+	--vng-background: #fafafa;
+	--vng-foreground: #09090b;
+	--vng-border: #e4e4e7;
+	--vng-primary: #09090b;
+	--vng-primary-hover: #27272a;
+	--vng-primary-foreground: #ffffff;
+	--vng-secondary: #f4f4f5;
+	--vng-secondary-foreground: #09090b;
+	--vng-danger: #dc2626;
+	--vng-success: #16a34a;
+	--vng-warning: #eab308;
+	--vng-radius-sm: 4px;
+	--vng-radius-md: 6px;
+	--vng-radius-lg: 8px;
+	--vng-transition-speed: 150ms;
+
+	--background: var(--vng-background);
+	--foreground: var(--vng-foreground);
 	--card: #ffffff;
-	--card-raised: #f8fafc;
-	--subtle-foreground: #334155;
-	--muted: #f1f5f9;
-	--muted-foreground: #5b6577;
-	--border: #e5e7eb;
-	--border-strong: #d1d5db;
-	--input: #ffffff;
-	--primary: #c2410c;
-	--primary-hover: #a8380a;
-	--primary-foreground: #ffffff;
+	--card-foreground: #09090b;
+	--card-raised: #fafafa;
+	--popover: #ffffff;
+	--subtle-foreground: #3f3f46;
+	--muted: #f4f4f5;
+	--muted-foreground: #63636b;
+	--accent: #f4f4f5;
+	--accent-foreground: #09090b;
+	--secondary: var(--vng-secondary);
+	--secondary-foreground: var(--vng-secondary-foreground);
+	--border: var(--vng-border);
+	--border-strong: #d4d4d8;
+	--input: #e4e4e7;
+	--primary: var(--vng-primary);
+	--primary-hover: var(--vng-primary-hover);
+	--primary-foreground: var(--vng-primary-foreground);
+	--destructive: var(--vng-danger);
+	--destructive-foreground: #ffffff;
+	--ring: #09090b;
 	--brand: #ea580c;
 	--brand-wash: rgb(234 88 12 / 0.09);
-	--ring: #2563eb;
 	--link: #1d4ed8;
-	--success: #12957a;
-	--success-foreground: #0b7a63;
-	--success-muted: #e6f6f1;
-	--danger: #e5383b;
-	--danger-foreground: #c81e2c;
-	--danger-muted: #fdecee;
+
+	/* Court status colours: a mark colour, a text colour and a soft surface. */
+	--success: var(--vng-success);
+	--success-foreground: #15803d;
+	--success-muted: #f0fdf4;
+	--danger: var(--vng-danger);
+	--danger-foreground: #b91c1c;
+	--danger-muted: #fef2f2;
+	--info: #2563eb;
 	--info-foreground: #1d4ed8;
 	--info-muted: #eff6ff;
-	--warning-foreground: #b45309;
-	--warning-muted: #fff4e5;
-	--neutral-mark: #8b95a7;
+	--warning: var(--vng-warning);
+	--warning-foreground: #a16207;
+	--warning-muted: #fefce8;
+	--neutral-mark: #a1a1aa;
+
 	--chart-1: #2563eb;
 	--chart-1-wash: rgb(37 99 235 / 0.1);
-	--chart-grid: #eef0f3;
-	--chart-copies: #cbd5e1;
-	--chart-copies-hot: #94a3b8;
-	--candle-up: #12957a;
-	--candle-down: #e5383b;
-	--holding-wash: rgb(234 88 12 / 0.1);
-	--unseen-wash: rgb(15 23 42 / 0.035);
-	--tooltip: #0f172a;
-	--tooltip-foreground: #f8fafc;
+	--chart-grid: #f4f4f5;
+	--chart-copies: #d4d4d8;
+	--chart-copies-hot: #a1a1aa;
+	--candle-up: #16a34a;
+	--candle-down: #dc2626;
+	--holding-wash: rgb(234 88 12 / 0.09);
+	--unseen-wash: rgb(9 9 11 / 0.035);
+	--tooltip: #09090b;
+	--tooltip-foreground: #fafafa;
+
+	/* BorderBeam / spotlight light colours */
+	--beam-from: #ffaa40;
+	--beam-to: #9c40ff;
+	--spotlight-color: rgb(0 0 0 / 0.08);
+	--ambience-color: rgb(0 0 0 / 0.8);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme='light']) {
 		color-scheme: dark;
-		--background: #0b1220;
-		--foreground: #e6eaf2;
-		--card: #111a2e;
-		--card-raised: #152038;
-		--subtle-foreground: #c4cbd8;
-		--muted: #18233b;
-		--muted-foreground: #94a3b8;
-		--border: #1f2a44;
-		--border-strong: #2c3a5a;
-		--input: #0f1729;
-		--primary: #ff7a2e;
-		--primary-hover: #ff8f4f;
-		--primary-foreground: #0b1220;
-		--brand: #ff7a2e;
-		--brand-wash: rgb(255 122 46 / 0.12);
-		--ring: #6ea8ff;
-		--link: #6ea8ff;
-		--success: #2fbf98;
-		--success-foreground: #34d3a8;
-		--success-muted: #0e3b33;
-		--danger: #f0525a;
-		--danger-foreground: #ff6b72;
-		--danger-muted: #3a1418;
-		--info-foreground: #6ea8ff;
-		--info-muted: #13254a;
-		--warning-foreground: #fbbf5a;
-		--warning-muted: #3a2a0e;
-		--neutral-mark: #64748b;
-		--chart-1: #6ea8ff;
-		--chart-1-wash: rgb(110 168 255 / 0.14);
-		--chart-grid: #1a2540;
-		--chart-copies: #2c3a5a;
-		--chart-copies-hot: #475876;
-		--candle-up: #2fbf98;
-		--candle-down: #f0525a;
-		--holding-wash: rgb(255 122 46 / 0.12);
+		--vng-background: #09090b;
+		--vng-foreground: #fafafa;
+		--vng-border: #27272a;
+		--vng-primary: #fafafa;
+		--vng-primary-hover: #e4e4e7;
+		--vng-primary-foreground: #09090b;
+		--vng-secondary: #27272a;
+		--vng-secondary-foreground: #fafafa;
+		--card: #0f0f11;
+		--card-foreground: #fafafa;
+		--card-raised: #18181b;
+		--popover: #18181b;
+		--subtle-foreground: #d4d4d8;
+		--muted: #27272a;
+		--muted-foreground: #a1a1aa;
+		--accent: #27272a;
+		--accent-foreground: #fafafa;
+		--border-strong: #3f3f46;
+		--input: #27272a;
+		--ring: #fafafa;
+		--brand: #fb923c;
+		--brand-wash: rgb(251 146 60 / 0.12);
+		--link: #60a5fa;
+		--success: #22c55e;
+		--success-foreground: #4ade80;
+		--success-muted: #052e16;
+		--danger: #ef4444;
+		--danger-foreground: #f87171;
+		--danger-muted: #450a0a;
+		--info: #3b82f6;
+		--info-foreground: #60a5fa;
+		--info-muted: #172554;
+		--warning-foreground: #facc15;
+		--warning-muted: #422006;
+		--neutral-mark: #71717a;
+		--chart-1: #60a5fa;
+		--chart-1-wash: rgb(96 165 250 / 0.14);
+		--chart-grid: #18181b;
+		--chart-copies: #3f3f46;
+		--chart-copies-hot: #71717a;
+		--candle-up: #22c55e;
+		--candle-down: #ef4444;
+		--holding-wash: rgb(251 146 60 / 0.1);
 		--unseen-wash: rgb(255 255 255 / 0.03);
-		--tooltip: #e6eaf2;
-		--tooltip-foreground: #0b1220;
+		--tooltip: #fafafa;
+		--tooltip-foreground: #09090b;
+		--spotlight-color: rgb(255 255 255 / 0.15);
+		--ambience-color: rgb(255 255 255 / 1);
 	}
 }
 
 :root[data-theme='dark'] {
 	color-scheme: dark;
-	--background: #0b1220;
-	--foreground: #e6eaf2;
-	--card: #111a2e;
-	--card-raised: #152038;
-	--subtle-foreground: #c4cbd8;
-	--muted: #18233b;
-	--muted-foreground: #94a3b8;
-	--border: #1f2a44;
-	--border-strong: #2c3a5a;
-	--input: #0f1729;
-	--primary: #ff7a2e;
-	--primary-hover: #ff8f4f;
-	--primary-foreground: #0b1220;
-	--brand: #ff7a2e;
-	--brand-wash: rgb(255 122 46 / 0.12);
-	--ring: #6ea8ff;
-	--link: #6ea8ff;
-	--success: #2fbf98;
-	--success-foreground: #34d3a8;
-	--success-muted: #0e3b33;
-	--danger: #f0525a;
-	--danger-foreground: #ff6b72;
-	--danger-muted: #3a1418;
-	--info-foreground: #6ea8ff;
-	--info-muted: #13254a;
-	--warning-foreground: #fbbf5a;
-	--warning-muted: #3a2a0e;
-	--neutral-mark: #64748b;
-	--chart-1: #6ea8ff;
-	--chart-1-wash: rgb(110 168 255 / 0.14);
-	--chart-grid: #1a2540;
-	--chart-copies: #2c3a5a;
-	--chart-copies-hot: #475876;
-	--candle-up: #2fbf98;
-	--candle-down: #f0525a;
-	--holding-wash: rgb(255 122 46 / 0.12);
+	--vng-background: #09090b;
+	--vng-foreground: #fafafa;
+	--vng-border: #27272a;
+	--vng-primary: #fafafa;
+	--vng-primary-hover: #e4e4e7;
+	--vng-primary-foreground: #09090b;
+	--vng-secondary: #27272a;
+	--vng-secondary-foreground: #fafafa;
+	--card: #0f0f11;
+	--card-foreground: #fafafa;
+	--card-raised: #18181b;
+	--popover: #18181b;
+	--subtle-foreground: #d4d4d8;
+	--muted: #27272a;
+	--muted-foreground: #a1a1aa;
+	--accent: #27272a;
+	--accent-foreground: #fafafa;
+	--border-strong: #3f3f46;
+	--input: #27272a;
+	--ring: #fafafa;
+	--brand: #fb923c;
+	--brand-wash: rgb(251 146 60 / 0.12);
+	--link: #60a5fa;
+	--success: #22c55e;
+	--success-foreground: #4ade80;
+	--success-muted: #052e16;
+	--danger: #ef4444;
+	--danger-foreground: #f87171;
+	--danger-muted: #450a0a;
+	--info: #3b82f6;
+	--info-foreground: #60a5fa;
+	--info-muted: #172554;
+	--warning-foreground: #facc15;
+	--warning-muted: #422006;
+	--neutral-mark: #71717a;
+	--chart-1: #60a5fa;
+	--chart-1-wash: rgb(96 165 250 / 0.14);
+	--chart-grid: #18181b;
+	--chart-copies: #3f3f46;
+	--chart-copies-hot: #71717a;
+	--candle-up: #22c55e;
+	--candle-down: #ef4444;
+	--holding-wash: rgb(251 146 60 / 0.1);
 	--unseen-wash: rgb(255 255 255 / 0.03);
-	--tooltip: #e6eaf2;
-	--tooltip-foreground: #0b1220;
+	--tooltip: #fafafa;
+	--tooltip-foreground: #09090b;
+	--spotlight-color: rgb(255 255 255 / 0.15);
+	--ambience-color: rgb(255 255 255 / 1);
 }
 
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
 	--color-card-raised: var(--card-raised);
+	--color-popover: var(--popover);
 	--color-subtle: var(--subtle-foreground);
 	--color-muted: var(--muted);
 	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
 	--color-border: var(--border);
 	--color-border-strong: var(--border-strong);
 	--color-input: var(--input);
 	--color-primary: var(--primary);
 	--color-primary-hover: var(--primary-hover);
 	--color-primary-foreground: var(--primary-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
 	--color-brand: var(--brand);
 	--color-brand-wash: var(--brand-wash);
 	--color-ring: var(--ring);
@@ -160,8 +237,10 @@
 	--color-danger: var(--danger);
 	--color-danger-foreground: var(--danger-foreground);
 	--color-danger-muted: var(--danger-muted);
+	--color-info: var(--info);
 	--color-info-foreground: var(--info-foreground);
 	--color-info-muted: var(--info-muted);
+	--color-warning: var(--warning);
 	--color-warning-foreground: var(--warning-foreground);
 	--color-warning-muted: var(--warning-muted);
 	--color-neutral-mark: var(--neutral-mark);
@@ -171,22 +250,30 @@
 	--color-tooltip-foreground: var(--tooltip-foreground);
 	--font-sans: 'IBM Plex Sans Variable', 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 	--font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-	--radius-panel: 0.75rem;
-	--radius-control: 0.5rem;
+	--radius-sm: var(--vng-radius-sm);
+	--radius-md: var(--vng-radius-md);
+	--radius-lg: var(--vng-radius-lg);
 }
 
 @layer base {
+	*,
+	::after,
+	::before,
+	::backdrop {
+		border-color: var(--border);
+	}
 	html {
 		-webkit-text-size-adjust: 100%;
 	}
 	body {
 		@apply bg-background font-sans text-foreground antialiased;
+		text-rendering: optimizeLegibility;
 		overflow-x: hidden;
 	}
+	/* VengeanceUI focus: a soft 3px ring in the primary colour. */
 	:focus-visible {
-		outline: 2px solid var(--ring);
-		outline-offset: 2px;
-		border-radius: 6px;
+		outline: 3px solid color-mix(in srgb, var(--ring) 50%, transparent);
+		outline-offset: 1px;
 	}
 	button:not(:disabled),
 	[role='radio'],
@@ -198,106 +285,32 @@
 }
 
 @layer components {
-	.panel {
-		@apply min-w-0 rounded-panel border border-border bg-card;
-	}
-	.panel-head {
-		@apply flex min-h-12 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border px-4 py-2.5;
-	}
-	.panel-title {
-		@apply m-0 text-[15px] font-semibold text-foreground;
-	}
-	.eyebrow {
-		@apply text-[13px] font-medium text-muted-foreground;
-	}
-	/* Controls: 40px touch targets, 100ms colour feedback, a pressed state. */
-	.btn {
-		@apply inline-flex min-h-10 items-center justify-center gap-2 rounded-control border px-3.5 py-2 text-[13.5px] font-semibold whitespace-nowrap;
-	}
-	/* Use as class="btn btn-primary" (Tailwind 4 cannot @apply a component class). */
-	.btn-primary {
-		@apply border-transparent bg-primary text-primary-foreground;
-	}
-	.btn-secondary {
-		@apply border-border-strong bg-card text-foreground;
-	}
-	.btn-ghost {
-		@apply border-transparent bg-transparent text-subtle;
-	}
-	.btn:disabled {
-		@apply opacity-55;
-		cursor: not-allowed;
-	}
-	.btn[aria-busy='true'] {
-		cursor: progress;
-	}
-	.select {
-		@apply min-h-10 w-full appearance-none rounded-control border border-border-strong bg-input py-2 pr-8 pl-3 text-sm text-foreground;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%238b95a7' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-		background-repeat: no-repeat;
-		background-position: right 0.7rem center;
-	}
+	/* VengeanceUI Label */
 	.field-label {
-		@apply text-[13px] font-medium text-subtle;
+		@apply flex items-center gap-2 text-sm leading-none font-medium select-none;
+	}
+	/* VengeanceUI Input, as a native select with a chevron. */
+	.select {
+		@apply h-9 w-full min-w-0 appearance-none rounded-md border border-input bg-transparent py-1 pr-8 pl-3 text-base shadow-xs transition-[color,box-shadow] outline-none md:text-sm dark:bg-input/30 pointer-coarse:h-10;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.6rem center;
+	}
+	.select:focus-visible {
+		@apply border-ring ring-[3px] ring-ring/50;
+		outline: none;
+	}
+	.select option,
+	.select optgroup {
+		background-color: var(--popover);
+		color: var(--foreground);
 	}
 	.num {
 		font-variant-numeric: tabular-nums;
 	}
-	.skeleton {
-		background: linear-gradient(90deg, var(--muted), var(--card-raised), var(--muted));
-		background-size: 200% 100%;
-		@apply rounded-md;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.btn,
-		.chip,
-		.seg-option,
-		.tab,
-		.row-btn {
-			transition:
-				background-color 100ms ease-out,
-				border-color 100ms ease-out,
-				color 100ms ease-out,
-				transform 50ms ease-out;
-		}
-		.btn:active:not(:disabled),
-		.chip:active {
-			transform: translateY(1px);
-		}
-		.skeleton {
-			animation: shimmer 1.2s ease-in-out infinite;
-		}
-	}
-	@media (hover: hover) {
-		.btn-primary:hover:not(:disabled) {
-			background-color: var(--primary-hover);
-		}
-		.btn-secondary:hover:not(:disabled),
-		.chip:hover {
-			border-color: var(--neutral-mark);
-		}
-		.btn-ghost:hover:not(:disabled) {
-			background-color: var(--muted);
-			color: var(--foreground);
-		}
-		.row-btn:hover {
-			background-color: var(--muted);
-		}
-		.tab:hover:not([aria-selected='true']) {
-			color: var(--foreground);
-		}
-	}
-}
-
-@keyframes shimmer {
-	to {
-		background-position: -200% 0;
-	}
 }
 
 @media (forced-colors: active) {
-	.mark,
 	.verdict-block {
 		border: 2px solid CanvasText;
 	}

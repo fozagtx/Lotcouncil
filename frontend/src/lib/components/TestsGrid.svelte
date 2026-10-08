@@ -2,7 +2,9 @@
 	import type { CourtResult } from '#lib/court.svelte.js';
 	import { feeLabel, fmtDate, pct, score, signedPct } from '#lib/format.js';
 	import type { Markets, TestKey } from '#lib/types.js';
-	import Badge from './Badge.svelte';
+	import Badge from './ui/Badge.svelte';
+	import Skeleton from './ui/Skeleton.svelte';
+	import StatsCounter from './ui/StatsCounter.svelte';
 	import BarPair from './charts/BarPair.svelte';
 	import Histogram from './charts/Histogram.svelte';
 	import LineChart from './charts/LineChart.svelte';
@@ -22,27 +24,27 @@
 	});
 </script>
 
-<div class="grid gap-px bg-border lg:grid-cols-3">
+<div class="grid divide-y lg:grid-cols-3 lg:divide-x lg:divide-y-0">
 	{#each KEYS as key (key)}
 		{@const t = tests?.[key]}
 		{@const info = markets?.tests[key]}
-		<article class="flex min-w-0 flex-col gap-2.5 bg-card p-4" aria-labelledby="test-{key}-name">
+		<article class="flex min-w-0 flex-col gap-3 p-5" aria-labelledby="test-{key}-name">
 			<div class="flex items-start justify-between gap-2">
 				<div>
-					<p class="eyebrow m-0">Test {key}</p>
-					<h3 id="test-{key}-name" class="m-0 text-[15px] font-semibold">{info?.name ?? ''}</h3>
+					<p class="m-0 text-xs font-medium text-muted-foreground">Test {key}</p>
+					<h3 id="test-{key}-name" class="m-0 mt-1 text-base font-semibold tracking-tight">{info?.name ?? ''}</h3>
 				</div>
 				{#if result}
-					<Badge tone={!t ? 'neutral' : t.passed ? 'success' : 'danger'} dot>{!t ? 'Not run' : t.passed ? 'Passed' : 'Failed'}</Badge>
+					<Badge variant={!t ? 'secondary' : t.passed ? 'success' : 'danger'} dot={!t ? 'neutral' : t.passed ? 'success' : 'danger'}>{!t ? 'Not run' : t.passed ? 'Passed' : 'Failed'}</Badge>
 				{/if}
 			</div>
 			<p class="m-0 text-[13px] text-muted-foreground">{info?.question ?? ''}</p>
 
 			{#if !result}
 				<div class="grid gap-2" aria-hidden="true">
-					<div class="skeleton h-[140px]"></div>
-					<div class="skeleton h-7 w-1/2"></div>
-					<div class="skeleton h-3.5 w-full"></div>
+					<Skeleton class="h-[140px]" />
+					<Skeleton class="h-7 w-1/2" />
+					<Skeleton class="h-3.5 w-full" />
 				</div>
 			{:else if !t}
 				<p class="m-0 text-[13px] text-subtle">Not run. {result.ruling.gate.sentence}</p>
@@ -62,7 +64,7 @@
 						label="Result after fees over time; the never-seen last 40% is shaded."
 					/>
 					<p class="m-0 flex flex-wrap items-baseline gap-2">
-						<span class="num text-[26px] leading-tight font-bold {a.passed ? 'text-success-foreground' : 'text-danger-foreground'}">{score(a.score_unseen)}</span>
+						<StatsCounter value={a.score_unseen} format={score} duration={1.1} class="text-[28px] leading-tight font-semibold tracking-tight {a.passed ? 'text-success-foreground' : 'text-danger-foreground'}" />
 						<span class="text-xs text-muted-foreground">score on never-seen data · needs above {a.threshold}</span>
 					</p>
 				{:else if key === 'B' && tests?.B}
@@ -80,7 +82,7 @@
 						<span class="inline-flex items-center gap-1.5"><i class="h-3 w-px bg-subtle"></i>Beats 95%</span>
 					</div>
 					<p class="m-0 flex flex-wrap items-baseline gap-2">
-						<span class="num text-[26px] leading-tight font-bold {b.passed ? 'text-success-foreground' : 'text-danger-foreground'}">{pct(b.beat_share_pct)}</span>
+						<StatsCounter value={b.beat_share_pct} format={pct} duration={1.1} class="text-[28px] leading-tight font-semibold tracking-tight {b.passed ? 'text-success-foreground' : 'text-danger-foreground'}" />
 						<span class="text-xs text-muted-foreground">of {b.copies} random copies beaten · needs {pct(b.threshold_pct)}</span>
 					</p>
 				{:else if key === 'C' && tests?.C}
@@ -93,7 +95,7 @@
 						label="Score at the normal fee and at {c.stress_fee_mult} times the fee."
 					/>
 					<p class="m-0 flex flex-wrap items-baseline gap-2">
-						<span class="num text-[26px] leading-tight font-bold {c.fee_passed ? 'text-success-foreground' : 'text-danger-foreground'}">{score(c.score_stress)}</span>
+						<StatsCounter value={c.score_stress} format={score} duration={1.1} class="text-[28px] leading-tight font-semibold tracking-tight {c.fee_passed ? 'text-success-foreground' : 'text-danger-foreground'}" />
 						<span class="text-xs text-muted-foreground">score at {c.stress_fee_mult}× fees · needs above 0</span>
 					</p>
 					{#if weekend}

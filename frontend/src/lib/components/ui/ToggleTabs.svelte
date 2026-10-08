@@ -1,4 +1,10 @@
+<!--
+	VengeanceUI Tabs list styling (MIT, github.com/Ashutoshx7/VengeanceUI) on a radio group:
+	the muted track with a raised active pill. Arrow keys move between options.
+-->
 <script lang="ts">
+	import { cn } from './utils.js';
+
 	interface Option {
 		value: number | string;
 		label: string;
@@ -12,9 +18,10 @@
 		label?: string;
 		disabled?: boolean;
 		onchange?: (value: number | string) => void;
+		class?: string;
 	}
 
-	let { options, value = $bindable(), labelledby, label, disabled = false, onchange }: Props = $props();
+	let { options, value = $bindable(), labelledby, label, disabled = false, onchange, class: className = '' }: Props = $props();
 	let buttons: HTMLButtonElement[] = $state([]);
 
 	function select(i: number, focus = false) {
@@ -25,7 +32,6 @@
 		if (focus) buttons[i]?.focus();
 	}
 
-	// Arrow keys move between options, as in any radio group; only the selected one is a tab stop.
 	function onkeydown(e: KeyboardEvent, i: number) {
 		const n = options.length;
 		const next =
@@ -50,19 +56,22 @@
 	aria-labelledby={labelledby}
 	aria-label={label}
 	aria-disabled={disabled || undefined}
-	class="inline-grid min-h-10 gap-1 rounded-control border border-border bg-muted p-1"
-	style="grid-template-columns: repeat({options.length}, minmax(0, 1fr))"
+	class={cn('inline-flex h-10 w-fit shrink-0 items-center justify-center gap-0.5 rounded-lg bg-muted p-1 text-muted-foreground', className)}
 >
 	{#each options as option, i (option.value)}
+		{@const active = option.value === value}
 		<button
 			type="button"
 			role="radio"
 			bind:this={buttons[i]}
-			aria-checked={option.value === value}
+			aria-checked={active}
 			aria-label={option.description}
-			tabindex={option.value === value ? 0 : -1}
+			tabindex={active ? 0 : -1}
 			{disabled}
-			class="seg-option min-h-8 rounded-[6px] px-2.5 text-[13px] font-semibold text-muted-foreground aria-checked:bg-primary aria-checked:text-primary-foreground disabled:cursor-not-allowed"
+			class={cn(
+				'inline-flex h-full min-w-0 flex-1 items-center justify-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
+				active ? 'bg-card text-foreground shadow-sm dark:bg-zinc-700/80' : 'hover:text-foreground'
+			)}
 			onclick={() => select(i)}
 			onkeydown={(e) => onkeydown(e, i)}
 		>

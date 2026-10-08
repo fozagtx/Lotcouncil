@@ -7,11 +7,11 @@ Lotcouncil tells you whether a trading idea is real or just luck, before you ris
 The AI translates your sentence into a rule and explains the result in plain words. Fixed, deterministic code runs three tests and makes the ruling. **The AI never decides pass or fail.**
 
 <p>
-  <img src="docs/screenshot-desktop.png" alt="Desktop: a PASS ruling with three test cards" width="68%">
+  <img src="docs/screenshot-desktop.png" alt="Desktop: a PASS ruling with the key numbers and the court timeline" width="68%">
   <img src="docs/screenshot-phone-dark.png" alt="Phone, dark mode: a FAIL ruling" width="25%">
 </p>
 
-The page is a trading-terminal layout: a new-trial command bar, a KPI strip, a candlestick chart with the rule's holding periods, tabs for the three tests, the full trade ledger, a plain-words explanation and an editable rule, and a ruling inspector with a step-by-step court timeline (with measured timings) and export actions. Brand and tokens are in [`brand.md`](brand.md).
+The page is a trading-terminal layout: a new-trial command bar, a KPI strip, a candlestick chart with the rule's holding periods, tabs for the three tests, the full trade ledger, a plain-words explanation and an editable rule, and a ruling inspector with a step-by-step court timeline (with measured timings) and export actions. The UI is built from Svelte ports of [VengeanceUI](https://www.vengenceui.com) components (MIT; see [`brand.md`](brand.md) for the list, tokens and contrast checks).
 
 The screenshots were taken in developer practice mode (made-up prices, labelled as such), because the build environment could not reach Bitget. On a normal install the app only shows real Bitget prices. See [Status](#status).
 
@@ -21,7 +21,7 @@ The screenshots were taken in developer practice mode (made-up prices, labelled 
 
 By hand:
 
-The court and API are Python (FastAPI). The page is a SvelteKit app (Svelte 5, TypeScript, Tailwind CSS 4) built to static files that the Python server serves.
+The court and API are Python (FastAPI). The page is a SvelteKit app (Svelte 5, TypeScript, Tailwind CSS 4, VengeanceUI components ported to Svelte, Lucide icons) built to static files that the Python server serves.
 
 ```bash
 pip install -r requirements.txt
@@ -226,6 +226,7 @@ frontend/              SvelteKit app (Svelte 5 runes, TypeScript, Tailwind 4)
   src/routes/          the page, layout and design tokens (layout.css)
   src/lib/             API client, run state, rules, formatting, verdict card
   src/lib/components/  verdict, test cards, charts, rule editor, drawer
+    ui/                Svelte ports of VengeanceUI components (MIT notice inside)
 scripts/               fetch_candles.py, calibrate.py
 tests/                 pytest suite
 ```

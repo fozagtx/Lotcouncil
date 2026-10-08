@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { fmtDateTime } from '#lib/format.js';
 	import type { Trade } from '#lib/types.js';
-	import Badge from './Badge.svelte';
+	import Icon from './Icon.svelte';
+	import Badge from './ui/Badge.svelte';
+	import Empty from './ui/Empty.svelte';
 
 	let { trades, decimals }: { trades: Trade[]; decimals: number } = $props();
 
@@ -14,18 +16,15 @@
 </script>
 
 {#if trades.length === 0}
-	<div class="grid place-items-center gap-1 px-4 py-12 text-center">
-		<p class="m-0 font-semibold">No trades</p>
-		<p class="m-0 max-w-sm text-sm text-muted-foreground">
-			The rule never bought in this window. Try a longer window or shorter lengths in the Rule tab.
-		</p>
-	</div>
+	<Empty title="No trades" description="The rule never bought in this window. Try a longer window or shorter lengths in the Rule tab.">
+		{#snippet media()}<Icon name="candles" />{/snippet}
+	</Empty>
 {:else}
-	<dl class="m-0 grid grid-cols-2 gap-px border-b border-border bg-border sm:grid-cols-4">
-		{#each [['Win rate', closed ? `${Math.round((100 * wins) / closed)}%` : '—', `${wins} of ${closed} closed`], ['Avg. hold', `${avgHours} h`, `${trades.length} trades`], ['Best trade', `${sign(best)}${Math.abs(best).toFixed(2)}%`, 'after fees'], ['Worst trade', `${sign(worst)}${Math.abs(worst).toFixed(2)}%`, 'after fees']] as [label, value, note] (label)}
-			<div class="bg-card px-4 py-2.5">
-				<dt class="eyebrow">{label}</dt>
-				<dd class="num m-0 text-[17px] font-bold">{value}</dd>
+	<dl class="m-0 grid grid-cols-2 border-b sm:grid-cols-4">
+		{#each [['Win rate', closed ? `${Math.round((100 * wins) / closed)}%` : '—', `${wins} of ${closed} closed`], ['Avg. hold', `${avgHours} h`, `${trades.length} trades`], ['Best trade', `${sign(best)}${Math.abs(best).toFixed(2)}%`, 'after fees'], ['Worst trade', `${sign(worst)}${Math.abs(worst).toFixed(2)}%`, 'after fees']] as [label, value, note], i (label)}
+			<div class="px-5 py-3.5 {i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t sm:border-t-0' : ''} {i === 2 ? 'sm:border-l' : ''}">
+				<dt class="text-sm text-muted-foreground">{label}</dt>
+				<dd class="num m-0 mt-1 text-xl font-semibold tracking-tight">{value}</dd>
 				<p class="m-0 text-xs text-muted-foreground">{note}</p>
 			</div>
 		{/each}
@@ -33,39 +32,39 @@
 	<!-- A scrollable region must be focusable so keyboard users can scroll it (WCAG 2.1.1). -->
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div class="max-h-[440px] overflow-auto" role="region" aria-label="Trade ledger" tabindex="0">
-		<table class="w-full min-w-[720px] border-collapse text-[13px]">
+		<table class="w-full min-w-[720px] caption-bottom border-collapse text-sm">
 			<caption class="sr-only">Every trade the rule made, oldest first. Returns include fees.</caption>
-			<thead class="sticky top-0 z-10 bg-card-raised">
+			<thead class="sticky top-0 z-10 bg-card [&_tr]:border-b">
 				<tr class="text-left">
 					{#each ['Trade', 'Entry', 'Exit', 'Held', 'Entry price', 'Exit price', 'Return', 'Part', 'Status'] as h (h)}
 						<th
 							scope="col"
-							class="border-b border-border px-3 py-2 text-xs font-semibold whitespace-nowrap text-muted-foreground
+							class="h-10 px-3 align-middle font-medium whitespace-nowrap text-muted-foreground
 								{['Held', 'Entry price', 'Exit price', 'Return'].includes(h) ? 'text-right' : ''}">{h}</th
 						>
 					{/each}
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="[&_tr:last-child]:border-0">
 				{#each trades as t (t.n)}
-					<tr class="border-b border-border last:border-0 even:bg-card-raised">
-						<td class="px-3 py-2 font-mono text-[12px] font-semibold text-info-foreground">T-{String(t.n).padStart(3, '0')}</td>
-						<td class="num px-3 py-2 whitespace-nowrap">{fmtDateTime(t.entry_time)}</td>
-						<td class="num px-3 py-2 whitespace-nowrap">{t.open ? '—' : fmtDateTime(t.exit_time)}</td>
-						<td class="num px-3 py-2 text-right">{t.hours} h</td>
-						<td class="num px-3 py-2 text-right">{t.entry_price.toFixed(decimals)}</td>
-						<td class="num px-3 py-2 text-right">{t.exit_price.toFixed(decimals)}</td>
-						<td class="num px-3 py-2 text-right font-semibold {t.return_pct >= 0 ? 'text-success-foreground' : 'text-danger-foreground'}">
+					<tr class="border-b transition-colors hover:bg-muted/50">
+						<td class="px-3 py-2.5 font-mono text-xs font-medium text-muted-foreground">T-{String(t.n).padStart(3, '0')}</td>
+						<td class="num px-3 py-2.5 whitespace-nowrap">{fmtDateTime(t.entry_time)}</td>
+						<td class="num px-3 py-2.5 whitespace-nowrap">{t.open ? '—' : fmtDateTime(t.exit_time)}</td>
+						<td class="num px-3 py-2.5 text-right">{t.hours} h</td>
+						<td class="num px-3 py-2.5 text-right">{t.entry_price.toFixed(decimals)}</td>
+						<td class="num px-3 py-2.5 text-right">{t.exit_price.toFixed(decimals)}</td>
+						<td class="num px-3 py-2.5 text-right font-semibold {t.return_pct >= 0 ? 'text-success-foreground' : 'text-danger-foreground'}">
 							{sign(t.return_pct)}{Math.abs(t.return_pct).toFixed(2)}%
 						</td>
-						<td class="px-3 py-2"><Badge tone={t.part === 'unseen' ? 'info' : 'neutral'}>{t.part === 'unseen' ? 'Never seen' : 'Seen'}</Badge></td>
-						<td class="px-3 py-2">
+						<td class="px-3 py-2.5"><Badge variant={t.part === 'unseen' ? 'info' : 'secondary'}>{t.part === 'unseen' ? 'Never seen' : 'Seen'}</Badge></td>
+						<td class="px-3 py-2.5">
 							{#if t.open}
-								<Badge tone="warning">Open</Badge>
+								<Badge variant="warning">Open</Badge>
 							{:else if t.return_pct > 0}
-								<Badge tone="success">Win</Badge>
+								<Badge variant="success">Win</Badge>
 							{:else}
-								<Badge tone="danger">Loss</Badge>
+								<Badge variant="danger">Loss</Badge>
 							{/if}
 						</td>
 					</tr>
@@ -73,7 +72,7 @@
 			</tbody>
 		</table>
 	</div>
-	<p class="m-0 border-t border-border px-4 py-2 text-xs text-muted-foreground">
+	<p class="m-0 border-t px-5 py-3 text-xs text-muted-foreground">
 		Bought at the close before the first held hour, sold at the close of the last one. Returns include both fees. An open trade was still held at the last candle.
 	</p>
 {/if}

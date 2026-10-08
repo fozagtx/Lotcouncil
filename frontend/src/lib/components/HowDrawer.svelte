@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { rerunAudit } from '#lib/api.js';
 	import Icon from './Icon.svelte';
+	import Button, { buttonVariants } from './ui/Button.svelte';
+	import Spinner from './ui/Spinner.svelte';
 
 	let dialog: HTMLDialogElement | undefined = $state();
 	let rerun: { ok: boolean; text: string } | null = $state(null);
@@ -43,22 +45,17 @@
 <dialog
 	bind:this={dialog}
 	aria-labelledby="how-title"
-	class="ml-auto h-full max-h-full w-[min(560px,100%)] max-w-full border-0 border-l border-border bg-card p-0 text-foreground shadow-2xl backdrop:bg-slate-950/50"
+	class="ml-auto h-full max-h-full w-[min(560px,100%)] max-w-full border-0 border-l bg-background p-0 text-foreground shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-[2px]"
 	onclick={(e) => e.target === dialog && dialog?.close()}
 >
 	<div class="h-full overflow-y-auto px-5 pt-4 pb-10 sm:px-6">
-		<div class="sticky -top-4 flex items-center justify-between bg-card pt-1 pb-2.5">
-			<h2 id="how-title" class="m-0 text-xl font-semibold">How the court works</h2>
-			<button
-				type="button"
-				class="btn btn-secondary size-10 rounded-full p-0 text-subtle"
-				aria-label="Close"
-				onclick={() => dialog?.close()}
-			>
-				<Icon name="close" class="size-5" />
-			</button>
+		<div class="sticky -top-4 z-10 flex items-center justify-between border-b bg-background pt-1 pb-3">
+			<h2 id="how-title" class="m-0 text-lg font-semibold tracking-tight">How the court works</h2>
+			<Button variant="ghost" size="icon" aria-label="Close" onclick={() => dialog?.close()}>
+				<Icon name="close" />
+			</Button>
 		</div>
-		<div class="grid gap-2 text-[15px] text-subtle [&_h3]:mt-4 [&_h3]:mb-0 [&_h3]:text-[15px] [&_h3]:font-semibold [&_h3]:text-foreground [&_p]:m-0">
+		<div class="grid gap-2 pt-3 text-[15px] leading-relaxed text-subtle [&_h3]:mt-4 [&_h3]:mb-0 [&_h3]:text-[15px] [&_h3]:font-semibold [&_h3]:tracking-tight [&_h3]:text-foreground [&_p]:m-0">
 			<p>
 				An idea is ruled <b class="text-foreground">PASS</b> only if it makes at least 10 trades and passes all three tests. The
 				thresholds are fixed in code, so the same prices, rule and fee always give the same ruling.
@@ -116,10 +113,10 @@
 			</p>
 			<div>
 				<label
-					class="btn btn-secondary mt-1 border-dashed focus-within:outline-2 focus-within:outline-ring"
+					class={buttonVariants({ variant: 'outline', class: 'mt-1 focus-within:ring-[3px] focus-within:ring-ring/50' })}
 					aria-describedby="check-title"
 				>
-					<Icon name={checking ? 'spinner' : 'file'} class="size-[18px]" />
+					{#if checking}<Spinner />{:else}<Icon name="file" />{/if}
 					Choose an audit file
 					<input id="audit-file" type="file" accept="application/json,.json" class="sr-only" onchange={onfile} />
 				</label>

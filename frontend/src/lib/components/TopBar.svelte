@@ -1,63 +1,57 @@
 <script lang="ts">
 	import type { CourtSession } from '#lib/court.svelte.js';
 	import { toggleTheme } from '#lib/theme.js';
-	import Badge from './Badge.svelte';
 	import BrandMark from './BrandMark.svelte';
 	import Icon from './Icon.svelte';
+	import Badge, { type DotTone } from './ui/Badge.svelte';
+	import Button from './ui/Button.svelte';
 
 	let { session, onhow }: { session: CourtSession; onhow: () => void } = $props();
 
 	const market = $derived(session.result?.market);
 	const markets = $derived(session.markets);
-	const source = $derived.by(() => {
-		if (!market) return { tone: 'neutral' as const, text: session.running ? 'Loading' : 'Waiting' };
-		if (market.source === 'bitget') return { tone: 'success' as const, text: 'Live Bitget' };
-		if (market.source === 'saved') return { tone: 'warning' as const, text: 'Saved Bitget prices' };
-		return { tone: 'warning' as const, text: 'Practice prices (dev mode)' };
+	const source = $derived.by((): { dot: DotTone; text: string } => {
+		if (!market) return { dot: 'neutral', text: session.running ? 'Loading prices' : 'Waiting for prices' };
+		if (market.source === 'bitget') return { dot: 'success', text: 'Live Bitget prices' };
+		if (market.source === 'saved') return { dot: 'warning', text: 'Saved Bitget prices' };
+		return { dot: 'warning', text: 'Practice prices (dev mode)' };
 	});
 </script>
 
 {#snippet chips()}
-	<Badge tone={source.tone} dot live={session.running}><span class="sr-only">Data: </span>{source.text}</Badge>
+	<Badge variant="outline" dot={source.dot} live={session.running}><span class="sr-only">Data: </span>{source.text}</Badge>
 	{#if markets}
-		<Badge tone={markets.ai_enabled ? 'info' : 'neutral'} dot>
+		<Badge variant="outline" dot={markets.ai_enabled ? 'info' : 'neutral'}>
 			{markets.ai_enabled ? `AI · ${markets.ai_model?.split('/').at(-1) ?? 'on'}` : 'AI off · keyword reader'}
 		</Badge>
 	{/if}
 {/snippet}
 
-<header class="border-b border-border bg-card">
-	<div class="flex items-center gap-3 px-4 py-3 lg:gap-6 lg:px-6">
-		<a href="./" class="shrink-0" aria-label="Lotcouncil home"><BrandMark class="size-9" /></a>
-		<div class="min-w-0 flex-1">
-			<h1 class="m-0 truncate text-[17px] leading-tight font-semibold sm:text-lg">
-				Lotcouncil
-				<span class="hidden font-normal text-muted-foreground sm:inline">· put your trading idea on trial</span>
-			</h1>
-			<p class="m-0 hidden truncate text-[13px] text-muted-foreground md:block">
-				Fixed code rules PASS or FAIL on hourly Bitget stock-token prices. The AI only translates and explains.
-			</p>
-		</div>
+<header class="relative z-30 border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 lg:sticky lg:top-0">
+	<div class="mx-auto flex h-14 max-w-[1600px] items-center gap-3 px-4 lg:gap-5 lg:px-6">
+		<a href="./" class="flex shrink-0 items-center gap-2.5 rounded-md" aria-label="Lotcouncil home">
+			<BrandMark class="size-7" />
+			<span class="text-[15px] font-semibold tracking-tight">Lotcouncil</span>
+		</a>
+		<span class="hidden h-5 w-px bg-border sm:block" aria-hidden="true"></span>
+		<p class="m-0 hidden min-w-0 flex-1 truncate text-sm text-muted-foreground sm:block">Put a trading idea on trial</p>
+		<span class="flex-1 sm:hidden"></span>
 
-		<div class="hidden flex-wrap items-center gap-2 md:flex" role="group" aria-label="Status">
+		<div class="hidden items-center gap-2 lg:flex" role="group" aria-label="Status">
 			{@render chips()}
 		</div>
 
-		<div class="flex shrink-0 items-center gap-2">
-			<button type="button" class="btn btn-secondary px-2.5 sm:px-3.5" onclick={onhow} aria-label="How it works">
-				<Icon name="book" class="size-4" /><span class="hidden sm:inline">How it works</span>
-			</button>
-			<button
-				type="button"
-				class="btn btn-secondary size-10 p-0"
-				aria-label="Switch between light and dark mode"
-				onclick={toggleTheme}
-			>
-				<Icon name="moon" class="size-[18px]" />
-			</button>
+		<div class="flex shrink-0 items-center gap-1.5">
+			<Button variant="outline" size="sm" onclick={onhow} aria-label="How it works">
+				<Icon name="book" /><span class="hidden sm:inline">How it works</span>
+			</Button>
+			<Button variant="ghost" size="icon" class="size-8" aria-label="Switch between light and dark mode" onclick={toggleTheme}>
+				<Icon name="moon" class="size-4 dark:hidden" />
+				<Icon name="sun" class="hidden size-4 dark:block" />
+			</Button>
 		</div>
 	</div>
-	<div class="-mt-1 flex flex-wrap gap-2 px-4 pb-2.5 md:hidden" role="group" aria-label="Status">
+	<div class="mx-auto flex max-w-[1600px] flex-wrap gap-2 px-4 pb-2.5 lg:hidden" role="group" aria-label="Status">
 		{@render chips()}
 	</div>
 </header>

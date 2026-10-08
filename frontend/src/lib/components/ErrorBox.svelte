@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { CourtFailure } from '#lib/court.svelte.js';
 	import Icon from './Icon.svelte';
+	import Alert from './ui/Alert.svelte';
+	import Button from './ui/Button.svelte';
 
 	interface Props {
 		failure: CourtFailure;
@@ -20,19 +22,12 @@
 	};
 </script>
 
-<div class="flex items-start gap-3 rounded-lg border border-danger/35 bg-danger-muted px-4 py-3.5" role="alert">
-	<Icon name="x" class="mt-0.5 size-5 shrink-0 text-danger-foreground" />
-	<div class="grid gap-2">
-		<p class="m-0 font-semibold">{TITLES[failure.kind]}</p>
-		<p class="m-0 text-[13.5px] text-subtle">{failure.message}</p>
-		<div class="flex flex-wrap gap-2">
-			{#if failure.kind === 'idea'}
-				<button type="button" class="btn btn-secondary" onclick={onexample}>Use an example idea</button>
-			{:else if failure.kind !== 'rate'}
-				<button type="button" class="btn btn-secondary" onclick={onretry}>
-					<Icon name="retry" class="size-4" />Try again
-				</button>
-			{/if}
-		</div>
-	</div>
-</div>
+<Alert variant="destructive" title={TITLES[failure.kind]}>
+	{#snippet icon()}<Icon name="alert" />{/snippet}
+	<p>{failure.message}</p>
+	{#if failure.kind === 'idea'}
+		<Button variant="outline" size="sm" class="mt-2" onclick={onexample}>Use an example idea</Button>
+	{:else if failure.kind !== 'rate'}
+		<Button variant="outline" size="sm" class="mt-2" onclick={onretry}><Icon name="retry" />Try again</Button>
+	{/if}
+</Alert>

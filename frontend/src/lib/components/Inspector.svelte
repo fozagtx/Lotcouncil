@@ -4,9 +4,21 @@
 	import type { CourtSession, StepKey, StepState } from '#lib/court.svelte.js';
 	import { feeLabel, fmtDate, int } from '#lib/format.js';
 	import type { TestKey } from '#lib/types.js';
-	import Badge, { type Tone } from './Badge.svelte';
 	import ErrorBox from './ErrorBox.svelte';
 	import Icon from './Icon.svelte';
+	import Alert from './ui/Alert.svelte';
+	import Badge, { type BadgeVariant } from './ui/Badge.svelte';
+	import BorderBeam from './ui/BorderBeam.svelte';
+	import Button from './ui/Button.svelte';
+	import Card from './ui/Card.svelte';
+	import CardContent from './ui/CardContent.svelte';
+	import CardDescription from './ui/CardDescription.svelte';
+	import CardFooter from './ui/CardFooter.svelte';
+	import CardHeader from './ui/CardHeader.svelte';
+	import CardTitle from './ui/CardTitle.svelte';
+	import CopyButton from './ui/CopyButton.svelte';
+	import Skeleton from './ui/Skeleton.svelte';
+	import Spinner from './ui/Spinner.svelte';
 
 	interface Props {
 		session: CourtSession;
@@ -43,23 +55,35 @@
 		return out;
 	});
 
+	type Mark = 'pass' | 'fail' | 'active' | 'skipped' | 'waiting';
+
 	interface Step {
 		key: StepKey;
 		title: string;
-		badge: { tone: Tone; text: string; live?: boolean };
+		badge: { variant: BadgeVariant; text: string; live?: boolean };
+		mark: Mark;
 		detail: string;
 		mono?: string;
+		copy?: string;
 	}
 
 	const SOURCE_BADGE = { ai: 'AI', keywords: 'Keywords', user: 'Your numbers' } as const;
 	const MARKET_BADGE = { bitget: 'Live', saved: 'Saved', practice: 'Practice' } as const;
 
 	function stateBadge(state: StepState, passed: boolean | undefined): Step['badge'] {
-		if (state === 'active') return { tone: 'info', text: 'Running', live: true };
-		if (state === 'skipped') return { tone: 'neutral', text: 'Skipped' };
-		if (state === 'failed') return { tone: 'danger', text: 'Failed' };
-		if (state === 'done') return passed === false ? { tone: 'danger', text: 'Failed' } : { tone: 'success', text: 'Passed' };
-		return { tone: 'neutral', text: 'Waiting' };
+		if (state === 'active') return { variant: 'info', text: 'Running', live: true };
+		if (state === 'skipped') return { variant: 'secondary', text: 'Skipped' };
+		if (state === 'failed') return { variant: 'danger', text: 'Failed' };
+		if (state === 'done') return passed === false ? { variant: 'danger', text: 'Failed' } : { variant: 'success', text: 'Passed' };
+		return { variant: 'secondary', text: 'Waiting' };
+	}
+
+	function stateMark(state: StepState, passed: boolean | undefined): Mark {
+		if (state === 'active') return 'active';
+		if (state === 'skipped') return 'skipped';
+		if (state === 'failed' || (state === 'done' && passed === false)) return 'fail';
+		if (state === 'done') return 'pass';
+		return 'waiting';
 	}
 
 	const steps = $derived.by((): Step[] => {
@@ -71,6 +95,7 @@
 			key,
 			title,
 			badge: stateBadge(s[key], tests?.[key]?.passed),
+			mark: stateMark(s[key], tests?.[key]?.passed),
 			detail: tests?.[key]?.sentence ?? (s[key] === 'skipped' ? 'Not run: too few trades to judge.' : session.markets?.tests[key].question ?? '')
 		});
 		return [
@@ -79,23 +104,30 @@
 				title: 'Rule read',
 				badge:
 					s.read === 'done' && reading
-						? { tone: 'info', text: SOURCE_BADGE[reading.source] }
+						? { variant: 'info', text: SOURCE_BADGE[reading.source] }
 						: stateBadge(s.read, undefined),
+				mark: stateMark(s.read, undefined),
 				detail: ruling?.rule_text || reading?.rule_text || 'Turning the sentence into one of three rule types.'
 			},
 			{
 				key: 'data',
 				title: 'Prices loaded',
-				badge: s.data === 'done' && m ? { tone: m.source === 'bitget' ? 'success' : 'warning', text: MARKET_BADGE[m.source] } : stateBadge(s.data, undefined),
+				badge:
+					s.data === 'done' && m
+						? { variant: m.source === 'bitget' ? 'success' : 'warning', text: MARKET_BADGE[m.source] }
+						: stateBadge(s.data, undefined),
+				mark: stateMark(s.data, undefined),
 				detail: m
 					? `${int(m.candles)} hourly candles, ${fmtDate(m.start / 1000)} to ${fmtDate(m.end / 1000)}.`
 					: 'Finished hourly candles only.',
-				mono: m ? `${m.hash.slice(0, 23)}…` : undefined
+				mono: m ? `${m.hash.slice(0, 23)}…` : undefined,
+				copy: m?.hash
 			},
 			{
 				key: 'gate',
 				title: 'Trade count',
 				badge: stateBadge(s.gate, ruling?.gate.passed),
+				mark: stateMark(s.gate, ruling?.gate.passed),
 				detail: ruling?.gate.sentence ?? 'At least 10 trades are needed to judge.'
 			},
 			testStep('A', 'A · Unseen data'),
@@ -122,11 +154,19 @@
 		else if (how === 'downloaded') say('Verdict card saved as an image.');
 	}
 
+	let linkCopied = $state(false);
+	$effect(() => {
+		if (!linkCopied) return;
+		const t = setTimeout(() => (linkCopied = false), 2000);
+		return () => clearTimeout(t);
+	});
+
 	async function copyLink() {
 		if (!session.result) return;
 		const url = session.shareUrl();
 		try {
 			await navigator.clipboard.writeText(url);
+			linkCopied = true;
 			say('Link copied: it re-runs this exact ruling.');
 		} catch {
 			try {
@@ -162,36 +202,43 @@
 	}
 </script>
 
-<section class="panel flex flex-col {className}" aria-labelledby="ruling-title" aria-busy={!result && !session.error}>
-	<header class="panel-head">
-		<h2 id="ruling-title" class="panel-title">Ruling</h2>
-		{#if session.example && result}
-			<Badge tone="neutral">Example</Badge>
-		{/if}
-	</header>
+<Card class="relative flex flex-col {className}" aria-labelledby="ruling-title" aria-busy={!result && !session.error}>
+	{#if session.running}<BorderBeam size={160} duration={4} />{/if}
+	<CardHeader>
+		<CardTitle id="ruling-title">Ruling</CardTitle>
+		<CardDescription>
+			{#if result}{result.market.label} · {result.market.days_available} days · fee {feeLabel(100 * result.request.fee)}{:else}Every step the court takes, as it happens.{/if}
+		</CardDescription>
+		{#snippet action()}
+			{#if session.example && result}<Badge variant="secondary">Example</Badge>{/if}
+		{/snippet}
+	</CardHeader>
 
-	<div class="grid gap-4 p-4">
+	<CardContent class="grid gap-5">
 		{#if session.error}
-			<ErrorBox
-				failure={session.error}
-				onretry={() => session.retry()}
-				{onexample}
-			/>
+			<ErrorBox failure={session.error} onretry={() => session.retry()} {onexample} />
 		{:else if ruling && result}
 			<div
-				class="verdict-block rounded-lg border p-4 {pass ? 'border-success/35 bg-success-muted' : 'border-danger/35 bg-danger-muted'}"
+				class="verdict-block relative rounded-lg border p-5 {pass ? 'border-success/30 bg-success-muted' : 'border-danger/30 bg-danger-muted'}"
 			>
-				<div class="flex items-center gap-3.5">
+				<BorderBeam
+					size={90}
+					duration={8}
+					borderWidth={1.5}
+					colorFrom={pass ? '#4ade80' : '#fb7185'}
+					colorTo={pass ? '#16a34a' : '#dc2626'}
+				/>
+				<div class="flex items-center gap-4">
 					<span
-						class="mark grid size-12 shrink-0 place-items-center rounded-full text-white {pass ? 'bg-success' : 'bg-danger'}"
+						class="grid size-11 shrink-0 place-items-center rounded-full shadow-sm {pass ? 'bg-success text-white dark:text-zinc-950' : 'bg-danger text-white'}"
 						aria-hidden="true"
 					>
 						<Icon name={pass ? 'check' : 'x'} class="size-6" />
 					</span>
 					<div>
-						<p class="eyebrow m-0">Verdict</p>
+						<p class="m-0 text-xs font-medium text-subtle">Verdict</p>
 						<p
-							class="m-0 text-[44px] leading-none font-extrabold tracking-tight {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
+							class="m-0 text-5xl leading-none font-semibold tracking-tighter {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
 							aria-label="Verdict: {ruling.verdict}"
 							role="img"
 						>
@@ -199,80 +246,114 @@
 						</p>
 					</div>
 				</div>
-				<p id="verdict-headline" class="mt-3 mb-1 text-[17px] leading-snug font-semibold">{ruling.headline}</p>
-				<p class="m-0 text-[13.5px] text-subtle">{caveat}</p>
+				<p id="verdict-headline" class="mt-4 mb-1 text-base leading-snug font-medium">{ruling.headline}</p>
+				<p class="m-0 text-sm text-subtle">{caveat}</p>
 			</div>
 
-			<div class="grid gap-1">
-				<p class="m-0 text-[14.5px] break-words">“{result.idea || ruling.rule_text}”</p>
-				<p class="m-0 text-xs text-muted-foreground">
-					{result.market.label} · {result.market.days_available} days · fee {feeLabel(100 * result.request.fee)}
-				</p>
-			</div>
+			<blockquote class="m-0 border-l-2 pl-4 text-[15px] leading-snug break-words text-subtle italic">
+				“{result.idea || ruling.rule_text}”
+			</blockquote>
 
 			{#if notes.length}
-				<p class="m-0 flex gap-2 rounded-md bg-warning-muted px-3 py-2 text-[13px] text-warning-foreground">
-					<Icon name="alert" class="mt-0.5 size-4 shrink-0" /><span>{notes.join(' ')}</span>
-				</p>
+				<Alert variant="warning" role="note">
+					{#snippet icon()}<Icon name="alert" />{/snippet}
+					<p>{notes.join(' ')}</p>
+				</Alert>
 			{/if}
 
 			{#if !ruling.gate.passed}
 				<div class="flex flex-wrap gap-2">
 					{#if result.request.days < maxDays}
-						<button type="button" class="btn btn-secondary" onclick={onwiden}>Try the {maxDays}-day window</button>
+						<Button variant="outline" onclick={onwiden}>Try the {maxDays}-day window</Button>
 					{/if}
-					<button type="button" class="btn btn-secondary" onclick={onedit}>Edit the numbers</button>
+					<Button variant="outline" onclick={onedit}>Edit the numbers</Button>
 				</div>
 			{/if}
 		{:else}
-			<div class="grid gap-3 rounded-lg border border-border p-4" aria-hidden="true">
-				<div class="flex items-center gap-3.5">
-					<div class="skeleton size-12 rounded-full"></div>
-					<div class="grid gap-2"><div class="skeleton h-3 w-16"></div><div class="skeleton h-10 w-32"></div></div>
+			<div class="grid gap-4 rounded-lg border p-5" aria-hidden="true">
+				<div class="flex items-center gap-4">
+					<Skeleton class="size-11 rounded-full" />
+					<div class="grid gap-2"><Skeleton class="h-3 w-14" /><Skeleton class="h-11 w-32" /></div>
 				</div>
-				<div class="skeleton h-4 w-4/5"></div>
-				<div class="skeleton h-3.5 w-full"></div>
+				<Skeleton class="h-4 w-4/5" />
+				<Skeleton class="h-3.5 w-full" />
 			</div>
 		{/if}
 
 		<div>
-			<div class="mb-2 flex items-center justify-between gap-2">
-				<h3 class="m-0 text-sm font-semibold">How the court ruled</h3>
-				<span class="text-xs text-muted-foreground">
+			<div class="mb-3 flex items-center justify-between gap-2">
+				<h3 class="m-0 text-sm font-semibold tracking-tight">How the court ruled</h3>
+				<span class="num text-xs text-muted-foreground">
 					{session.elapsedMs !== null ? `Computed in ${int(session.elapsedMs)} ms` : session.running ? 'Running…' : ''}
 				</span>
 			</div>
-			<ol class="m-0 grid list-none gap-2 p-0">
-				{#each steps as step (step.key)}
-					<li class="rounded-lg border border-border bg-card-raised px-3 py-2.5">
-						<div class="flex items-start justify-between gap-2">
-							<p class="m-0 text-[13.5px] font-semibold">
-								{step.title}
-							</p>
-							<Badge tone={step.badge.tone} live={step.badge.live} dot={step.badge.live}>{step.badge.text}</Badge>
-						</div>
-						<p class="m-0 mt-1 text-[12.5px] leading-snug text-muted-foreground">{step.detail}</p>
-						{#if step.mono}
-							<p class="m-0 mt-1 font-mono text-[11.5px] break-all text-muted-foreground">{step.mono}</p>
+			<ol class="m-0 grid list-none p-0">
+				{#each steps as step, i (step.key)}
+					<li class="relative flex gap-3 pb-4 last:pb-0">
+						{#if i < steps.length - 1}
+							<span class="absolute top-7 bottom-0 left-[13px] w-px bg-border" aria-hidden="true"></span>
 						{/if}
+						<span
+							class="relative grid size-[27px] shrink-0 place-items-center rounded-full border
+								{step.mark === 'pass'
+								? 'border-transparent bg-success text-white dark:text-zinc-950'
+								: step.mark === 'fail'
+									? 'border-transparent bg-danger text-white'
+									: step.mark === 'active'
+										? 'border-info/40 bg-info-muted text-info-foreground'
+										: 'bg-card text-muted-foreground'}"
+							aria-hidden="true"
+						>
+							{#if step.mark === 'pass'}
+								<Icon name="check" class="size-3.5" />
+							{:else if step.mark === 'fail'}
+								<Icon name="x" class="size-3.5" />
+							{:else if step.mark === 'active'}
+								<Spinner class="size-3.5" />
+							{:else if step.mark === 'skipped'}
+								<Icon name="dash" class="size-3.5" />
+							{:else}
+								<span class="size-1.5 rounded-full bg-neutral-mark"></span>
+							{/if}
+						</span>
+						<div class="min-w-0 flex-1 pt-0.5">
+							<div class="flex items-start justify-between gap-2">
+								<p class="m-0 text-sm font-medium">{step.title}</p>
+								<Badge variant={step.badge.variant} dot={step.badge.live ? 'info' : undefined} live={step.badge.live}>{step.badge.text}</Badge>
+							</div>
+							<p class="m-0 mt-1 text-[13px] leading-snug text-muted-foreground">{step.detail}</p>
+							{#if step.mono}
+								<div class="mt-1.5 flex min-w-0 items-center gap-1.5">
+									<code class="truncate font-mono text-xs text-muted-foreground">{step.mono}</code>
+									{#if step.copy}
+										<CopyButton
+											text={step.copy}
+											label="Copy the data fingerprint"
+											class="size-6"
+											oncopy={(ok) => ok && say('Data fingerprint copied.')}
+										/>
+									{/if}
+								</div>
+							{/if}
+						</div>
 					</li>
 				{/each}
 			</ol>
 		</div>
-	</div>
+	</CardContent>
 
-	<footer class="mt-auto grid gap-2 border-t border-border p-4">
+	<CardFooter class="mt-auto grid gap-3 border-t pt-5 sm:pt-6">
 		<div class="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
-			<button type="button" class="btn btn-secondary" onclick={copyCard} disabled={!result}>
-				<Icon name="image" class="size-4" />Verdict card
-			</button>
-			<button type="button" class="btn btn-secondary" onclick={copyLink} disabled={!result}>
-				<Icon name="link" class="size-4" />Copy link
-			</button>
-			<button type="button" class="btn btn-secondary" onclick={exportAudit} disabled={!result || auditBusy} aria-busy={auditBusy}>
-				<Icon name={auditBusy ? 'spinner' : 'file'} class="size-4" />Export audit
-			</button>
+			<Button variant="outline" onclick={copyCard} disabled={!result}>
+				<Icon name="image" />Verdict card
+			</Button>
+			<Button variant="outline" onclick={copyLink} disabled={!result}>
+				<Icon name={linkCopied ? 'check' : 'link'} />Copy link
+			</Button>
+			<Button variant="outline" onclick={exportAudit} disabled={!result || auditBusy} aria-busy={auditBusy}>
+				{#if auditBusy}<Spinner />{:else}<Icon name="file" />{/if}Export audit
+			</Button>
 		</div>
-		<p class="m-0 min-h-5 text-[13px] break-all text-subtle" role="status">{toast}</p>
-	</footer>
-</section>
+		<p class="m-0 min-h-5 text-[13px] break-all text-muted-foreground" role="status">{toast}</p>
+	</CardFooter>
+</Card>

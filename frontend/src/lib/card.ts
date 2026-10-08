@@ -7,25 +7,24 @@ const H = 630;
 const SANS = '"IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
 
-/** Card colours. The card is always light so it reads the same in every feed. */
+/** Card colours (the light theme's zinc palette). The card is always light so it reads the same in every feed. */
 const C = {
-	bg: '#f3f4f6',
+	bg: '#fafafa',
 	card: '#ffffff',
-	ink: '#0f172a',
-	ink2: '#334155',
-	muted: '#5b6577',
-	line: '#e5e7eb',
-	pass: '#12957a',
-	passInk: '#0b7a63',
-	passBg: '#e6f6f1',
-	fail: '#e5383b',
-	failInk: '#c81e2c',
-	failBg: '#fdecee',
-	skip: '#8b95a7',
+	ink: '#09090b',
+	ink2: '#3f3f46',
+	muted: '#63636b',
+	line: '#e4e4e7',
+	pass: '#16a34a',
+	passInk: '#15803d',
+	passBg: '#f0fdf4',
+	fail: '#dc2626',
+	failInk: '#b91c1c',
+	failBg: '#fef2f2',
+	skip: '#a1a1aa',
 	series: '#2563eb',
-	brand: '#ea580c',
-	onBrand: '#ffffff',
-	rail: '#0f1729'
+	brand: '#09090b',
+	onBrand: '#ffffff'
 };
 
 type MarkState = 'pass' | 'fail' | 'skip';

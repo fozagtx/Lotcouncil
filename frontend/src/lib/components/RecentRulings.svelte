@@ -2,7 +2,14 @@
 	import type { CourtSession } from '#lib/court.svelte.js';
 	import type { PastRuling } from '#lib/history.svelte.js';
 	import { RULE_FIELDS } from '#lib/rules.js';
-	import Badge from './Badge.svelte';
+	import Icon from './Icon.svelte';
+	import Badge from './ui/Badge.svelte';
+	import Button from './ui/Button.svelte';
+	import Card from './ui/Card.svelte';
+	import CardDescription from './ui/CardDescription.svelte';
+	import CardHeader from './ui/CardHeader.svelte';
+	import CardTitle from './ui/CardTitle.svelte';
+	import Empty from './ui/Empty.svelte';
 
 	let { session, class: className = '' }: { session: CourtSession; class?: string } = $props();
 
@@ -23,44 +30,46 @@
 	}
 </script>
 
-<section id="recent" class="panel {className}" aria-labelledby="recent-title" tabindex="-1">
-	<header class="panel-head">
-		<h2 id="recent-title" class="panel-title">Recent rulings</h2>
-		{#if items.length}
-			<button type="button" class="btn btn-ghost min-h-8 px-2 text-xs" onclick={() => session.history.clear()}>Clear</button>
-		{/if}
-	</header>
+<Card id="recent" class={className} aria-labelledby="recent-title" tabindex={-1}>
+	<CardHeader class="pb-3 sm:pb-3">
+		<CardTitle id="recent-title">Recent rulings</CardTitle>
+		<CardDescription>Saved in this browser. Open one to re-run it on the same candles.</CardDescription>
+		{#snippet action()}
+			{#if items.length}
+				<Button variant="ghost" size="sm" onclick={() => session.history.clear()}>Clear</Button>
+			{/if}
+		{/snippet}
+	</CardHeader>
 	{#if items.length === 0}
-		<div class="px-4 py-8 text-center">
-			<p class="m-0 text-sm font-semibold">No rulings yet</p>
-			<p class="m-0 mt-1 text-[13px] text-muted-foreground">Rulings you run appear here. Open one to re-run it on the same candles.</p>
-		</div>
+		<Empty title="No rulings yet" description="Rulings you run appear here." class="pt-2 md:pt-4 md:pb-8">
+			{#snippet media()}<Icon name="history" />{/snippet}
+		</Empty>
 	{:else}
-		<ul class="m-0 max-h-[360px] list-none overflow-y-auto p-0">
+		<ul class="m-0 max-h-[360px] list-none overflow-y-auto border-t p-0">
 			{#each items as p (p.id)}
-				<li class="border-b border-border last:border-0">
+				<li class="border-b last:border-0">
 					<button
 						type="button"
-						class="row-btn grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5 text-left"
+						class="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-5 py-3 text-left transition-colors outline-none hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset disabled:opacity-50 sm:px-6"
 						onclick={() => session.reopen(p)}
 						disabled={session.running}
 						aria-label="Re-open {p.verdict} ruling: {p.label}, {ruleCode(p)}, {p.days} days"
 					>
 						<span
-							class="grid size-8 place-items-center rounded-full text-[11px] font-bold
-								{p.verdict === 'PASS' ? 'bg-success-muted text-success-foreground' : 'bg-danger-muted text-danger-foreground'}"
+							class="grid size-9 place-items-center rounded-lg border text-[11px] font-semibold
+								{p.verdict === 'PASS' ? 'border-success/30 bg-success-muted text-success-foreground' : 'border-danger/30 bg-danger-muted text-danger-foreground'}"
 							aria-hidden="true"
 						>
 							{p.label.replace(/^r/, '').replace('Practice: ', '').slice(0, 2).toUpperCase()}
 						</span>
 						<span class="min-w-0">
-							<span class="block truncate text-[13.5px] font-semibold">{p.label}{p.symbol.startsWith('PRACTICE') ? '' : '/USDT'}</span>
-							<span class="block truncate font-mono text-[11.5px] text-muted-foreground">{ruleCode(p)} · {p.days}D · {ago(p.at)}</span>
+							<span class="block truncate text-sm font-medium">{p.label}{p.symbol.startsWith('PRACTICE') ? '' : '/USDT'}</span>
+							<span class="block truncate font-mono text-xs text-muted-foreground">{ruleCode(p)} · {p.days}D · {ago(p.at)}</span>
 						</span>
-						<Badge tone={p.verdict === 'PASS' ? 'success' : 'danger'}>{p.verdict}</Badge>
+						<Badge variant={p.verdict === 'PASS' ? 'success' : 'danger'}>{p.verdict}</Badge>
 					</button>
 				</li>
 			{/each}
 		</ul>
 	{/if}
-</section>
+</Card>

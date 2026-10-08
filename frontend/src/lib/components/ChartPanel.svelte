@@ -3,7 +3,13 @@
 	import { fmtDate, signedPct } from '#lib/format.js';
 	import CandleChart from './charts/CandleChart.svelte';
 	import LineChart from './charts/LineChart.svelte';
-	import SegmentedRadio from './SegmentedRadio.svelte';
+	import Card from './ui/Card.svelte';
+	import CardContent from './ui/CardContent.svelte';
+	import CardDescription from './ui/CardDescription.svelte';
+	import CardHeader from './ui/CardHeader.svelte';
+	import CardTitle from './ui/CardTitle.svelte';
+	import Skeleton from './ui/Skeleton.svelte';
+	import ToggleTabs from './ui/ToggleTabs.svelte';
 
 	let { session, class: className = '' }: { session: CourtSession; class?: string } = $props();
 
@@ -23,22 +29,14 @@
 	);
 </script>
 
-<section class="panel {className}" aria-labelledby="chart-title" aria-busy={!result}>
-	<header class="panel-head">
-		<div class="flex min-w-0 items-baseline gap-3">
-			<h2 id="chart-title" class="m-0 text-base font-bold tracking-tight">
-				{#if result}
-					{pair}
-				{:else}
-					<span class="panel-title">Chart</span>
-				{/if}
-			</h2>
-			{#if result}
-				<span class="truncate text-xs text-muted-foreground">{sourceLabel} · {view === 'candles' ? candleLabel : 'result after fees'}</span>
-			{/if}
-		</div>
-		<div class="flex flex-wrap items-center gap-2">
-			<SegmentedRadio
+<Card class={className} aria-labelledby="chart-title" aria-busy={!result}>
+	<CardHeader>
+		<CardTitle id="chart-title" class="text-lg">{result ? pair : 'Chart'}</CardTitle>
+		<CardDescription>
+			{#if result}{sourceLabel} · {view === 'candles' ? candleLabel : 'result after fees'}{:else}Prices load with the first ruling.{/if}
+		</CardDescription>
+		{#snippet action()}
+			<ToggleTabs
 				label="Chart view"
 				options={[
 					{ value: 'candles', label: 'Candles', description: 'Show price candles' },
@@ -46,19 +44,19 @@
 				]}
 				bind:value={view}
 			/>
-			<SegmentedRadio
+			<ToggleTabs
 				label="Time window"
 				options={windows}
 				value={session.days}
 				disabled={session.running}
 				onchange={(d) => session.changeWindow(Number(d))}
 			/>
-		</div>
-	</header>
+		{/snippet}
+	</CardHeader>
 
-	<div class="px-3 pt-2 pb-3 sm:px-4">
+	<CardContent class="px-3 sm:px-5">
 		{#if result && chart}
-			<div class="mb-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-hidden="true">
+			<div class="mb-2 flex flex-wrap gap-x-4 gap-y-1 px-1 text-xs text-muted-foreground" aria-hidden="true">
 				{#if view === 'candles'}
 					<span class="inline-flex items-center gap-1.5"><i class="h-3 w-2 rounded-[2px] bg-[var(--candle-up)]"></i>Up</span>
 					<span class="inline-flex items-center gap-1.5"><i class="h-3 w-2 rounded-[2px] bg-[var(--candle-down)]"></i>Down</span>
@@ -90,7 +88,7 @@
 				/>
 			{/if}
 		{:else}
-			<div class="skeleton mt-6 h-[300px]" aria-hidden="true"></div>
+			<Skeleton class="h-[320px] rounded-lg" />
 		{/if}
-	</div>
-</section>
+	</CardContent>
+</Card>

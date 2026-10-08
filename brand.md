@@ -4,41 +4,59 @@ _Status: active_
 
 **Lotcouncil** — a courtroom for trading ideas: it tests whether an idea is real or luck and rules PASS or FAIL.
 
-Direction: a professional trading terminal. White panels on cool gray with an execution-inspector style ruling panel, burnt-orange actions and solid orange active tabs (from a trading-terminal reference), teal and red for verdicts and candles. Mood: premium, bold. Category: DeFi / trading tools.
+Direction: built on [VengeanceUI](https://www.vengenceui.com) ([source](https://github.com/Ashutoshx7/VengeanceUI), MIT). The page uses its zinc neutrals, a black-and-white primary, 4/6/8px radii and 150ms transitions, and Svelte 5 ports of its components (in `frontend/src/lib/components/ui/`, with the MIT notice in `LICENSE-VengeanceUI.txt`). Green and red are kept for verdicts and candles. Mood: premium, bold. Category: DeFi / trading tools.
 
-The tokens live in `frontend/src/routes/layout.css` (light and dark are each chosen, not flipped). Every text pair below passes WCAG AA; contrast was computed from the hex values.
+The tokens live in `frontend/src/routes/layout.css`; light and dark are each chosen, not flipped. Every text pair below passes WCAG AA (contrast computed from the hex values).
+
+## Components (VengeanceUI ports)
+
+| Port | Used for |
+| --- | --- |
+| Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter | every panel |
+| Button (default, outline, secondary, ghost, link, destructive) | all actions |
+| RadialGlowButton | the one main action, "Put it on trial" |
+| SpotlightNavbar (as `SpotlightTabs`) | the Tests / Trades / Plain words / Rule tabs |
+| Tabs list styling (as `ToggleTabs`, a radio group) | history window, chart view |
+| BorderBeam | the Ruling card while the court runs, and around the verdict |
+| StatsCounter | key numbers and test results count up when they appear |
+| Badge (+ soft status variants) | statuses, sources, verdicts |
+| Alert (+ warning variant) | errors and data notes |
+| CopyButton | copying the data fingerprint |
+| Textarea, Kbd, Skeleton, Spinner, Empty, Label/Input styling | form, loading and empty states |
+
+Icons are [Lucide](https://lucide.dev) (`@lucide/svelte`), the set VengeanceUI uses.
 
 ## Palette
 
 | Role | Light | Dark | Use |
 | --- | --- | --- | --- |
-| background | `#f3f4f6` | `#0b1220` | page |
-| card | `#ffffff` | `#111a2e` | panels |
-| card-raised | `#f8fafc` | `#152038` | timeline cards, table stripes |
-| foreground | `#0f172a` | `#e6eaf2` | body text |
-| subtle | `#334155` | `#c4cbd8` | secondary text |
-| muted-foreground | `#5b6577` (5.3:1 on gray) | `#94a3b8` (6.8:1) | labels, captions |
-| border / strong | `#e5e7eb` / `#d1d5db` | `#1f2a44` / `#2c3a5a` | hairlines, inputs |
-| primary | `#c2410c` (white text 5.2:1) | `#ff7a2e` (navy text 7.2:1) | buttons, active tabs |
-| brand | `#ea580c` | `#ff7a2e` | wordmark, logo, tab underline (large or non-text only) |
-| success | `#12957a` mark, `#0b7a63` text on `#e6f6f1` (4.7:1) | `#2fbf98`, `#34d3a8` on `#0e3b33` | PASS, up candles, wins |
-| danger | `#e5383b` mark, `#c81e2c` text on `#fdecee` (5.0:1) | `#f0525a`, `#ff6b72` on `#3a1418` | FAIL, down candles, losses |
-| info | `#1d4ed8` on `#eff6ff` (6.2:1) | `#6ea8ff` on `#13254a` | AI badge, "never seen", timings |
-| warning | `#b45309` on `#fff4e5` (4.6:1) | `#fbbf5a` on `#3a2a0e` | practice / saved data |
-| ring | `#2563eb` | `#6ea8ff` | focus outline |
+| background | `#fafafa` | `#09090b` | page |
+| card | `#ffffff` | `#0f0f11` | panels |
+| card-raised / muted | `#fafafa` / `#f4f4f5` | `#18181b` / `#27272a` | inset areas, tab tracks, skeletons |
+| foreground | `#09090b` | `#fafafa` | body text |
+| subtle | `#3f3f46` | `#d4d4d8` | secondary text |
+| muted-foreground | `#63636b` (5.4:1 on muted) | `#a1a1aa` (5.8:1 on muted) | labels, captions |
+| border / strong | `#e4e4e7` / `#d4d4d8` | `#27272a` / `#3f3f46` | hairlines, inputs |
+| primary | `#09090b` on white text | `#fafafa` with black text | default buttons, logo tile, focus ring (at 50%) |
+| success | `#16a34a` mark, `#15803d` text on `#f0fdf4` (4.8:1) | `#22c55e`, `#4ade80` on `#052e16` | PASS, up candles, wins |
+| danger | `#dc2626` mark, `#b91c1c` text on `#fef2f2` (5.9:1) | `#ef4444`, `#f87171` on `#450a0a` | FAIL, down candles, losses |
+| info | `#1d4ed8` on `#eff6ff` (6.2:1) | `#60a5fa` on `#172554` | AI badge, "never seen", running |
+| warning | `#a16207` on `#fefce8` (4.8:1) | `#facc15` on `#422006` | practice / saved data |
+| brand accent | `#ea580c` | `#fb923c` | the rule's holding periods on charts, BorderBeam light (with `#9c40ff`) |
 
 ## Typography
 
-- **IBM Plex Sans** (variable) for all UI text: an institutional, finance-tool face rather than the default Inter look. `tabular-nums` (`.num`) wherever numbers line up or change.
+- **IBM Plex Sans** (variable) for all UI text; `tabular-nums` wherever numbers line up or change.
 - **IBM Plex Mono** for identifiers only: trade IDs, data fingerprints, rule codes.
-- Sentence case everywhere. Panel titles 15px semibold; labels 13px medium. No letter-spaced capitals. Nothing below 12px; body 13–16px.
+- Sentence case everywhere. Card titles 16px semibold with tight tracking; labels 14px medium. Nothing below 11px; body 13–16px.
 - Fonts are bundled from npm (`@fontsource*/ibm-plex-*`), so the page makes no third-party requests.
 
 ## Shape and spacing
 
-- Panels: 12px radius, 1px border, no shadow (border or shadow, never both). Controls: 8px radius, at least 40px tall.
-- 4px spacing grid; 16px page gutter on phones, 24px on desktop.
-- Motion: 100ms colour feedback, 50ms press, skeleton shimmer; all off under `prefers-reduced-motion`.
+- Cards: 12px radius, 1px border, small shadow (VengeanceUI Card). Controls: 6px radius, 36px tall (40px on touch screens).
+- Focus: a 3px ring in the primary colour at 50%.
+- 16px page gutter on phones, 24px on desktop; 24px between cards on desktop.
+- Motion: 150ms colour transitions, counters, the spotlight and the border beam. All of it stops under `prefers-reduced-motion`; counters then show the final number at once.
 
 ## Voice
 
@@ -46,8 +64,8 @@ Plain, specific and calm. Say what the court found and what to do next ("Try the
 
 ## Do / don't
 
-- Do use primary orange for one main action per panel; use secondary buttons elsewhere.
-- Do pair every status colour with a word or icon (PASSED, FAILED, ✓, ✕).
-- Don't put small text in the bright brand orange; use `primary` for text.
+- Do use the radial glow button only for the main action; use outline buttons elsewhere.
+- Do pair every status colour with a word or icon (Passed, Failed, ✓, ✕).
 - Don't add controls that do nothing: every button on the page works. No sidebar for decoration.
 - Don't show made-up data to users. Practice markets are developer-only (`COURT_PRACTICE=on`) and always labelled.
+- Don't let a counter rest on a number that isn't the result: off-screen counters show the real value straight away.

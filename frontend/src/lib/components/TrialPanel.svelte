@@ -2,16 +2,26 @@
 	import type { CourtSession } from '#lib/court.svelte.js';
 	import { feeLabel } from '#lib/format.js';
 	import Icon from './Icon.svelte';
-	import SegmentedRadio from './SegmentedRadio.svelte';
+	import Button from './ui/Button.svelte';
+	import Card from './ui/Card.svelte';
+	import CardContent from './ui/CardContent.svelte';
+	import CardDescription from './ui/CardDescription.svelte';
+	import CardHeader from './ui/CardHeader.svelte';
+	import CardTitle from './ui/CardTitle.svelte';
+	import Kbd from './ui/Kbd.svelte';
+	import RadialGlowButton from './ui/RadialGlowButton.svelte';
+	import Spinner from './ui/Spinner.svelte';
+	import Textarea from './ui/Textarea.svelte';
+	import ToggleTabs from './ui/ToggleTabs.svelte';
 
 	interface Props {
 		session: CourtSession;
 		onrun: (idea: string) => void;
-		textarea?: HTMLTextAreaElement;
+		textarea?: HTMLTextAreaElement | null;
 		class?: string;
 	}
 
-	let { session, onrun, textarea = $bindable(), class: className = '' }: Props = $props();
+	let { session, onrun, textarea = $bindable(null), class: className = '' }: Props = $props();
 
 	const EXAMPLES = [
 		{ label: '10h / 40h average cross', idea: 'buy when the 10 hour average crosses above the 40 hour average' },
@@ -50,64 +60,56 @@
 	}
 </script>
 
-<section class="panel {className}" aria-labelledby="trial-title">
-	<header class="panel-head">
-		<h2 id="trial-title" class="panel-title">New trial</h2>
-		<span class="text-xs text-muted-foreground">One sentence in, one ruling out</span>
-	</header>
-	<form class="grid gap-3 p-4" onsubmit={submit} autocomplete="off">
-		<div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-stretch">
-			<div class="grid gap-1.5">
+<Card class={className} aria-labelledby="trial-title">
+	<CardHeader>
+		<CardTitle id="trial-title">New trial</CardTitle>
+		<CardDescription>Describe a trading idea in one sentence. Fixed code rules PASS or FAIL; the AI only translates.</CardDescription>
+	</CardHeader>
+	<CardContent>
+		<form class="grid gap-5" onsubmit={submit} autocomplete="off">
+			<div class="grid gap-2">
 				<label for="idea" class="field-label">Your idea</label>
-				<textarea
-					id="idea"
-					bind:this={textarea}
-					bind:value={session.idea}
-					rows="2"
-					maxlength="400"
-					required
-					aria-describedby="idea-help"
-					placeholder="buy when the 10 hour average crosses above the 40 hour average"
-					class="min-h-[4.25rem] w-full resize-y rounded-control border border-border-strong bg-input px-3.5 py-2.5 text-[16px] leading-snug placeholder:text-muted-foreground focus:border-transparent focus:outline-2 focus:outline-offset-0 focus:outline-ring"
-					{onkeydown}
-				></textarea>
-				<p id="idea-help" class="m-0 text-xs text-muted-foreground">
-					Average crosses, breakouts and dip buys. Lengths in hours, days or weeks. Press Enter to run.
+				<div class="flex flex-col gap-3 lg:flex-row lg:items-stretch">
+					<Textarea
+						id="idea"
+						bind:ref={textarea}
+						bind:value={session.idea}
+						rows={2}
+						maxlength={400}
+						required
+						aria-describedby="idea-help"
+						placeholder="buy when the 10 hour average crosses above the 40 hour average"
+						class="min-h-[4.5rem] flex-1 resize-none px-3.5 py-3 text-base leading-snug md:text-[15px]"
+						{onkeydown}
+					/>
+					<RadialGlowButton type="submit" class="w-full lg:w-auto lg:min-w-[200px]" disabled={session.running} aria-busy={session.running}>
+						{#if session.running}<Spinner />{:else}<Icon name="gavel" class="size-[18px]" />{/if}
+						<span>{session.running ? 'Ruling…' : 'Put it on trial'}</span>
+					</RadialGlowButton>
+				</div>
+				<p id="idea-help" class="m-0 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+					Average crosses, breakouts and dip buys, in hours, days or weeks.
+					<span class="inline-flex items-center gap-1">Press <Kbd>Enter</Kbd> to run.</span>
 				</p>
 			</div>
-			<button
-				type="submit"
-				class="btn btn-primary min-h-12 px-6 text-[15px] lg:mt-[22px] lg:mb-[22px] lg:min-w-[190px]"
-				disabled={session.running}
-				aria-busy={session.running}
-			>
-				<Icon name={session.running ? 'spinner' : 'gavel'} class="size-[18px]" />
-				<span>{session.running ? 'Ruling…' : 'Put it on trial'}</span>
-			</button>
-		</div>
 
-		<div class="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-			<div class="grid gap-1.5">
+			<div class="grid gap-2">
 				<span class="field-label" id="examples-label">Examples</span>
 				<div
-					class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0"
+					class="-mx-5 flex gap-2 overflow-x-auto px-5 py-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0"
 					role="group"
 					aria-labelledby="examples-label"
 				>
 					{#each EXAMPLES as example (example.label)}
-						<button
-							type="button"
-							class="chip min-h-10 shrink-0 rounded-full border border-border bg-card px-3 text-[13px] font-medium text-subtle sm:min-h-9 pointer-coarse:min-h-10"
-							onclick={() => useExample(example.idea)}
-						>
+						<Button variant="outline" size="sm" class="shrink-0 rounded-full px-3.5" onclick={() => useExample(example.idea)}>
 							{example.label}
-						</button>
+						</Button>
 					{/each}
 				</div>
 			</div>
 
-			<div class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-end">
-				<div class="grid min-w-0 gap-1.5 sm:w-[190px]">
+			<div class="grid grid-cols-2 gap-4 border-t pt-5 sm:flex sm:flex-wrap sm:items-end">
+				<div class="grid min-w-0 gap-2 sm:w-[210px]">
 					<label for="symbol" class="field-label">Token</label>
 					<select id="symbol" class="select" bind:value={session.symbol}>
 						<optgroup label="Bitget stock tokens">
@@ -115,14 +117,16 @@
 								<option value={t.symbol}>{t.label}/USDT{t.name ? ` · ${t.name}` : ''}</option>
 							{/each}
 						</optgroup>
-						<optgroup label="Practice (made-up prices)">
-							{#each practiceTokens as t (t.symbol)}
-								<option value={t.symbol}>{t.label}</option>
-							{/each}
-						</optgroup>
+						{#if practiceTokens.length}
+							<optgroup label="Practice (made-up prices)">
+								{#each practiceTokens as t (t.symbol)}
+									<option value={t.symbol}>{t.label}</option>
+								{/each}
+							</optgroup>
+						{/if}
 					</select>
 				</div>
-				<div class="grid min-w-0 gap-1.5 sm:w-[110px]">
+				<div class="grid min-w-0 gap-2 sm:w-[120px]">
 					<label for="fee" class="field-label">Fee / trade</label>
 					<select id="fee" class="select" bind:value={session.feePct}>
 						{#each markets?.fees_pct ?? [] as f (f)}
@@ -130,11 +134,11 @@
 						{/each}
 					</select>
 				</div>
-				<div class="col-span-2 grid gap-1.5">
+				<div class="col-span-2 grid gap-2">
 					<span id="days-label" class="field-label">History</span>
-					<SegmentedRadio options={windows} bind:value={session.days} labelledby="days-label" />
+					<ToggleTabs options={windows} bind:value={session.days} labelledby="days-label" class="w-full sm:w-fit" />
 				</div>
 			</div>
-		</div>
-	</form>
-</section>
+		</form>
+	</CardContent>
+</Card>
