@@ -3,6 +3,10 @@
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import type { Markets, Ruling } from '@/lib/court/types';
 
 export default function HomePage() {
@@ -71,82 +75,91 @@ export default function HomePage() {
   if (!markets) {
     return (
       <main className="mx-auto max-w-3xl p-6">
-        <h1 className="mb-6 text-3xl font-bold tracking-tight">Lotcouncil</h1>
-        <p className="text-zinc-600 dark:text-zinc-400">Loading markets…</p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Lotcouncil</CardTitle>
+            <CardDescription>Loading markets…</CardDescription>
+          </CardHeader>
+        </Card>
       </main>
     );
   }
 
   return (
     <main className="mx-auto max-w-3xl p-6">
-      <h1 className="mb-6 text-3xl font-bold tracking-tight">Lotcouncil</h1>
-      <p className="mb-6 text-zinc-600 dark:text-zinc-400">Put your trading idea on trial. No Python, full-stack Next.js.</p>
-
-      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className="mb-1 block text-sm font-medium">Token</label>
-            <select
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-            >
-              {markets.tokens.map((t) => (
-                <option key={t.symbol} value={t.symbol}>
-                  {t.label} — {t.name}
-                </option>
-              ))}
-            </select>
+      <Card>
+        <CardHeader>
+          <CardTitle>Lotcouncil</CardTitle>
+          <CardDescription>Put your trading idea on trial. No Python, full-stack Next.js.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label>Token</Label>
+              <Select value={symbol} onValueChange={setSymbol}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {markets.tokens.map((t) => (
+                    <SelectItem key={t.symbol} value={t.symbol}>
+                      {t.label} — {t.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Window (days)</Label>
+              <Select value={String(days)} onValueChange={(v) => setDays(Number(v))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {markets.windows_days.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      {d}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Fee (%)</Label>
+              <Select value={String(fee)} onValueChange={(v) => setFee(Number(v))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {markets.fees_pct.map((f) => (
+                    <SelectItem key={f} value={String(f)}>
+                      {f}%
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Window (days)</label>
-            <select
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-              value={days}
-              onChange={(e) => setDays(Number(e.target.value))}
-            >
-              {markets.windows_days.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Fee (%)</label>
-            <select
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-              value={fee}
-              onChange={(e) => setFee(Number(e.target.value))}
-            >
-              {markets.fees_pct.map((f) => (
-                <option key={f} value={f}>
-                  {f}%
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">Idea</label>
-          <textarea
-            className="min-h-[80px] w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-            value={idea}
-            onChange={(e) => setIdea(e.target.value)}
-            placeholder="buy when the 10 hour average crosses above the 40 hour average"
-          />
-        </div>
+          <div className="space-y-2">
+            <Label>Idea</Label>
+            <Textarea
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              placeholder="buy when the 10 hour average crosses above the 40 hour average"
+            />
+          </div>
 
-        <Button onClick={run} disabled={running}>
-          {running ? 'Judging…' : 'Run the court'}
-        </Button>
-      </div>
+          <Button onClick={run} disabled={running}>
+            {running ? 'Judging…' : 'Run the court'}
+          </Button>
+        </CardContent>
+      </Card>
 
       {messages.length > 0 && (
         <div className="mt-6 space-y-2">
           {messages.map((m, i) => (
-            <div key={i} className="rounded-md border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div key={i} className="rounded-md border border-border bg-muted/40 px-4 py-2 text-sm">
               {m}
             </div>
           ))}
@@ -156,7 +169,7 @@ export default function HomePage() {
       {ruling && (
         <div className={`mt-6 rounded-xl border-2 p-6 text-center text-2xl font-bold ${ruling.verdict === 'PASS' ? 'border-green-600 text-green-700 dark:text-green-400' : 'border-red-600 text-red-700 dark:text-red-400'}`}>
           {ruling.verdict}
-          <p className="mt-2 text-base font-normal text-zinc-700 dark:text-zinc-300">{ruling.headline}</p>
+          <p className="mt-2 text-base font-normal text-muted-foreground">{ruling.headline}</p>
         </div>
       )}
     </main>
