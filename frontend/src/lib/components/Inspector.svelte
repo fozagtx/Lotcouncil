@@ -219,17 +219,17 @@
 			<div
 				class="verdict-block relative overflow-hidden rounded-lg border p-4 {pass ? 'border-success/30 bg-success-muted' : 'border-danger/30 bg-danger-muted'}"
 			>
-				<div class="flex items-center gap-3">
+				<div class="flex items-center gap-2.5">
 					<span
-						class="grid size-9 shrink-0 place-items-center rounded-full shadow-sm {pass ? 'bg-success text-white dark:text-zinc-950' : 'bg-danger text-white'}"
+						class="grid size-7 shrink-0 place-items-center rounded-full shadow-sm {pass ? 'bg-success text-white dark:text-zinc-950' : 'bg-danger text-white'}"
 						aria-hidden="true"
 					>
-						<Icon name={pass ? 'check' : 'x'} class="size-5" />
+						<Icon name={pass ? 'check' : 'x'} class="size-4" />
 					</span>
 					<div>
 						<p class="m-0 text-[11px] font-medium text-subtle">Verdict</p>
 						<p
-							class="m-0 font-display text-4xl leading-none font-semibold tracking-tighter {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
+							class="m-0 font-display text-2xl leading-none font-semibold tracking-tight {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
 							aria-label="Verdict: {ruling.verdict}"
 							role="img"
 						>
@@ -237,7 +237,7 @@
 						</p>
 					</div>
 				</div>
-				<p id="verdict-headline" class="mt-3 mb-1 text-[15px] leading-snug font-medium">{ruling.headline}</p>
+				<p id="verdict-headline" class="mt-2.5 mb-1 text-sm leading-snug font-medium">{ruling.headline}</p>
 				<p class="m-0 text-[13px] text-subtle">{caveat}</p>
 			</div>
 
