@@ -130,8 +130,6 @@ Hourly spot candles from Bitget's public API, up to 180 days, no key needed. If 
 python scripts/fetch_candles.py
 ```
 
-`PRACTICE-TREND` and `PRACTICE-RANDOM` are made-up series for demos and are always labelled as such.
-
 ## Deploy
 
 [`render.yaml`](render.yaml) is a Render Blueprint: Docker web service, health check on `/api/markets`. In the Render dashboard choose **New → Blueprint**, pick this repo and `main`, set `NEBIUS_API_KEY` (or leave empty), Apply.

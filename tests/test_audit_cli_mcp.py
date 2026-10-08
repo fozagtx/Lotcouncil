@@ -13,7 +13,7 @@ from .conftest import TREND_IDEA
 
 @pytest.fixture
 def audit(service):
-    out = service.judge(symbol="PRACTICE-TREND", days=90, idea=TREND_IDEA, fee=0.001)
+    out = service.judge(symbol="rAAPLUSDT", days=90, idea=TREND_IDEA, fee=0.001)
     req = out["request"]
     return service.audit(
         symbol=req["symbol"], days=req["days"], end_ms=req["end"], rule=req["rule"], fee=req["fee"], idea=TREND_IDEA, parsed_by=req["parsed_by"]
@@ -69,17 +69,17 @@ def test_cli_rerun(audit, tmp_path, capsys):
 
 def test_cli_judge(service, monkeypatch, capsys):
     monkeypatch.setattr("lotcouncil.service.CourtService", lambda: service)
-    assert cli.main(["judge", TREND_IDEA, "--symbol", "PRACTICE-TREND"]) == 0
+    assert cli.main(["judge", TREND_IDEA, "--symbol", "rAAPLUSDT"]) == 0
     assert capsys.readouterr().out.startswith("PASS")
 
 
 def test_mcp_tool_returns_the_courts_verdict(service, monkeypatch):
     monkeypatch.setattr(mcp_server, "_service", service)
-    out = mcp_server.judge_strategy(idea=TREND_IDEA, symbol="PRACTICE-TREND", days=90)
+    out = mcp_server.judge_strategy(idea=TREND_IDEA, symbol="rAAPLUSDT", days=90)
     assert out["ok"] and out["verdict"] == "PASS" and set(out["tests"]) == {"A", "B", "C"}
-    out = mcp_server.judge_strategy(rule={"type": "ma_cross", "fast": 10, "slow": 40}, symbol="PRACTICE-RANDOM")
+    out = mcp_server.judge_strategy(rule={"type": "ma_cross", "fast": 10, "slow": 40}, symbol="rTSLAUSDT")
     assert out["verdict"] == "FAIL"
-    bad = mcp_server.judge_strategy(idea="buy when RSI is low", symbol="PRACTICE-TREND")
+    bad = mcp_server.judge_strategy(idea="buy when RSI is low", symbol="rAAPLUSDT")
     assert bad["ok"] is False and bad["verdict"] is None and "RSI" in bad["error"]
 
 

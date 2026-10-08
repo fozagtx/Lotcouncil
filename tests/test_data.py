@@ -123,7 +123,7 @@ def test_no_data_at_all_gives_a_plain_message(tmp_path, monkeypatch):
         raise DataError("blocked")
 
     store = CandleStore(fetcher=down)
-    with pytest.raises(DataError, match="practice market"):
+    with pytest.raises(DataError, match="Try again in a minute"):
         store.window("rAAPLUSDT", 30)
     with pytest.raises(DataError):
         store.window("rAAPLUSDT", 30)
@@ -144,9 +144,3 @@ def test_windows_and_end_times(trend_df):
 def test_unknown_symbols_are_refused():
     with pytest.raises(DataError, match="not one of the tokens"):
         CandleStore().window("DOGEUSDT", 30)
-
-
-def test_practice_markets_never_change():
-    a, ia = CandleStore().window("PRACTICE-TREND", 90)
-    b, ib = CandleStore().window("PRACTICE-TREND", 90)
-    assert ia["hash"] == ib["hash"] and ia["source"] == "practice"
