@@ -44,8 +44,8 @@
 
 	function runIdea(idea: string) {
 		session.run({ idea });
-		// On phones the verdict sits below the input; bring it into view.
-		if (window.innerWidth < 1280) reveal('inspector');
+		// On stacked layouts the verdict sits below the input; bring it into view.
+		if (window.innerWidth < 1024) reveal('inspector');
 	}
 
 	function runRule(rule: Rule) {
@@ -82,8 +82,8 @@
 <div>
 	<TopBar {session} onhow={() => drawer?.open()} />
 
-	<main class="mx-auto max-w-[1600px] px-4 pt-6 pb-8 lg:px-6 lg:pt-8">
-		<div class="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+	<main class="mx-auto max-w-[1600px] px-4 pt-4 pb-8 lg:px-6 lg:pt-5">
+		<div class="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
 			<div class="grid gap-1.5">
 				<h1 class="m-0 text-2xl font-semibold tracking-tight sm:text-3xl">Strategy court</h1>
 				<p class="m-0 max-w-2xl text-sm text-muted-foreground sm:text-base">
@@ -91,8 +91,8 @@
 				</p>
 			</div>
 		</div>
-		<div class="flex flex-col gap-4 lg:gap-6 xl:grid xl:grid-cols-[minmax(0,1fr)_420px] xl:items-start 2xl:grid-cols-[minmax(0,1fr)_460px]">
-			<div class="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-6">
+		<div class="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-5 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_460px]">
+			<div class="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-5">
 				<TrialPanel {session} onrun={runIdea} class="order-1" />
 				<KpiStrip {result} class="order-3" />
 				<ChartPanel {session} class="order-4" />
@@ -162,7 +162,7 @@
 				</div>
 			</div>
 
-			<div class="contents xl:flex xl:flex-col xl:gap-6">
+			<div class="contents lg:flex lg:flex-col lg:gap-5">
 				<div id="inspector" class="order-2 scroll-mt-3 lg:scroll-mt-20">
 					<Inspector {session} {maxDays} onedit={editNumbers} onwiden={widen} onexample={useExample} />
 				</div>

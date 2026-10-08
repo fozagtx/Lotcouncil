@@ -32,7 +32,7 @@
 
 <div
 	aria-hidden="true"
-	class={cn('border-beam pointer-events-none absolute inset-0 rounded-[inherit]', className)}
+	class={cn('border-beam pointer-events-none absolute -inset-px rounded-[inherit]', className)}
 	style:--size={size}
 	style:--duration={duration}
 	style:--anchor={anchor}

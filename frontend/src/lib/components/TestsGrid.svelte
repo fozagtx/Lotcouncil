@@ -24,7 +24,7 @@
 	});
 </script>
 
-<div class="grid divide-y lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+<div class="grid divide-y xl:grid-cols-3 xl:divide-x xl:divide-y-0">
 	{#each KEYS as key (key)}
 		{@const t = tests?.[key]}
 		{@const info = markets?.tests[key]}

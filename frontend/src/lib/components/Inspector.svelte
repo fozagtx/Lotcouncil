@@ -343,7 +343,7 @@
 	</CardContent>
 
 	<CardFooter class="mt-auto grid gap-3 border-t pt-5 sm:pt-6">
-		<div class="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
+		<div class="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
 			<Button variant="outline" onclick={copyCard} disabled={!result}>
 				<Icon name="image" />Verdict card
 			</Button>

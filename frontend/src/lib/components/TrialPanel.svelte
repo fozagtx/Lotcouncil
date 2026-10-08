@@ -68,7 +68,7 @@
 		<form class="grid gap-5" onsubmit={submit} autocomplete="off">
 			<div class="grid gap-2">
 				<label for="idea" class="field-label">Your idea</label>
-				<div class="flex flex-col gap-3 lg:flex-row lg:items-stretch">
+				<div class="flex flex-col gap-3 xl:flex-row xl:items-stretch">
 					<Textarea
 						id="idea"
 						bind:ref={textarea}
@@ -81,7 +81,7 @@
 						class="min-h-[4.5rem] flex-1 resize-none px-3.5 py-3 text-base leading-snug md:text-[15px]"
 						{onkeydown}
 					/>
-					<RadialGlowButton type="submit" class="w-full lg:w-auto lg:min-w-[200px]" disabled={session.running} aria-busy={session.running}>
+					<RadialGlowButton type="submit" class="w-full xl:w-auto xl:min-w-[200px]" disabled={session.running} aria-busy={session.running}>
 						{#if session.running}<Spinner />{:else}<Icon name="gavel" class="size-[18px]" />{/if}
 						<span>{session.running ? 'Ruling…' : 'Put it on trial'}</span>
 					</RadialGlowButton>
