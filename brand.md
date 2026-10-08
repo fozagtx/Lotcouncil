@@ -4,7 +4,7 @@ _Status: active_
 
 **Lotcouncil** — a courtroom for trading ideas: it tests whether an idea is real or luck and rules PASS or FAIL.
 
-Direction: a professional trading terminal. Navy icon rail and white panels on cool gray (from an execution-inspector reference), burnt-orange actions and solid orange active tabs (from a trading-terminal reference), teal and red for verdicts and candles. Mood: premium, bold. Category: DeFi / trading tools.
+Direction: a professional trading terminal. White panels on cool gray with an execution-inspector style ruling panel, burnt-orange actions and solid orange active tabs (from a trading-terminal reference), teal and red for verdicts and candles. Mood: premium, bold. Category: DeFi / trading tools.
 
 The tokens live in `frontend/src/routes/layout.css` (light and dark are each chosen, not flipped). Every text pair below passes WCAG AA; contrast was computed from the hex values.
 
@@ -25,15 +25,14 @@ The tokens live in `frontend/src/routes/layout.css` (light and dark are each cho
 | danger | `#e5383b` mark, `#c81e2c` text on `#fdecee` (5.0:1) | `#f0525a`, `#ff6b72` on `#3a1418` | FAIL, down candles, losses |
 | info | `#1d4ed8` on `#eff6ff` (6.2:1) | `#6ea8ff` on `#13254a` | AI badge, "never seen", timings |
 | warning | `#b45309` on `#fff4e5` (4.6:1) | `#fbbf5a` on `#3a2a0e` | practice / saved data |
-| rail | `#0f1729`, icons `#94a3b8` (7.0:1) | `#070c18` | left navigation |
 | ring | `#2563eb` | `#6ea8ff` | focus outline |
 
 ## Typography
 
-- **Inter Variable** for all UI text; `tabular-nums` (`.num`) wherever numbers line up or change.
-- **JetBrains Mono Variable** for identifiers: trade IDs, data fingerprints, rule codes, timings.
-- Panel titles: 12.5px bold uppercase, 0.06em tracking. Labels: 11.5px semibold uppercase. Nothing below 11px; body 13–16px.
-- Fonts are bundled from npm (`@fontsource-variable/*`), so the page makes no third-party requests.
+- **IBM Plex Sans** (variable) for all UI text: an institutional, finance-tool face rather than the default Inter look. `tabular-nums` (`.num`) wherever numbers line up or change.
+- **IBM Plex Mono** for identifiers only: trade IDs, data fingerprints, rule codes.
+- Sentence case everywhere. Panel titles 15px semibold; labels 13px medium. No letter-spaced capitals. Nothing below 12px; body 13–16px.
+- Fonts are bundled from npm (`@fontsource*/ibm-plex-*`), so the page makes no third-party requests.
 
 ## Shape and spacing
 
@@ -50,4 +49,5 @@ Plain, specific and calm. Say what the court found and what to do next ("Try the
 - Do use primary orange for one main action per panel; use secondary buttons elsewhere.
 - Do pair every status colour with a word or icon (PASSED, FAILED, ✓, ✕).
 - Don't put small text in the bright brand orange; use `primary` for text.
-- Don't add controls that do nothing: every button on the page works.
+- Don't add controls that do nothing: every button on the page works. No sidebar for decoration.
+- Don't show made-up data to users. Practice markets are developer-only (`COURT_PRACTICE=on`) and always labelled.

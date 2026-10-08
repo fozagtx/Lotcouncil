@@ -6,7 +6,8 @@ Sources, in order of preference for a real token:
 2. A saved candle file in ``data/snapshots/<SYMBOL>.csv`` (written by
    ``scripts/fetch_candles.py``), used when Bitget cannot be reached.
 
-Practice markets are made-up series (see ``synthetic.py``) and are always
+Practice markets are made-up series (see ``synthetic.py``) for offline
+development and tests. They are off unless ``COURT_PRACTICE=on`` and are always
 labelled as such.
 
 Only finished candles are used: the candle that is still forming is dropped,
@@ -78,6 +79,11 @@ DEFAULT_DAYS = 90
 
 class DataError(ValueError):
     """Prices could not be loaded or are unusable. The message is shown to the user."""
+
+
+def practice_enabled() -> bool:
+    """Made-up practice markets are a developer tool (offline testing). Off unless COURT_PRACTICE=on."""
+    return os.environ.get("COURT_PRACTICE", "off").lower() == "on"
 
 
 def token_list() -> list[str]:
@@ -263,7 +269,7 @@ class CandleStore:
                 )
             raise DataError(
                 f"Couldn't load {token_label(symbol)} prices from Bitget right now ({_short(live_err)}). "
-                "Try again in a minute, or pick a practice market."
+                "Check that this computer can reach api.bitget.com, then try again."
             ) from None
 
     def get_all(self, symbol: str) -> _Entry:
@@ -288,7 +294,10 @@ class CandleStore:
 
     def window(self, symbol: str, days: int, end_ms: int | None = None) -> tuple[pd.DataFrame, dict]:
         """Candles for the ``days`` days ending at ``end_ms`` (default: the latest candle)."""
-        if symbol not in PRACTICE and symbol not in token_list():
+        if symbol in PRACTICE:
+            if not practice_enabled():
+                raise DataError("Practice markets are turned off. Pick a Bitget stock token.")
+        elif symbol not in token_list():
             raise DataError(f"{symbol} is not one of the tokens this court can judge.")
         if not (1 <= int(days) <= MAX_DAYS):
             raise DataError(f"The time window must be between 1 and {MAX_DAYS} days.")

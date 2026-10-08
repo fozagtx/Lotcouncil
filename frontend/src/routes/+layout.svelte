@@ -1,6 +1,7 @@
 <script lang="ts">
-	import '@fontsource-variable/inter';
-	import '@fontsource-variable/jetbrains-mono';
+	import '@fontsource-variable/ibm-plex-sans';
+	import '@fontsource/ibm-plex-mono/400.css';
+	import '@fontsource/ibm-plex-mono/500.css';
 	import './layout.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';

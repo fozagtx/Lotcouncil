@@ -40,6 +40,7 @@ def test_judge_streams_each_stage_then_the_verdict(client):
     assert verdict["ruling"]["verdict"] == "PASS"
     assert "series" not in verdict["ruling"]
     assert len(verdict["chart"]["copy_scores"]) == 500
+    assert isinstance(verdict["elapsed_ms"], int) and verdict["elapsed_ms"] >= 0
     assert len(verdict["chart"]["time"]) <= 721
     assert evs[-1]["explanation"]["source"] == "template"
 
@@ -55,7 +56,7 @@ def test_rule_can_be_given_directly(client):
     [
         ({"idea": "make me rich"}, "couldn't find a rule"),
         ({"symbol": "NOPE"}, "not one of the tokens"),
-        ({"symbol": "rAAPLUSDT"}, "practice market"),
+        ({"symbol": "rAAPLUSDT"}, "api.bitget.com"),
         ({"fee_pct": 1.5}, "fee"),
         ({"days": 10}, "at least 500"),
         ({"rule": {"type": "ma_cross", "fast": 50, "slow": 5}}, "shorter"),

@@ -18,6 +18,8 @@ def no_network(monkeypatch):
     """Tests never call Bitget or Nebius."""
     monkeypatch.delenv("NEBIUS_API_KEY", raising=False)
     monkeypatch.delenv("COURT_TOKENS", raising=False)
+    # Tests run offline on the made-up practice markets.
+    monkeypatch.setenv("COURT_PRACTICE", "on")
 
 
 @pytest.fixture

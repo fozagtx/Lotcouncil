@@ -48,10 +48,7 @@
 >
 	<div class="h-full overflow-y-auto px-5 pt-4 pb-10 sm:px-6">
 		<div class="sticky -top-4 flex items-center justify-between bg-card pt-1 pb-2.5">
-			<div>
-				<p class="m-0 text-[12px] font-extrabold tracking-[0.14em] text-brand">LOTCOUNCIL</p>
-				<h2 id="how-title" class="m-0 text-xl font-bold tracking-tight">How the court works</h2>
-			</div>
+			<h2 id="how-title" class="m-0 text-xl font-semibold">How the court works</h2>
 			<button
 				type="button"
 				class="btn btn-secondary size-10 rounded-full p-0 text-subtle"
@@ -104,8 +101,8 @@
 			<h3>Data</h3>
 			<p>
 				Prices are hourly candles from Bitget’s public spot API for tokenized US stocks. Only finished candles are used. Volume is
-				ignored because it may be missing before July 9, 2026. Practice markets are made-up prices for learning: one has a planted
-				trend, one is pure noise.
+				ignored because it may be missing before July 9, 2026. If Bitget can’t be reached, the court uses saved Bitget candles when
+				there are some, and otherwise says so instead of showing anything made up.
 			</p>
 			<h3>Limits</h3>
 			<p>

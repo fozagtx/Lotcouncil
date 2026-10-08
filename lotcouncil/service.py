@@ -8,6 +8,7 @@ so they share one path from idea to ruling. The verdict always comes from
 from __future__ import annotations
 
 import logging
+import time
 from collections.abc import Iterator
 
 import numpy as np
@@ -16,7 +17,17 @@ import pandas as pd
 from .ai import AIHelper
 from .audit import _plain, build_audit
 from .court import DEFAULT_FEE, FEE_CHOICES, TEST_INFO, CourtError, iter_court, market_from_frame, public_ruling
-from .data import DEFAULT_DAYS, PRACTICE, TOKEN_NAMES, WINDOWS_DAYS, CandleStore, DataError, token_label, token_list
+from .data import (
+    DEFAULT_DAYS,
+    PRACTICE,
+    TOKEN_NAMES,
+    WINDOWS_DAYS,
+    CandleStore,
+    DataError,
+    practice_enabled,
+    token_label,
+    token_list,
+)
 from .parse import ParseError
 from .rules import RuleError, describe_rule, validate_rule
 
@@ -145,9 +156,11 @@ class CourtService:
             {"symbol": s, "label": token_label(s), "name": TOKEN_NAMES.get(s, ""), "practice": False}
             for s in token_list()
         ]
-        practice = [
-            {"symbol": s, "label": p["label"], "name": p["name"], "practice": True} for s, p in PRACTICE.items()
-        ]
+        practice = (
+            [{"symbol": s, "label": p["label"], "name": p["name"], "practice": True} for s, p in PRACTICE.items()]
+            if practice_enabled()
+            else []
+        )
         return {
             "tokens": tokens + practice,
             "windows_days": list(WINDOWS_DAYS),
@@ -187,6 +200,7 @@ class CourtService:
         Errors become a single {"stage": "error"} event with a plain message, so a
         bad idea or bad data never breaks the page.
         """
+        started = time.perf_counter()
         try:
             fee = snap_fee(fee)
             parsed_by = "user"
@@ -212,6 +226,8 @@ class CourtService:
             public = _plain(public_ruling(ruling))
             yield {
                 "stage": "verdict",
+                # Real time spent on the server: reading the idea, loading prices and running the court.
+                "elapsed_ms": round(1000 * (time.perf_counter() - started)),
                 "ruling": public,
                 "chart": chart_payload(ruling, df),
                 "market": market,

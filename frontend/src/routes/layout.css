@@ -46,9 +46,6 @@
 	--unseen-wash: rgb(15 23 42 / 0.035);
 	--tooltip: #0f172a;
 	--tooltip-foreground: #f8fafc;
-	--rail: #0f1729;
-	--rail-foreground: #94a3b8;
-	--rail-active: #1e293b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -93,9 +90,6 @@
 		--unseen-wash: rgb(255 255 255 / 0.03);
 		--tooltip: #e6eaf2;
 		--tooltip-foreground: #0b1220;
-		--rail: #070c18;
-		--rail-foreground: #94a3b8;
-		--rail-active: #16213a;
 	}
 }
 
@@ -140,9 +134,6 @@
 	--unseen-wash: rgb(255 255 255 / 0.03);
 	--tooltip: #e6eaf2;
 	--tooltip-foreground: #0b1220;
-	--rail: #070c18;
-	--rail-foreground: #94a3b8;
-	--rail-active: #16213a;
 }
 
 @theme inline {
@@ -178,11 +169,8 @@
 	--color-chart-1-wash: var(--chart-1-wash);
 	--color-tooltip: var(--tooltip);
 	--color-tooltip-foreground: var(--tooltip-foreground);
-	--color-rail: var(--rail);
-	--color-rail-foreground: var(--rail-foreground);
-	--color-rail-active: var(--rail-active);
-	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	--font-sans: 'IBM Plex Sans Variable', 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+	--font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	--radius-panel: 0.75rem;
 	--radius-control: 0.5rem;
 }
@@ -190,7 +178,6 @@
 @layer base {
 	html {
 		-webkit-text-size-adjust: 100%;
-		font-feature-settings: 'cv11', 'ss01';
 	}
 	body {
 		@apply bg-background font-sans text-foreground antialiased;
@@ -218,10 +205,10 @@
 		@apply flex min-h-12 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border px-4 py-2.5;
 	}
 	.panel-title {
-		@apply m-0 text-[12.5px] font-bold tracking-[0.06em] text-foreground uppercase;
+		@apply m-0 text-[15px] font-semibold text-foreground;
 	}
 	.eyebrow {
-		@apply text-[11.5px] font-semibold tracking-[0.07em] text-muted-foreground uppercase;
+		@apply text-[13px] font-medium text-muted-foreground;
 	}
 	/* Controls: 40px touch targets, 100ms colour feedback, a pressed state. */
 	.btn {
@@ -251,7 +238,7 @@
 		background-position: right 0.7rem center;
 	}
 	.field-label {
-		@apply text-[11.5px] font-semibold tracking-[0.07em] text-muted-foreground uppercase;
+		@apply text-[13px] font-medium text-subtle;
 	}
 	.num {
 		font-variant-numeric: tabular-nums;
@@ -267,7 +254,6 @@
 		.chip,
 		.seg-option,
 		.tab,
-		.rail-btn,
 		.row-btn {
 			transition:
 				background-color 100ms ease-out,
@@ -294,10 +280,6 @@
 		.btn-ghost:hover:not(:disabled) {
 			background-color: var(--muted);
 			color: var(--foreground);
-		}
-		.rail-btn:hover {
-			background-color: var(--rail-active);
-			color: #ffffff;
 		}
 		.row-btn:hover {
 			background-color: var(--muted);

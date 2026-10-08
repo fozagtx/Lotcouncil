@@ -39,7 +39,7 @@ def judge_strategy(
     Args:
         idea: The idea in plain English, e.g. "buy when the 10 hour average crosses above the 40 hour average".
             Ignored when `rule` is given.
-        symbol: A Bitget tokenized-stock symbol such as "rAAPLUSDT", or "PRACTICE-TREND" / "PRACTICE-RANDOM".
+        symbol: A Bitget tokenized-stock symbol such as "rAAPLUSDT".
         days: How many days of hourly candles to judge on (30, 60, 90 or 180).
         fee_pct: Fee per position change in percent: 0.05, 0.1 or 0.2.
         rule: Optional exact rule instead of an idea, e.g. {"type": "ma_cross", "fast": 10, "slow": 40},

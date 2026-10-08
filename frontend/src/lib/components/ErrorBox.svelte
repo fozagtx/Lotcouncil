@@ -4,13 +4,11 @@
 
 	interface Props {
 		failure: CourtFailure;
-		isPractice: boolean;
 		onretry: () => void;
-		onpractice: () => void;
 		onexample: () => void;
 	}
 
-	let { failure, isPractice, onretry, onpractice, onexample }: Props = $props();
+	let { failure, onretry, onexample }: Props = $props();
 
 	const TITLES = {
 		idea: 'The court couldn’t read that idea',
@@ -28,9 +26,6 @@
 		<p class="m-0 font-semibold">{TITLES[failure.kind]}</p>
 		<p class="m-0 text-[13.5px] text-subtle">{failure.message}</p>
 		<div class="flex flex-wrap gap-2">
-			{#if failure.kind === 'data' && !isPractice}
-				<button type="button" class="btn btn-secondary" onclick={onpractice}>Try it on a practice market</button>
-			{/if}
 			{#if failure.kind === 'idea'}
 				<button type="button" class="btn btn-secondary" onclick={onexample}>Use an example idea</button>
 			{:else if failure.kind !== 'rate'}

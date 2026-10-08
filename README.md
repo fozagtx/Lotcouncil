@@ -13,7 +13,7 @@ The AI translates your sentence into a rule and explains the result in plain wor
 
 The page is a trading-terminal layout: a new-trial command bar, a KPI strip, a candlestick chart with the rule's holding periods, tabs for the three tests, the full trade ledger, a plain-words explanation and an editable rule, and a ruling inspector with a step-by-step court timeline (with measured timings) and export actions. Brand and tokens are in [`brand.md`](brand.md).
 
-The screenshots use the built-in practice markets (made-up prices), because the build environment could not reach Bitget. See [Status](#status).
+The screenshots were taken in developer practice mode (made-up prices, labelled as such), because the build environment could not reach Bitget. On a normal install the app only shows real Bitget prices. See [Status](#status).
 
 ## Quick start
 
@@ -97,7 +97,9 @@ python scripts/fetch_candles.py              # default tokens; prints how many d
 python scripts/fetch_candles.py --list       # which stock-token symbols Bitget lists
 ```
 
-**Practice markets** (`PRACTICE-TREND`, `PRACTICE-RANDOM`) are made-up, fixed series for demos and learning: one has a planted trend, one is pure noise. They are always labelled as practice prices. If Bitget is down when the page first loads, the example ruling switches to the practice market and says why.
+The app never shows made-up prices to users. If Bitget can't be reached and there is no saved file, it says so and offers to retry.
+
+**Practice markets** (`PRACTICE-TREND`, `PRACTICE-RANDOM`) are made-up, fixed series for offline development: one has a planted trend, one is pure noise. They are **off by default**; set `COURT_PRACTICE=on` to show them (labelled "dev mode"). The tests and `scripts/calibrate.py` use them.
 
 ## Sharing and audit files
 
@@ -155,6 +157,7 @@ Interactive docs are at `/api/docs`.
 | `COURT_RATE_LIMIT` / `COURT_AI_LIMIT` | 60 / 20 | per visitor, per `COURT_RATE_WINDOW_SECONDS` (600) |
 | `COURT_TRUST_PROXY` | `on` | read the visitor address from `X-Forwarded-For` |
 | `BITGET_BASE_URL`, `COURT_SNAPSHOT_DIR` | Bitget, `data/snapshots` | data sources |
+| `COURT_PRACTICE` | `off` | `on` adds the made-up practice markets (offline development only) |
 
 ## Deploy
 

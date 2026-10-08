@@ -108,14 +108,14 @@ Your prompt now starts with `(.venv)`. Run `python run.py` (inside a virtual env
 ## 4. Use it
 
 1. Type a trading idea in **Your idea**, for example `buy when the 10 hour average crosses above the 40 hour average`, or click one of the **Examples**.
-2. Pick a **Token** (a Bitget stock token such as rAAPL, or a practice market), a **Fee** and a **History** window.
-3. Press **Put it on trial**. The **Ruling inspector** on the right shows PASS or FAIL and each step of the court as it runs.
+2. Pick a **Token** (a Bitget stock token such as rAAPL), a **Fee** and a **History** window.
+3. Press **Put it on trial**. The **Ruling** panel on the right shows PASS or FAIL and each step of the court as it runs.
 4. Below the chart, the tabs show the three **Tests**, every **Trade** the rule made, the ruling in **Plain words**, and the **Rule** (where you can change the numbers and run again).
-5. In the inspector, **Verdict card** copies an image you can post, **Copy link** copies a link that re-runs the same ruling, and **Export audit** saves a file anyone can re-check.
+5. In the Ruling panel, **Verdict card** copies an image you can post, **Copy link** copies a link that re-runs the same ruling, and **Export audit** saves a file anyone can re-check.
 
-### Real Bitget prices vs practice prices
+### Real Bitget prices
 
-The stock tokens (rAAPL, rTSLA, …) load live hourly prices from Bitget. If your internet connection can't reach Bitget, the app tells you and offers a **practice market** instead. Practice markets are made-up prices, clearly labelled, and always work.
+The tokens (rAAPL, rTSLA, …) load live hourly prices from Bitget. Lotcouncil never shows made-up prices: if your internet connection can't reach Bitget, it says so and offers **Try again**.
 
 To check that your computer can reach Bitget (and save a backup copy of the prices), run in a second terminal, from the `Lotcouncil` folder:
 
@@ -123,7 +123,7 @@ To check that your computer can reach Bitget (and save a backup copy of the pric
 python3 scripts/fetch_candles.py rAAPLUSDT     # Windows: py scripts/fetch_candles.py rAAPLUSDT
 ```
 
-It prints how many days of history the token has. The saved copy in `data/snapshots/` is used automatically whenever Bitget can't be reached.
+It prints how many days of history the token has. The saved copy in `data/snapshots/` is used automatically whenever Bitget can't be reached, and the page labels it "Saved Bitget prices".
 
 ---
 
@@ -194,7 +194,7 @@ Then add a server to your AI app with the command `npx -y @bitget-ai/bitget-agen
 | `Node.js is not installed` or `too old` | Install the LTS version from <https://nodejs.org/>, reopen the terminal, run again. |
 | `Port 8000 is already in use` | Lotcouncil (or another app) is already running. Close it, or run `py run.py --port 8001` and open <http://localhost:8001>. |
 | The page says it "has not been built yet" | Run `py run.py --rebuild` (Mac/Linux: `python3 run.py --rebuild`). |
-| `Couldn't load rAAPL prices from Bitget` | Your network can't reach Bitget right now. Click **Try it on a practice market**, or try again later. Run `scripts/fetch_candles.py` (section 4) to test the connection. |
+| `Couldn't load rAAPL prices from Bitget` | Your network can't reach Bitget right now (a VPN, firewall or regional block can cause this). Click **Try again** later, and run `scripts/fetch_candles.py` (section 4) to test the connection. |
 | `Too many rulings for now` | You hit the limit of 60 rulings per 10 minutes. Wait a few minutes, or add `COURT_RATE_LIMIT=500` to your `.env` and restart. |
 | Errors while installing Python packages | Use a virtual environment (step 3, optional box), then run again. |
 | Anything else | Run `py run.py --rebuild` once. If it still fails, copy the last lines of the terminal output into an issue on GitHub. |
@@ -209,7 +209,7 @@ Then add a server to your AI app with the command `npx -y @bitget-ai/bitget-agen
 | Start on another port | `py run.py --port 8001` | `python3 run.py --port 8001` |
 | Start without opening the browser | `py run.py --no-browser` | `python3 run.py --no-browser` |
 | Rebuild the page | `py run.py --rebuild` | `python3 run.py --rebuild` |
-| Judge an idea in the terminal | `py -m lotcouncil judge "buy when the 10 hour average crosses above the 40 hour average" --symbol PRACTICE-TREND` | same, with `python3` |
+| Judge an idea in the terminal | `py -m lotcouncil judge "buy when the 10 hour average crosses above the 40 hour average" --symbol rAAPLUSDT` | same, with `python3` |
 | Re-check an audit file | `py -m lotcouncil rerun my-audit.json` | `python3 -m lotcouncil rerun my-audit.json` |
 | Stop | Ctrl+C | Ctrl+C |
 

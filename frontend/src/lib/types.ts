@@ -171,7 +171,7 @@ export type CourtEvent =
 	| { stage: 'data'; market: MarketInfo }
 	| { stage: 'gate'; gate: Gate }
 	| { stage: TestKey; test: TestBase }
-	| { stage: 'verdict'; ruling: Ruling; chart: ChartData; market: MarketInfo; request: JudgeRequest }
+	| { stage: 'verdict'; ruling: Ruling; chart: ChartData; market: MarketInfo; request: JudgeRequest; elapsed_ms: number }
 	| { stage: 'explanation'; explanation: Explanation }
 	| { stage: 'error'; message: string };
 

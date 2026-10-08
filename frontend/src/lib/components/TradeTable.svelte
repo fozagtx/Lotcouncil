@@ -40,7 +40,7 @@
 					{#each ['Trade', 'Entry', 'Exit', 'Held', 'Entry price', 'Exit price', 'Return', 'Part', 'Status'] as h (h)}
 						<th
 							scope="col"
-							class="border-b border-border px-3 py-2 text-[11px] font-bold tracking-[0.06em] whitespace-nowrap text-muted-foreground uppercase
+							class="border-b border-border px-3 py-2 text-xs font-semibold whitespace-nowrap text-muted-foreground
 								{['Held', 'Entry price', 'Exit price', 'Return'].includes(h) ? 'text-right' : ''}">{h}</th
 						>
 					{/each}

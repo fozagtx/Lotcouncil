@@ -28,7 +28,7 @@
 </script>
 
 <span
-	class="inline-flex items-center gap-1.5 rounded-md px-2 py-[3px] text-[11px] leading-none font-bold tracking-[0.06em] whitespace-nowrap uppercase {TONES[
+	class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs leading-none font-semibold whitespace-nowrap {TONES[
 		tone
 	]} {className}"
 >

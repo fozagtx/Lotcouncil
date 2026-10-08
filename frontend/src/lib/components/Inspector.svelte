@@ -37,7 +37,6 @@
 	const notes = $derived.by(() => {
 		if (!result) return [];
 		const out: string[] = [];
-		if (result.fallbackNote) out.push(result.fallbackNote);
 		if (result.market.source !== 'bitget') out.push(result.market.source_note);
 		if (result.market.short_history)
 			out.push(`Only ${result.market.days_available} days of history exist for ${result.market.label}, so all of it was used.`);
@@ -165,11 +164,9 @@
 
 <section class="panel flex flex-col {className}" aria-labelledby="ruling-title" aria-busy={!result && !session.error}>
 	<header class="panel-head">
-		<h2 id="ruling-title" class="panel-title">Ruling inspector</h2>
+		<h2 id="ruling-title" class="panel-title">Ruling</h2>
 		{#if session.example && result}
-			<Badge tone="brand">Example ruling</Badge>
-		{:else if result}
-			<Badge tone={pass ? 'success' : 'danger'} dot>{pass ? 'Verified pass' : 'Rejected'}</Badge>
+			<Badge tone="neutral">Example</Badge>
 		{/if}
 	</header>
 
@@ -177,9 +174,7 @@
 		{#if session.error}
 			<ErrorBox
 				failure={session.error}
-				isPractice={session.isPractice}
 				onretry={() => session.retry()}
-				onpractice={() => session.tryPractice()}
 				{onexample}
 			/>
 		{:else if ruling && result}
@@ -242,9 +237,9 @@
 
 		<div>
 			<div class="mb-2 flex items-center justify-between gap-2">
-				<h3 class="eyebrow m-0">Court timeline</h3>
-				<span class="text-[11.5px] font-semibold tracking-[0.06em] text-info-foreground uppercase">
-					{session.elapsedMs !== null ? `Total ${int(session.elapsedMs)} ms` : session.running ? 'Running…' : ''}
+				<h3 class="m-0 text-sm font-semibold">How the court ruled</h3>
+				<span class="text-xs text-muted-foreground">
+					{session.elapsedMs !== null ? `Computed in ${int(session.elapsedMs)} ms` : session.running ? 'Running…' : ''}
 				</span>
 			</div>
 			<ol class="m-0 grid list-none gap-2 p-0">
@@ -252,9 +247,6 @@
 					<li class="rounded-lg border border-border bg-card-raised px-3 py-2.5">
 						<div class="flex items-start justify-between gap-2">
 							<p class="m-0 text-[13.5px] font-semibold">
-								<span class="num mr-1.5 font-mono text-[12px] font-medium text-info-foreground">
-									T+{session.stepTimes[step.key] ?? '–'}{session.stepTimes[step.key] !== null ? ' ms' : ''}
-								</span>
 								{step.title}
 							</p>
 							<Badge tone={step.badge.tone} live={step.badge.live} dot={step.badge.live}>{step.badge.text}</Badge>

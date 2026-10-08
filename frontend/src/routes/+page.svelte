@@ -5,7 +5,6 @@
 	import HowDrawer from '#lib/components/HowDrawer.svelte';
 	import Inspector from '#lib/components/Inspector.svelte';
 	import KpiStrip from '#lib/components/KpiStrip.svelte';
-	import Rail from '#lib/components/Rail.svelte';
 	import RecentRulings from '#lib/components/RecentRulings.svelte';
 	import RulePanel from '#lib/components/RulePanel.svelte';
 	import Tabs from '#lib/components/Tabs.svelte';
@@ -18,7 +17,6 @@
 
 	const session = new CourtSession();
 	let drawer: HowDrawer | undefined = $state();
-	let ideaBox: HTMLTextAreaElement | undefined = $state();
 	let tab = $state('tests');
 
 	const maxDays = $derived(Math.max(...(session.markets?.windows_days ?? [180])));
@@ -71,16 +69,7 @@
 		runIdea(EXAMPLE_IDEA);
 	}
 
-	function focusTrial() {
-		window.scrollTo({ top: 0 });
-		ideaBox?.focus();
-	}
 
-	async function showRecent() {
-		reveal('recent');
-		await tick();
-		document.getElementById('recent')?.focus();
-	}
 </script>
 
 <svelte:head>
@@ -89,15 +78,13 @@
 
 <a href="#inspector" class="absolute top-2 -left-[999px] z-40 rounded-lg bg-card px-3 py-2 focus:left-2">Skip to the ruling</a>
 
-<Rail onhow={() => drawer?.open()} onaudit={() => drawer?.open('audit')} onrecent={showRecent} ontrial={focusTrial} />
-
-<div class="lg:pl-16">
+<div>
 	<TopBar {session} onhow={() => drawer?.open()} />
 
 	<main class="mx-auto max-w-[1760px] px-3 py-4 sm:px-4 lg:px-6 lg:py-5">
 		<div class="flex flex-col gap-4 xl:grid xl:grid-cols-[minmax(0,1fr)_400px] xl:items-start 2xl:grid-cols-[minmax(0,1fr)_440px]">
 			<div class="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-4">
-				<TrialPanel {session} onrun={runIdea} bind:textarea={ideaBox} class="order-1" />
+				<TrialPanel {session} onrun={runIdea} class="order-1" />
 				<KpiStrip {result} class="order-3" />
 				<ChartPanel {session} class="order-4" />
 				<div id="evidence" class="order-5 min-w-0">
@@ -184,6 +171,7 @@
 					? `Ideas are read and explained by ${session.markets.ai_model} on Nebius AI Studio; verdicts come only from fixed code.`
 					: 'AI is off on this server: a keyword reader and a built-in summary are used; verdicts come only from fixed code.'}
 			{/if}
+			<a href="/api/docs" rel="external" class="text-link underline underline-offset-2">API docs</a>
 		</p>
 	</footer>
 </div>

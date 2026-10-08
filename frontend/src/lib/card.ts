@@ -4,8 +4,8 @@ import type { CourtResult } from './court.svelte';
 
 const W = 1200;
 const H = 630;
-const SANS = '"Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-const MONO = '"JetBrains Mono Variable", ui-monospace, Menlo, monospace';
+const SANS = '"IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
 
 /** Card colours. The card is always light so it reads the same in every feed. */
 const C = {
@@ -156,12 +156,10 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 	ctx.moveTo(85, 98);
 	ctx.lineTo(99, 98);
 	ctx.stroke();
-	ctx.fillStyle = C.brand;
-	ctx.font = `800 26px ${SANS}`;
+	ctx.fillStyle = C.ink;
+	ctx.font = `600 30px ${SANS}`;
 	ctx.textBaseline = 'middle';
-	ctx.letterSpacing = '4px';
-	ctx.fillText('LOTCOUNCIL', 126, 87);
-	ctx.letterSpacing = '0px';
+	ctx.fillText('Lotcouncil', 126, 87);
 	ctx.font = `500 22px ${SANS}`;
 	ctx.fillStyle = C.muted;
 	ctx.textAlign = 'right';

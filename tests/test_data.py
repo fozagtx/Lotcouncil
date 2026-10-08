@@ -123,7 +123,7 @@ def test_no_data_at_all_gives_a_plain_message(tmp_path, monkeypatch):
         raise DataError("blocked")
 
     store = CandleStore(fetcher=down)
-    with pytest.raises(DataError, match="practice market"):
+    with pytest.raises(DataError, match="api.bitget.com"):
         store.window("rAAPLUSDT", 30)
     with pytest.raises(DataError):
         store.window("rAAPLUSDT", 30)
@@ -150,3 +150,12 @@ def test_practice_markets_never_change():
     a, ia = CandleStore().window("PRACTICE-TREND", 90)
     b, ib = CandleStore().window("PRACTICE-TREND", 90)
     assert ia["hash"] == ib["hash"] and ia["source"] == "practice"
+
+
+def test_practice_markets_are_off_unless_switched_on(monkeypatch, service):
+    monkeypatch.setenv("COURT_PRACTICE", "off")
+    with pytest.raises(DataError, match="turned off"):
+        CandleStore().window("PRACTICE-TREND", 90)
+    assert not any(t["practice"] for t in service.markets()["tokens"])
+    monkeypatch.setenv("COURT_PRACTICE", "on")
+    assert any(t["practice"] for t in service.markets()["tokens"])

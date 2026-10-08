@@ -18,14 +18,12 @@ export const STEPS: { key: StepKey; label: string; short: string }[] = [
 ];
 
 export const EXAMPLE_IDEA = 'buy when the 10 hour average crosses above the 40 hour average';
-const PRACTICE_FALLBACK = 'PRACTICE-TREND';
 
 export interface RunArgs {
 	idea?: string;
 	rule?: Rule;
 	end?: number;
 	example?: boolean;
-	fallbackNote?: string;
 }
 
 export interface CourtResult {
@@ -34,7 +32,6 @@ export interface CourtResult {
 	market: MarketInfo;
 	request: JudgeRequest;
 	idea: string;
-	fallbackNote?: string;
 }
 
 export interface CourtFailure {
@@ -42,7 +39,6 @@ export interface CourtFailure {
 	kind: ErrorKind;
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const blankSteps = (): Record<StepKey, StepState> => ({ read: '', data: '', gate: '', A: '', B: '', C: '' });
 
 export class CourtSession {
@@ -61,19 +57,15 @@ export class CourtSession {
 	error = $state.raw<CourtFailure | null>(null);
 	/** Read out by a polite live region when a ruling lands. */
 	announcement = $state('');
-	/** Milliseconds from pressing the button to each step's result arriving (measured in the browser). */
-	stepTimes = $state<Record<StepKey, number | null>>({ read: null, data: null, gate: null, A: null, B: null, C: null });
+	/** Time the server spent on the last ruling (reading the idea, loading prices, running the court). */
 	elapsedMs = $state<number | null>(null);
 	history = new RulingHistory();
 
 	lastArgs: RunArgs = {};
 	#runId = 0;
 	#controller: AbortController | null = null;
-	#gap = 170;
-	#t0 = 0;
 
 	async init() {
-		this.#gap = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 170;
 		this.history.load();
 		try {
 			this.markets = await getMarkets();
@@ -109,9 +101,6 @@ export class CourtSession {
 		this.idea = q.get('idea') ?? '';
 	}
 
-	get isPractice() {
-		return this.symbol.startsWith('PRACTICE');
-	}
 
 	async run(args: RunArgs) {
 		const runId = ++this.#runId;
@@ -125,9 +114,7 @@ export class CourtSession {
 		this.explanation = null;
 		this.announcement = '';
 		this.steps = blankSteps();
-		this.stepTimes = { read: null, data: null, gate: null, A: null, B: null, C: null };
 		this.elapsedMs = null;
-		this.#t0 = performance.now();
 		this.steps.read = args.rule ? 'done' : 'active';
 		if (args.rule) {
 			this.steps.data = 'active';
@@ -143,7 +130,7 @@ export class CourtSession {
 			for await (const ev of judge(body, controller.signal)) {
 				if (runId !== this.#runId) return;
 				if (ev.stage === 'verdict' || ev.stage === 'error') ended = true;
-				await this.#handle(ev, args, runId);
+				this.#handle(ev, args, runId);
 				if (ev.stage === 'error') return;
 			}
 			if (!ended) throw new CourtApiError('The ruling was cut off before it finished. Try again.', 'cut');
@@ -151,18 +138,15 @@ export class CourtSession {
 			if (e instanceof DOMException && e.name === 'AbortError') return;
 			if (runId !== this.#runId) return;
 			const err = e instanceof CourtApiError ? e : new CourtApiError('Something went wrong. Try again.', 'server');
-			this.#fail(runId, err.message, err.kind, args);
+			this.#fail(runId, err.message, err.kind);
 		} finally {
 			if (runId === this.#runId) this.running = false;
 		}
 	}
 
-	async #handle(ev: CourtEvent, args: RunArgs, runId: number) {
+	// Steps update as the server streams them; there is no artificial delay.
+	#handle(ev: CourtEvent, args: RunArgs, runId: number) {
 		const s = this.steps;
-		const at = Math.round(performance.now() - this.#t0);
-		const key = ({ understood: 'read', data: 'data', gate: 'gate', A: 'A', B: 'B', C: 'C' } as Record<string, StepKey>)[ev.stage];
-		if (key) this.stepTimes[key] = at;
-		if (ev.stage === 'verdict') this.elapsedMs = at;
 		switch (ev.stage) {
 			case 'understood':
 				this.reading = { rule: ev.rule, rule_text: ev.rule_text, source: ev.source, notice: ev.notice };
@@ -170,12 +154,10 @@ export class CourtSession {
 				s.data = 'active';
 				break;
 			case 'data':
-				await sleep(this.#gap);
 				s.data = 'done';
 				s.gate = 'active';
 				break;
 			case 'gate':
-				await sleep(this.#gap);
 				s.gate = ev.gate.passed ? 'done' : 'failed';
 				if (ev.gate.passed) s.A = 'active';
 				else s.A = s.B = s.C = 'skipped';
@@ -183,22 +165,20 @@ export class CourtSession {
 			case 'A':
 			case 'B':
 			case 'C': {
-				await sleep(this.#gap);
 				s[ev.stage] = ev.test.passed ? 'done' : 'failed';
 				const next = ({ A: 'B', B: 'C' } as const)[ev.stage as 'A' | 'B'];
 				if (next) s[next] = 'active';
 				break;
 			}
 			case 'verdict':
-				await sleep(this.#gap);
 				if (runId !== this.#runId) return;
+				this.elapsedMs = ev.elapsed_ms;
 				this.result = {
 					ruling: ev.ruling,
 					chart: ev.chart,
 					market: ev.market,
 					request: ev.request,
-					idea: args.idea ?? '',
-					fallbackNote: args.fallbackNote
+					idea: args.idea ?? ''
 				};
 				if (ev.request.parsed_by === 'user') {
 					this.reading = { rule: ev.ruling.rule, rule_text: ev.ruling.rule_text, source: 'user', notice: null };
@@ -224,22 +204,13 @@ export class CourtSession {
 				this.explanation = ev.explanation;
 				break;
 			case 'error':
-				this.#fail(runId, ev.message, isDataProblem(ev.message) ? 'data' : isIdeaProblem(ev.message) ? 'idea' : 'server', args);
+				this.#fail(runId, ev.message, isDataProblem(ev.message) ? 'data' : isIdeaProblem(ev.message) ? 'idea' : 'server');
 				break;
 		}
 	}
 
-	#fail(runId: number, message: string, kind: ErrorKind, args: RunArgs) {
+	#fail(runId: number, message: string, kind: ErrorKind) {
 		if (runId !== this.#runId) return;
-		if (args.example && kind === 'data' && !this.isPractice) {
-			// The first-load example should never be an error page: fall back to practice prices and say so.
-			this.symbol = PRACTICE_FALLBACK;
-			this.run({
-				...args,
-				fallbackNote: 'Bitget prices couldn’t be loaded on this server, so this example runs on a practice market.'
-			});
-			return;
-		}
 		this.running = false;
 		for (const k of Object.keys(this.steps) as StepKey[]) {
 			if (this.steps[k] === 'active') this.steps[k] = 'failed';
@@ -267,11 +238,6 @@ export class CourtSession {
 	}
 
 	retry() {
-		this.run({ ...this.lastArgs, example: false });
-	}
-
-	tryPractice() {
-		this.symbol = PRACTICE_FALLBACK;
 		this.run({ ...this.lastArgs, example: false });
 	}
 
