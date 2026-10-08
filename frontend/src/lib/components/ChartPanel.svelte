@@ -29,11 +29,11 @@
 	);
 </script>
 
-<Card class={className} aria-labelledby="chart-title" aria-busy={!result}>
+<Card class={className} aria-labelledby="chart-title" aria-busy={!result && session.running}>
 	<CardHeader>
 		<CardTitle id="chart-title" class="text-lg">{result ? pair : 'Chart'}</CardTitle>
 		<CardDescription>
-			{#if result}{sourceLabel} · {view === 'candles' ? candleLabel : 'result after fees'}{:else}Prices load with the first ruling.{/if}
+			{#if result}{sourceLabel} · {view === 'candles' ? candleLabel : 'result after fees'}{:else}Candles load with the first ruling.{/if}
 		</CardDescription>
 		{#snippet action()}
 			<ToggleTabs
@@ -88,8 +88,14 @@
 					label="The rule's result after fees over time, with the never-seen last 40% shaded."
 				/>
 			{/if}
-		{:else}
+		{:else if session.started}
 			<Skeleton class="h-[260px] rounded-lg" />
+		{:else}
+			<div class="grid h-[260px] place-items-center rounded-lg border border-dashed">
+				<p class="m-0 max-w-64 text-center text-[13px] text-muted-foreground">
+					Put an idea on trial and this chart shows the candles it was judged on.
+				</p>
+			</div>
 		{/if}
 	</CardContent>
 </Card>

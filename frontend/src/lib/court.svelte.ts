@@ -49,6 +49,8 @@ export class CourtSession {
 	idea = $state('');
 
 	running = $state(false);
+	/** False until the first real run; the page idles empty instead of demo-ing a verdict. */
+	started = $state(false);
 	example = $state(false);
 	steps = $state(blankSteps());
 	reading = $state.raw<Reading | null>(null);
@@ -84,9 +86,6 @@ export class CourtSession {
 			const rule = decodeRule(q.get('rule')) ?? undefined;
 			const end = q.get('end') ? Number(q.get('end')) : undefined;
 			this.run({ idea: this.idea, rule, end });
-		} else {
-			this.idea = EXAMPLE_IDEA;
-			this.run({ idea: EXAMPLE_IDEA, example: true });
 		}
 	}
 
@@ -104,6 +103,7 @@ export class CourtSession {
 
 	async run(args: RunArgs) {
 		const runId = ++this.#runId;
+		this.started = true;
 		this.#controller?.abort();
 		const controller = (this.#controller = new AbortController());
 		this.lastArgs = args;

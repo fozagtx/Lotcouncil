@@ -90,7 +90,7 @@
 			</p>
 		</div>
 		<div class="flex flex-col gap-4 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[300px_minmax(0,1fr)_360px] lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-3 xl:grid-cols-[320px_minmax(0,1fr)_400px] 2xl:grid-cols-[340px_minmax(0,1fr)_440px]">
-			<KpiStrip {result} class="order-3 lg:order-1 lg:col-span-3" />
+			<KpiStrip {result} started={session.started} class="order-3 lg:order-1 lg:col-span-3" />
 			<div class="contents lg:order-2 lg:flex lg:min-h-0 lg:flex-col lg:min-w-0 lg:overflow-y-auto lg:overscroll-contain">
 				<TrialPanel {session} onrun={runIdea} class="order-1" />
 			</div>
@@ -116,16 +116,27 @@
 						{/snippet}
 						{#snippet panel(id)}
 							{#if id === 'tests'}
-								<TestsGrid {result} markets={session.markets} />
+								{#if !result && !session.started}
+									<p class="m-0 p-4 text-[13px] text-muted-foreground">
+										A ruling runs three fixed tests — unseen data, random timing and stress — and they show up here.
+									</p>
+								{:else}
+									<TestsGrid {result} markets={session.markets} />
+								{/if}
 							{:else if id === 'trades'}
 								{#if result}
 									<TradeTable trades={result.chart.trades} {decimals} />
-								{:else}
+								{:else if session.started}
 									<div class="grid gap-2 p-4" aria-hidden="true">
 										{#each [0, 1, 2, 3, 4] as i (i)}<Skeleton class="h-8" />{/each}
 									</div>
+								{:else}
+									<p class="m-0 p-4 text-[13px] text-muted-foreground">Every trade the rule made appears here after a ruling.</p>
 								{/if}
 							{:else if id === 'words'}
+								{#if !session.started}
+									<p class="m-0 p-4 text-[13px] text-muted-foreground">A plain-words summary of the verdict appears here after a ruling.</p>
+								{:else}
 								<div class="grid gap-3 p-4" aria-busy={!session.explanation}>
 									{#if session.explanation}
 										<div class="flex flex-wrap items-center gap-2">
@@ -148,6 +159,7 @@
 										The verdict comes from fixed code. The explanation is written from the court’s numbers and cannot change it.
 									</p>
 								</div>
+								{/if}
 							{:else if id === 'rule'}
 								<RulePanel
 									reading={session.reading}

@@ -202,7 +202,7 @@
 	}
 </script>
 
-<Card class="relative flex flex-col {className}" aria-labelledby="ruling-title" aria-busy={!result && !session.error}>
+<Card class="relative flex flex-col {className}" aria-labelledby="ruling-title" aria-busy={session.running}>
 	{#if session.running}<BorderBeam size={160} duration={4} />{/if}
 	<CardHeader>
 		<CardTitle id="ruling-title">Ruling</CardTitle>
@@ -272,6 +272,13 @@
 					<Button variant="outline" onclick={onedit}>Edit the numbers</Button>
 				</div>
 			{/if}
+		{:else if !session.started}
+			<div class="grid gap-2 rounded-lg border border-dashed p-4">
+				<p class="m-0 text-sm font-medium">No ruling yet</p>
+				<p class="m-0 text-[13px] text-muted-foreground">
+					Type an idea on the left and put it on trial. The verdict and every step land here.
+				</p>
+			</div>
 		{:else}
 			<div class="grid gap-3 rounded-lg border p-4" aria-hidden="true">
 				<div class="flex items-center gap-3">

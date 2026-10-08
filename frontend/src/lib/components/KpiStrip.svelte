@@ -5,7 +5,7 @@
 	import Card from './ui/Card.svelte';
 	import Skeleton from './ui/Skeleton.svelte';
 
-	let { result, class: className = '' }: { result: CourtResult | null; class?: string } = $props();
+	let { result, started = false, class: className = '' }: { result: CourtResult | null; started?: boolean; class?: string } = $props();
 
 	interface Kpi {
 		label: string;
@@ -57,7 +57,7 @@
 	const TONE = { pass: 'text-success-foreground', fail: 'text-danger-foreground', plain: 'text-foreground' };
 </script>
 
-<Card class={className} aria-label="Key numbers" aria-busy={!result}>
+<Card class={className} aria-label="Key numbers" aria-busy={!result && started}>
 	<dl class="m-0 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
 		{#if result}
 			{#each kpis as k, i (k.label)}
@@ -77,12 +77,25 @@
 					<p class="m-0 mt-0.5 truncate text-[11px] text-muted-foreground">{k.note}</p>
 				</div>
 			{/each}
-		{:else}
+		{:else if started}
 			{#each Array.from({ length: 6 }, (_, i) => i) as i (i)}
 				<div class="grid gap-1.5 px-3 py-2" aria-hidden="true">
 					<Skeleton class="h-2.5 w-16" />
 					<Skeleton class="h-5 w-14" />
 					<Skeleton class="h-2.5 w-20" />
+				</div>
+			{/each}
+		{:else}
+			{#each ['Unseen score', 'Beat random', 'Score at 3× fees', 'Trades', 'Result after fees', 'Just holding'] as label, i (label)}
+				<div
+					class="min-w-0 px-3 py-2
+						{i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t' : ''}
+						sm:border-t-0 sm:border-l-0 {i % 3 !== 0 ? 'sm:border-l' : ''} {i >= 3 ? 'sm:border-t' : ''}
+						lg:border-l-0 lg:border-t-0 {i !== 0 ? 'lg:border-l' : ''}"
+				>
+					<dt class="truncate text-[11px] font-medium tracking-wide text-muted-foreground uppercase">{label}</dt>
+					<dd class="m-0 mt-0.5 text-lg leading-none font-semibold tracking-tight text-muted-foreground">—</dd>
+					<p class="m-0 mt-0.5 text-[11px] text-muted-foreground">run a trial</p>
 				</div>
 			{/each}
 		{/if}
