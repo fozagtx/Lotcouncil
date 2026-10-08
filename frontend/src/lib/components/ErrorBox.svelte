@@ -22,11 +22,11 @@
 	};
 </script>
 
-<div class="flex items-start gap-3 rounded-card border border-danger bg-danger-muted px-4 py-3.5" role="alert">
+<div class="flex items-start gap-3 rounded-lg border border-danger/35 bg-danger-muted px-4 py-3.5" role="alert">
 	<Icon name="x" class="mt-0.5 size-5 shrink-0 text-danger-foreground" />
 	<div class="grid gap-2">
 		<p class="m-0 font-semibold">{TITLES[failure.kind]}</p>
-		<p class="m-0 text-sm text-subtle">{failure.message}</p>
+		<p class="m-0 text-[13.5px] text-subtle">{failure.message}</p>
 		<div class="flex flex-wrap gap-2">
 			{#if failure.kind === 'data' && !isPractice}
 				<button type="button" class="btn btn-secondary" onclick={onpractice}>Try it on a practice market</button>

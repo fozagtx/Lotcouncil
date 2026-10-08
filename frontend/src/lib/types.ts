@@ -107,6 +107,28 @@ export interface Ruling {
 		split_index: number;
 		split_time: number;
 	};
+	settings: { fee: number; seed: number; court_version: string; thresholds: Record<string, number> };
+}
+
+export interface Trade {
+	n: number;
+	entry_time: number;
+	exit_time: number;
+	entry_price: number;
+	exit_price: number;
+	hours: number;
+	return_pct: number;
+	open: boolean;
+	part: 'seen' | 'unseen';
+}
+
+export interface Candles {
+	hours: number;
+	time: number[];
+	open: number[];
+	high: number[];
+	low: number[];
+	close: number[];
 }
 
 export interface ChartData {
@@ -117,6 +139,8 @@ export interface ChartData {
 	holding: [number, number][];
 	split_time: number;
 	copy_scores: number[];
+	trades: Trade[];
+	candles?: Candles;
 }
 
 export interface JudgeRequest {

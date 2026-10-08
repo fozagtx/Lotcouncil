@@ -1,6 +1,7 @@
 // Page state for one visitor: the controls, the streamed run, and the last ruling.
 import { goto } from '$app/navigation';
 import { CourtApiError, getMarkets, isDataProblem, isIdeaProblem, judge, type ErrorKind, type JudgeBody } from './api';
+import { RulingHistory } from './history.svelte.js';
 import { decodeRule, encodeRule } from './rules';
 import type { ChartData, CourtEvent, Explanation, JudgeRequest, MarketInfo, Markets, Reading, Rule, Ruling } from './types';
 
@@ -60,14 +61,20 @@ export class CourtSession {
 	error = $state.raw<CourtFailure | null>(null);
 	/** Read out by a polite live region when a ruling lands. */
 	announcement = $state('');
+	/** Milliseconds from pressing the button to each step's result arriving (measured in the browser). */
+	stepTimes = $state<Record<StepKey, number | null>>({ read: null, data: null, gate: null, A: null, B: null, C: null });
+	elapsedMs = $state<number | null>(null);
+	history = new RulingHistory();
 
 	lastArgs: RunArgs = {};
 	#runId = 0;
 	#controller: AbortController | null = null;
 	#gap = 170;
+	#t0 = 0;
 
 	async init() {
 		this.#gap = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 170;
+		this.history.load();
 		try {
 			this.markets = await getMarkets();
 		} catch (e) {
@@ -118,6 +125,9 @@ export class CourtSession {
 		this.explanation = null;
 		this.announcement = '';
 		this.steps = blankSteps();
+		this.stepTimes = { read: null, data: null, gate: null, A: null, B: null, C: null };
+		this.elapsedMs = null;
+		this.#t0 = performance.now();
 		this.steps.read = args.rule ? 'done' : 'active';
 		if (args.rule) {
 			this.steps.data = 'active';
@@ -149,6 +159,10 @@ export class CourtSession {
 
 	async #handle(ev: CourtEvent, args: RunArgs, runId: number) {
 		const s = this.steps;
+		const at = Math.round(performance.now() - this.#t0);
+		const key = ({ understood: 'read', data: 'data', gate: 'gate', A: 'A', B: 'B', C: 'C' } as Record<string, StepKey>)[ev.stage];
+		if (key) this.stepTimes[key] = at;
+		if (ev.stage === 'verdict') this.elapsedMs = at;
 		switch (ev.stage) {
 			case 'understood':
 				this.reading = { rule: ev.rule, rule_text: ev.rule_text, source: ev.source, notice: ev.notice };
@@ -192,6 +206,19 @@ export class CourtSession {
 				this.running = false;
 				this.announcement = `Verdict: ${ev.ruling.verdict}. ${ev.ruling.headline}`;
 				this.#syncUrl();
+				this.history.add({
+					id: [ev.request.symbol, ev.request.days, ev.request.fee, encodeRule(ev.request.rule), ev.request.end].join('|'),
+					symbol: ev.request.symbol,
+					label: ev.market.label,
+					days: ev.request.days,
+					feePct: 100 * ev.request.fee,
+					rule: ev.request.rule,
+					idea: args.idea ?? '',
+					end: Math.floor(ev.request.end / 1000),
+					verdict: ev.ruling.verdict,
+					headline: ev.ruling.headline,
+					at: Date.now()
+				});
 				break;
 			case 'explanation':
 				this.explanation = ev.explanation;
@@ -220,6 +247,23 @@ export class CourtSession {
 		if (kind === 'idea') this.steps.read = 'failed';
 		this.error = { message, kind };
 		this.announcement = `The court can’t rule on this. ${message}`;
+	}
+
+	/** Re-run the current rule on another time window (the chart's window switch). */
+	changeWindow(days: number) {
+		this.days = days;
+		const r = this.result;
+		if (r) this.run({ rule: r.request.rule, idea: r.idea });
+		else this.retry();
+	}
+
+	/** Re-open a past ruling exactly: same token, window, fee, rule and last candle. */
+	reopen(p: { symbol: string; days: number; feePct: number; rule: Rule; idea: string; end: number }) {
+		if (this.markets?.tokens.some((t) => t.symbol === p.symbol)) this.symbol = p.symbol;
+		this.days = p.days;
+		this.feePct = p.feePct;
+		this.idea = p.idea;
+		this.run({ rule: p.rule, idea: p.idea, end: p.end });
 	}
 
 	retry() {

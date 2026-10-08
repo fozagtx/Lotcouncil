@@ -11,6 +11,7 @@ import logging
 from collections.abc import Iterator
 
 import numpy as np
+import pandas as pd
 
 from .ai import AIHelper
 from .audit import _plain, build_audit
@@ -55,7 +56,66 @@ def _holding_spans(time_s: np.ndarray, pos: np.ndarray) -> list[list[int]]:
     return spans
 
 
-def chart_payload(ruling: dict) -> dict:
+CANDLE_HOURS = (1, 2, 4, 6, 12, 24)
+MAX_CANDLES = 150
+HOUR_S = 3600
+
+
+def candles_payload(df: pd.DataFrame) -> dict:
+    """Hourly candles merged into wider ones (aligned to UTC clock hours) so a chart shows at most ~150."""
+    n = len(df)
+    hours = next((h for h in CANDLE_HOURS if n / h <= MAX_CANDLES), CANDLE_HOURS[-1])
+    bucket = df["time"].to_numpy(dtype=np.int64) // (hours * HOUR_S * 1000)
+    g = df.assign(bucket=bucket).groupby("bucket", sort=True)
+    agg = g.agg(time=("time", "first"), open=("open", "first"), high=("high", "max"), low=("low", "min"), close=("close", "last"))
+    return {
+        "hours": hours,
+        "time": (agg["time"].to_numpy(dtype=np.int64) // 1000).tolist(),
+        "open": np.round(agg["open"].to_numpy(dtype=float), 4).tolist(),
+        "high": np.round(agg["high"].to_numpy(dtype=float), 4).tolist(),
+        "low": np.round(agg["low"].to_numpy(dtype=float), 4).tolist(),
+        "close": np.round(agg["close"].to_numpy(dtype=float), 4).tolist(),
+    }
+
+
+def trade_list(ruling: dict) -> list[dict]:
+    """Every round trip the rule made: bought at the close before its first held candle, sold at the
+    close of its last one. The return includes both fees."""
+    s = ruling["series"]
+    pos, close, net = s["position"], s["close"], s["net"]
+    time_s = np.asarray(s["time"]) // 1000
+    n = len(pos)
+    split = ruling["stats"]["split_index"]
+    trades: list[dict] = []
+    i = 0
+    while i < n:
+        if pos[i] > 0 and (i == 0 or pos[i - 1] == 0):
+            j = i
+            while j + 1 < n and pos[j + 1] > 0:
+                j += 1
+            last = j + 1 if j + 1 < n else j  # the candle after the last held one carries the exit fee
+            ret = float(np.prod(1 + net[i : last + 1]) - 1)
+            entry = i - 1 if i > 0 else i
+            trades.append(
+                {
+                    "n": len(trades) + 1,
+                    "entry_time": int(time_s[i]),
+                    "exit_time": int(time_s[j] + HOUR_S),
+                    "entry_price": round(float(close[entry]), 4),
+                    "exit_price": round(float(close[j]), 4),
+                    "hours": int(j - i + 1),
+                    "return_pct": round(100 * ret, 3),
+                    "open": bool(j == n - 1),
+                    "part": "unseen" if i >= split else "seen",
+                }
+            )
+            i = j + 1
+        else:
+            i += 1
+    return trades
+
+
+def chart_payload(ruling: dict, df: pd.DataFrame | None = None) -> dict:
     s = ruling["series"]
     time_s = (np.asarray(s["time"]) // 1000).astype(np.int64)
     idx = _thin(len(time_s))
@@ -67,7 +127,10 @@ def chart_payload(ruling: dict) -> dict:
         "holding": _holding_spans(time_s, s["position"]),
         "split_time": int(ruling["stats"]["split_time"] // 1000),
         "copy_scores": np.round(s["copy_scores"], 3).tolist(),
+        "trades": trade_list(ruling),
     }
+    if df is not None:
+        payload["candles"] = candles_payload(df)
     return payload
 
 
@@ -150,7 +213,7 @@ class CourtService:
             yield {
                 "stage": "verdict",
                 "ruling": public,
-                "chart": chart_payload(ruling),
+                "chart": chart_payload(ruling, df),
                 "market": market,
                 "request": {
                     "symbol": symbol,

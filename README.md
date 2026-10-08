@@ -11,6 +11,8 @@ The AI translates your sentence into a rule and explains the result in plain wor
   <img src="docs/screenshot-phone-dark.png" alt="Phone, dark mode: a FAIL ruling" width="25%">
 </p>
 
+The page is a trading-terminal layout: a new-trial command bar, a KPI strip, a candlestick chart with the rule's holding periods, tabs for the three tests, the full trade ledger, a plain-words explanation and an editable rule, and a ruling inspector with a step-by-step court timeline (with measured timings) and export actions. Brand and tokens are in [`brand.md`](brand.md).
+
 The screenshots use the built-in practice markets (made-up prices), because the build environment could not reach Bitget. See [Status](#status).
 
 ## Quick start
@@ -165,7 +167,7 @@ The PRD planned Streamlit Community Cloud. This build uses a SvelteKit page on a
 
 ```bash
 pip install -r requirements-dev.txt
-pytest -q                                     # 129 tests: court, data, AI checks, API, audit, MCP
+pytest -q                                     # 131 tests: court, data, AI checks, API, audit, MCP
 (cd frontend && npm run check)                # svelte-check: 0 errors, 0 warnings
 python scripts/calibrate.py --real --out docs/calibration.md
 ```
@@ -188,7 +190,7 @@ What is done and checked here:
 | R1 | Hourly candles for Bitget stock tokens | Built, with paging, finished-candle filter, snapshot fallback. **Not tested against live Bitget**: the build environment's network blocks `api.bitget.com`. |
 | R2 | Plain English to rule | Built: AI path plus keyword reader; three types parse (tested). |
 | R3 | Three tests, PASS or FAIL | Built; same input gives the same ruling (tested). |
-| R4 | Ruling, tests and chart | Built in Svelte: verdict hero, one visual per test, price chart with holding periods, loading skeletons. |
+| R4 | Ruling, tests and chart | Built in Svelte: verdict inspector with court timeline, KPI strip, candlestick chart with holding periods, one visual per test, trade ledger, loading skeletons. |
 | R5 | AI explanation from court numbers | Built with a number check. **Not tested with a live Nebius key.** |
 | R6 | Bad input never crashes | Built: every error becomes one plain message (tested). |
 | R7 | Public link on a phone | Ready to deploy (Docker / Procfile). No public link yet. Checked at 375, 400, 768 and 1280px in light and dark, no sideways scroll. |

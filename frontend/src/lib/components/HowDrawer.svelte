@@ -6,8 +6,12 @@
 	let rerun: { ok: boolean; text: string } | null = $state(null);
 	let checking = $state(false);
 
-	export function open() {
+	export function open(section?: 'audit') {
 		dialog?.showModal();
+		if (section === 'audit') {
+			document.getElementById('check-title')?.scrollIntoView({ block: 'start' });
+			(document.getElementById('audit-file') as HTMLInputElement | null)?.focus();
+		}
 	}
 
 	async function onfile(e: Event) {
@@ -39,12 +43,15 @@
 <dialog
 	bind:this={dialog}
 	aria-labelledby="how-title"
-	class="ml-auto h-full max-h-full w-[min(560px,100%)] max-w-full border-0 bg-card p-0 text-foreground shadow-xl backdrop:bg-black/45"
+	class="ml-auto h-full max-h-full w-[min(560px,100%)] max-w-full border-0 border-l border-border bg-card p-0 text-foreground shadow-2xl backdrop:bg-slate-950/50"
 	onclick={(e) => e.target === dialog && dialog?.close()}
 >
 	<div class="h-full overflow-y-auto px-5 pt-4 pb-10 sm:px-6">
 		<div class="sticky -top-4 flex items-center justify-between bg-card pt-1 pb-2.5">
-			<h2 id="how-title" class="m-0 font-serif text-2xl font-semibold">How the court works</h2>
+			<div>
+				<p class="m-0 text-[12px] font-extrabold tracking-[0.14em] text-brand">LOTCOUNCIL</p>
+				<h2 id="how-title" class="m-0 text-xl font-bold tracking-tight">How the court works</h2>
+			</div>
 			<button
 				type="button"
 				class="btn btn-secondary size-10 rounded-full p-0 text-subtle"
@@ -117,7 +124,7 @@
 				>
 					<Icon name={checking ? 'spinner' : 'file'} class="size-[18px]" />
 					Choose an audit file
-					<input type="file" accept="application/json,.json" class="sr-only" onchange={onfile} />
+					<input id="audit-file" type="file" accept="application/json,.json" class="sr-only" onchange={onfile} />
 				</label>
 			</div>
 			<p role="status" class="font-semibold {rerun ? (rerun.ok ? 'text-success-foreground' : 'text-danger-foreground') : ''}">

@@ -1,14 +1,14 @@
 <script lang="ts">
-	let { class: className = 'size-8' }: { class?: string } = $props();
+	let { class: className = 'size-9' }: { class?: string } = $props();
 </script>
 
-<svg viewBox="0 0 32 32" class={className} aria-hidden="true">
-	<rect x="1" y="1" width="30" height="30" rx="8" fill="var(--brand-mark)" />
+<svg viewBox="0 0 36 36" class={className} aria-hidden="true">
+	<rect width="36" height="36" rx="9" fill="var(--brand)" />
 	<path
-		d="M9 10h14M16 7v17M11 24h10M9 10l-3.5 7.5h7zM23 10l-3.5 7.5h7z"
+		d="M10 12.5h16M18 9v17.5M13.5 26.5h9M10 12.5l-3.4 7.4h6.8zM26 12.5l-3.4 7.4h6.8z"
 		fill="none"
-		stroke="var(--brand-mark-ink)"
-		stroke-width="1.8"
+		stroke="#ffffff"
+		stroke-width="2"
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	/>

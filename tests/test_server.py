@@ -139,3 +139,23 @@ def test_serves_the_built_frontend(service, tmp_path, monkeypatch):
     assert c.get("/").status_code == 200 and "Lotcouncil" in c.get("/").text
     assert c.get("/_app/x.js").status_code == 200
     assert c.get("/api/health").json()["ok"] is True
+
+
+def test_trade_ledger_adds_up_to_the_total_result(client):
+    v = judge(client)[6]
+    trades = v["chart"]["trades"]
+    assert len(trades) == v["ruling"]["gate"]["trades"]
+    compounded = 1.0
+    for t in trades:
+        compounded *= 1 + t["return_pct"] / 100
+        assert t["exit_time"] > t["entry_time"] and t["hours"] >= 1
+        assert t["part"] in ("seen", "unseen")
+    assert abs(100 * (compounded - 1) - v["ruling"]["stats"]["total_return_pct"]) < 0.05
+    assert [t["open"] for t in trades].count(True) <= 1
+
+
+def test_candles_are_merged_for_the_chart(client):
+    c = judge(client)[6]["chart"]["candles"]
+    assert c["hours"] in (1, 2, 4, 6, 12, 24) and len(c["time"]) <= 150
+    for o, h, lo, cl in zip(c["open"], c["high"], c["low"], c["close"], strict=True):
+        assert lo <= min(o, cl) and h >= max(o, cl)

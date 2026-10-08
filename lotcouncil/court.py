@@ -416,6 +416,7 @@ def iter_court(
             "time": time,
             "close": close,
             "position": pos,
+            "net": net,
             "equity": np.cumprod(1 + net) - 1,
             "equity_stress": np.cumprod(1 + stress_net) - 1,
             "copy_scores": copy_scores,

@@ -4,27 +4,28 @@ import type { CourtResult } from './court.svelte';
 
 const W = 1200;
 const H = 630;
-const SANS = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-const SERIF = '"Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif';
+const SANS = '"Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+const MONO = '"JetBrains Mono Variable", ui-monospace, Menlo, monospace';
 
 /** Card colours. The card is always light so it reads the same in every feed. */
 const C = {
-	bg: '#f4f3ef',
-	card: '#fcfcfb',
-	ink: '#0b0b0b',
-	ink2: '#52514e',
-	muted: '#66655f',
-	line: '#e1dfd8',
-	pass: '#0ca30c',
-	passInk: '#006300',
-	passBg: '#e9f5e7',
-	fail: '#d03b3b',
-	failInk: '#b12a2a',
-	failBg: '#fbecea',
-	skip: '#8a8984',
-	series: '#2a78d6',
-	brand: '#17233a',
-	onBrand: '#f4f3ef'
+	bg: '#f3f4f6',
+	card: '#ffffff',
+	ink: '#0f172a',
+	ink2: '#334155',
+	muted: '#5b6577',
+	line: '#e5e7eb',
+	pass: '#12957a',
+	passInk: '#0b7a63',
+	passBg: '#e6f6f1',
+	fail: '#e5383b',
+	failInk: '#c81e2c',
+	failBg: '#fdecee',
+	skip: '#8b95a7',
+	series: '#2563eb',
+	brand: '#ea580c',
+	onBrand: '#ffffff',
+	rail: '#0f1729'
 };
 
 type MarkState = 'pass' | 'fail' | 'skip';
@@ -155,10 +156,12 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 	ctx.moveTo(85, 98);
 	ctx.lineTo(99, 98);
 	ctx.stroke();
-	ctx.fillStyle = C.ink;
-	ctx.font = `600 32px ${SERIF}`;
+	ctx.fillStyle = C.brand;
+	ctx.font = `800 26px ${SANS}`;
 	ctx.textBaseline = 'middle';
-	ctx.fillText('Lotcouncil', 126, 87);
+	ctx.letterSpacing = '4px';
+	ctx.fillText('LOTCOUNCIL', 126, 87);
+	ctx.letterSpacing = '0px';
 	ctx.font = `500 22px ${SANS}`;
 	ctx.fillStyle = C.muted;
 	ctx.textAlign = 'right';
@@ -176,7 +179,7 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 	ctx.strokeStyle = pass ? C.pass : C.fail;
 	ctx.stroke();
 	ctx.fillStyle = pass ? C.passInk : C.failInk;
-	ctx.font = `850 118px ${SANS}`;
+	ctx.font = `800 112px ${SANS}`;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
 	ctx.fillText(r.ruling.verdict, 0, 8);
@@ -188,7 +191,7 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 	ctx.textAlign = 'left';
 	ctx.textBaseline = 'alphabetic';
 	ctx.fillStyle = C.ink;
-	ctx.font = `600 38px ${SERIF}`;
+	ctx.font = `700 36px ${SANS}`;
 	let y = 190;
 	for (const l of wrap(ctx, r.ruling.headline, tw, 2)) {
 		ctx.fillText(l, tx, y);
@@ -240,7 +243,8 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 		H - 58
 	);
 	ctx.textAlign = 'right';
-	ctx.fillText(`data ${r.market.hash.slice(0, 19)}…`, W - 72, H - 58);
+	ctx.font = `400 16px ${MONO}`;
+	ctx.fillText(`${r.market.hash.slice(0, 19)}…`, W - 72, H - 58);
 	return canvas;
 }
 

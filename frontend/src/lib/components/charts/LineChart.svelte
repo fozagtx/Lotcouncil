@@ -60,11 +60,11 @@
 <div class="relative w-full touch-pan-y" bind:clientWidth={width}>
 	<svg viewBox="0 0 {W} {height}" width="100%" {height} role="img" aria-label={label} class="block overflow-visible">
 		{#if split !== undefined}
-			<rect x={geo.x(split)} y={m.t} width={W - m.r - geo.x(split)} height={height - m.b - m.t} fill="var(--muted)" />
+			<rect x={geo.x(split)} y={m.t} width={W - m.r - geo.x(split)} height={height - m.b - m.t} fill="var(--unseen-wash)" />
 		{/if}
 		{#each geo.yTicks as v (v)}
 			<line x1={m.l} x2={W - m.r} y1={geo.y(v)} y2={geo.y(v)} stroke="var(--chart-grid)" shape-rendering="crispEdges" />
-			<text x={m.l - 8} y={geo.y(v) + 4} text-anchor="end" class="fill-muted-foreground text-xs tabular-nums">{yFormat(v)}</text>
+			<text x={m.l - 8} y={geo.y(v) + 4} text-anchor="end" class="num fill-muted-foreground text-xs">{yFormat(v)}</text>
 		{/each}
 		{#each geo.xTicks as tv, i (i)}
 			<text
@@ -78,7 +78,7 @@
 			<line x1={m.l} x2={W - m.r} y1={geo.y(0)} y2={geo.y(0)} stroke="var(--border)" shape-rendering="crispEdges" />
 		{/if}
 		{#each spans as [a, b], i (i)}
-			<rect x={geo.x(a)} y={m.t} width={Math.max(1, geo.x(b) - geo.x(a))} height={height - m.b - m.t} fill="var(--chart-1-wash)" />
+			<rect x={geo.x(a)} y={m.t} width={Math.max(1, geo.x(b) - geo.x(a))} height={height - m.b - m.t} fill="var(--holding-wash)" />
 		{/each}
 		{#if split !== undefined}
 			{@const sx = geo.x(split)}
