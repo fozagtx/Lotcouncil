@@ -54,9 +54,9 @@
 		{/snippet}
 	</CardHeader>
 
-	<CardContent class="px-3 sm:px-5">
+	<CardContent class="px-3 sm:px-4">
 		{#if result && chart}
-			<div class="mb-2 flex flex-wrap gap-x-4 gap-y-1 px-1 text-xs text-muted-foreground" aria-hidden="true">
+			<div class="mb-1 flex flex-wrap gap-x-4 gap-y-0.5 px-1 text-[11px] text-muted-foreground" aria-hidden="true">
 				{#if view === 'candles'}
 					<span class="inline-flex items-center gap-1.5"><i class="h-3 w-2 rounded-[2px] bg-[var(--candle-up)]"></i>Up</span>
 					<span class="inline-flex items-center gap-1.5"><i class="h-3 w-2 rounded-[2px] bg-[var(--candle-down)]"></i>Down</span>
@@ -71,6 +71,7 @@
 					candles={chart.candles}
 					spans={chart.holding}
 					split={chart.split_time}
+					height={260}
 					label="{pair} price candles, with the rule's holding periods shaded and the never-seen last 40% marked."
 				/>
 			{:else}
@@ -81,14 +82,14 @@
 					split={chart.split_time}
 					splitLabels={['Seen', 'Never seen']}
 					zero
-					height={320}
+					height={260}
 					yFormat={(v) => Math.round(v) + '%'}
 					tip={(i) => ({ head: fmtDate(chart.time[i]), value: `Result after fees ${signedPct(chart.equity_pct[i])}` })}
 					label="The rule's result after fees over time, with the never-seen last 40% shaded."
 				/>
 			{/if}
 		{:else}
-			<Skeleton class="h-[320px] rounded-lg" />
+			<Skeleton class="h-[260px] rounded-lg" />
 		{/if}
 	</CardContent>
 </Card>

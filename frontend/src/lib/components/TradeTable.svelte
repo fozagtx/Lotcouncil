@@ -22,7 +22,7 @@
 {:else}
 	<dl class="m-0 grid grid-cols-2 border-b sm:grid-cols-4">
 		{#each [['Win rate', closed ? `${Math.round((100 * wins) / closed)}%` : '—', `${wins} of ${closed} closed`], ['Avg. hold', `${avgHours} h`, `${trades.length} trades`], ['Best trade', `${sign(best)}${Math.abs(best).toFixed(2)}%`, 'after fees'], ['Worst trade', `${sign(worst)}${Math.abs(worst).toFixed(2)}%`, 'after fees']] as [label, value, note], i (label)}
-			<div class="px-5 py-3.5 {i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t sm:border-t-0' : ''} {i === 2 ? 'sm:border-l' : ''}">
+			<div class="px-4 py-3 {i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t sm:border-t-0' : ''} {i === 2 ? 'sm:border-l' : ''}">
 				<dt class="text-sm text-muted-foreground">{label}</dt>
 				<dd class="num m-0 mt-1 text-xl font-semibold tracking-tight">{value}</dd>
 				<p class="m-0 text-xs text-muted-foreground">{note}</p>
@@ -72,7 +72,7 @@
 			</tbody>
 		</table>
 	</div>
-	<p class="m-0 border-t px-5 py-3 text-xs text-muted-foreground">
+	<p class="m-0 border-t px-4 py-2.5 text-xs text-muted-foreground">
 		Bought at the close before the first held hour, sold at the close of the last one. Returns include both fees. An open trade was still held at the last candle.
 	</p>
 {/if}

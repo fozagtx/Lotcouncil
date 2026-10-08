@@ -23,7 +23,7 @@
 </script>
 
 <Card class={className} aria-label={label}>
-	<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b px-3 py-3 sm:px-4">
+	<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b px-3 py-2.5 sm:px-4">
 		<SpotlightTabs {tabs} bind:selected {label} />
 		{#if actions}<div class="px-1">{@render actions()}</div>{/if}
 	</div>

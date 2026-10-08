@@ -65,7 +65,7 @@
 		<CardDescription>Describe a trading idea in one sentence. Fixed code rules PASS or FAIL; the AI only translates.</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<form class="grid gap-5" onsubmit={submit} autocomplete="off">
+		<form class="grid gap-4" onsubmit={submit} autocomplete="off">
 			<div class="grid gap-2">
 				<label for="idea" class="field-label">Your idea</label>
 				<div class="flex flex-col gap-3 xl:flex-row xl:items-stretch">
@@ -78,7 +78,7 @@
 						required
 						aria-describedby="idea-help"
 						placeholder="buy when the 10 hour average crosses above the 40 hour average"
-						class="min-h-[4.5rem] flex-1 resize-none px-3.5 py-3 text-base leading-snug md:text-[15px]"
+						class="min-h-20 flex-1 resize-none px-3 py-2.5 text-base leading-snug md:text-sm"
 						{onkeydown}
 					/>
 					<RadialGlowButton type="submit" class="w-full xl:w-auto xl:min-w-[200px]" disabled={session.running} aria-busy={session.running}>
@@ -95,7 +95,7 @@
 			<div class="grid gap-2">
 				<span class="field-label" id="examples-label">Examples</span>
 				<div
-					class="-mx-5 flex gap-2 overflow-x-auto px-5 py-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0"
+					class="-mx-4 flex gap-2 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0"
 					role="group"
 					aria-labelledby="examples-label"
 				>
@@ -107,7 +107,7 @@
 				</div>
 			</div>
 
-			<div class="grid grid-cols-2 gap-4 border-t pt-5 sm:flex sm:flex-wrap sm:items-end">
+			<div class="grid grid-cols-2 gap-4 border-t pt-4 sm:flex sm:flex-wrap sm:items-end">
 				<div class="grid min-w-0 gap-2 sm:w-[210px]">
 					<label for="symbol" class="field-label">Token</label>
 					<select id="symbol" class="select" bind:value={session.symbol}>

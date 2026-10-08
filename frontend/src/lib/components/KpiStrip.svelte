@@ -63,28 +63,28 @@
 		{#if result}
 			{#each kpis as k, i (k.label)}
 				<div
-					class="min-w-0 px-5 py-4
+					class="min-w-0 px-4 py-3
 						{i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t' : ''}
 						sm:border-t-0 sm:border-l-0 {i % 3 !== 0 ? 'sm:border-l' : ''} {i >= 3 ? 'sm:border-t' : ''}
 						2xl:border-t-0 {i !== 0 ? '2xl:border-l' : '2xl:border-l-0'}"
 				>
-					<dt class="truncate text-sm text-muted-foreground">{k.label}</dt>
-					<dd class="m-0 mt-1.5 flex items-center gap-1.5 {TONE[k.tone]}">
+					<dt class="truncate text-[13px] text-muted-foreground">{k.label}</dt>
+					<dd class="m-0 mt-1 flex items-center gap-1.5 {TONE[k.tone]}">
 						{#if k.value === null}
-							<span class="text-2xl leading-none font-semibold tracking-tight">—</span>
+							<span class="text-[22px] leading-none font-semibold tracking-tight">—</span>
 						{:else}
-							<StatsCounter value={k.value} format={k.format} duration={1.1} class="text-2xl leading-none font-semibold tracking-tight" />
+							<StatsCounter value={k.value} format={k.format} duration={1.1} class="text-[22px] leading-none font-semibold tracking-tight" />
 						{/if}
 						{#if k.tone !== 'plain'}
 							<Icon name={k.tone === 'pass' ? 'check' : 'x'} class="size-4 shrink-0" label={k.tone === 'pass' ? 'passed' : 'failed'} />
 						{/if}
 					</dd>
-					<p class="m-0 mt-1.5 truncate text-xs text-muted-foreground">{k.note}</p>
+					<p class="m-0 mt-1 truncate text-[11px] text-muted-foreground">{k.note}</p>
 				</div>
 			{/each}
 		{:else}
 			{#each Array.from({ length: 6 }, (_, i) => i) as i (i)}
-				<div class="grid gap-2 px-5 py-4" aria-hidden="true">
+				<div class="grid gap-2 px-4 py-3" aria-hidden="true">
 					<Skeleton class="h-3.5 w-20" />
 					<Skeleton class="h-6 w-16" />
 					<Skeleton class="h-3 w-24" />

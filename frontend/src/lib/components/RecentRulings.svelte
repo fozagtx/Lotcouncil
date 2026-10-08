@@ -45,18 +45,18 @@
 			{#snippet media()}<Icon name="history" />{/snippet}
 		</Empty>
 	{:else}
-		<ul class="m-0 max-h-[360px] list-none overflow-y-auto border-t p-0">
+		<ul class="m-0 max-h-[300px] list-none overflow-y-auto border-t p-0">
 			{#each items as p (p.id)}
 				<li class="border-b last:border-0">
 					<button
 						type="button"
-						class="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-5 py-3 text-left transition-colors outline-none hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset disabled:opacity-50 sm:px-6"
+						class="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5 text-left transition-colors outline-none hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset disabled:opacity-50"
 						onclick={() => session.reopen(p)}
 						disabled={session.running}
 						aria-label="Re-open {p.verdict} ruling: {p.label}, {ruleCode(p)}, {p.days} days"
 					>
 						<span
-							class="grid size-9 place-items-center rounded-lg border text-[11px] font-semibold
+							class="grid size-8 place-items-center rounded-lg border text-[11px] font-semibold
 								{p.verdict === 'PASS' ? 'border-success/30 bg-success-muted text-success-foreground' : 'border-danger/30 bg-danger-muted text-danger-foreground'}"
 							aria-hidden="true"
 						>

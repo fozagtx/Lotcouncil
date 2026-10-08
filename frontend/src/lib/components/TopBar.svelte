@@ -27,10 +27,10 @@
 {/snippet}
 
 <header class="relative z-30 border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 lg:sticky lg:top-0">
-	<div class="mx-auto flex h-14 max-w-[1600px] items-center gap-3 px-4 lg:gap-5 lg:px-6">
-		<a href="./" class="flex shrink-0 items-center gap-2.5 rounded-md" aria-label="Lotcouncil home">
-			<BrandMark class="size-7" />
-			<span class="text-[15px] font-semibold tracking-tight">Lotcouncil</span>
+	<div class="mx-auto flex h-11 max-w-[1600px] items-center gap-3 px-4 lg:gap-4 lg:px-6">
+		<a href="./" class="flex shrink-0 items-center gap-2 rounded-md" aria-label="Lotcouncil home">
+			<BrandMark class="size-6" />
+			<span class="text-sm font-semibold tracking-tight">Lotcouncil</span>
 		</a>
 		<span class="hidden h-5 w-px bg-border sm:block" aria-hidden="true"></span>
 		<p class="m-0 hidden min-w-0 flex-1 truncate text-sm text-muted-foreground sm:block">Put a trading idea on trial</p>
@@ -50,7 +50,7 @@
 			</Button>
 		</div>
 	</div>
-	<div class="mx-auto flex max-w-[1600px] flex-wrap gap-2 px-4 pb-2.5 lg:hidden" role="group" aria-label="Status">
+	<div class="mx-auto flex max-w-[1600px] flex-wrap gap-2 px-4 pb-2 lg:hidden" role="group" aria-label="Status">
 		{@render chips()}
 	</div>
 </header>

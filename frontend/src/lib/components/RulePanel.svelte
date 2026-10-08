@@ -49,7 +49,7 @@
 	const SOURCE: Record<Reading['source'], string> = { ai: 'Read by AI', keywords: 'Keyword reader', user: 'Your numbers' };
 </script>
 
-<div class="grid gap-5 p-5 sm:p-6">
+<div class="grid gap-4 p-4">
 	{#if reading}
 		<div class="grid gap-2">
 			<div class="flex flex-wrap items-center gap-2">
@@ -63,7 +63,7 @@
 		</div>
 	{/if}
 
-	<form id="rule-form" class="grid gap-4 rounded-lg border bg-card-raised p-4" onsubmit={submit} novalidate>
+	<form id="rule-form" class="grid gap-3 rounded-lg border bg-card-raised p-3.5" onsubmit={submit} novalidate>
 		<p class="m-0 text-sm text-muted-foreground">Change the numbers and run again. The verdict always comes from the same fixed tests.</p>
 		<div class="flex flex-wrap items-start gap-3">
 			<div class="grid gap-2">

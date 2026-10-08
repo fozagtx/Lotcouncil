@@ -214,12 +214,12 @@
 		{/snippet}
 	</CardHeader>
 
-	<CardContent class="grid gap-5">
+	<CardContent class="grid gap-4">
 		{#if session.error}
 			<ErrorBox failure={session.error} onretry={() => session.retry()} {onexample} />
 		{:else if ruling && result}
 			<div
-				class="verdict-block relative rounded-lg border p-5 {pass ? 'border-success/30 bg-success-muted' : 'border-danger/30 bg-danger-muted'}"
+				class="verdict-block relative rounded-lg border p-4 {pass ? 'border-success/30 bg-success-muted' : 'border-danger/30 bg-danger-muted'}"
 			>
 				<BorderBeam
 					size={90}
@@ -228,17 +228,17 @@
 					colorFrom={pass ? '#4ade80' : '#fb7185'}
 					colorTo={pass ? '#16a34a' : '#dc2626'}
 				/>
-				<div class="flex items-center gap-4">
+				<div class="flex items-center gap-3">
 					<span
-						class="grid size-11 shrink-0 place-items-center rounded-full shadow-sm {pass ? 'bg-success text-white dark:text-zinc-950' : 'bg-danger text-white'}"
+						class="grid size-9 shrink-0 place-items-center rounded-full shadow-sm {pass ? 'bg-success text-white dark:text-zinc-950' : 'bg-danger text-white'}"
 						aria-hidden="true"
 					>
-						<Icon name={pass ? 'check' : 'x'} class="size-6" />
+						<Icon name={pass ? 'check' : 'x'} class="size-5" />
 					</span>
 					<div>
-						<p class="m-0 text-xs font-medium text-subtle">Verdict</p>
+						<p class="m-0 text-[11px] font-medium text-subtle">Verdict</p>
 						<p
-							class="m-0 text-5xl leading-none font-semibold tracking-tighter {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
+							class="m-0 text-4xl leading-none font-semibold tracking-tighter {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
 							aria-label="Verdict: {ruling.verdict}"
 							role="img"
 						>
@@ -246,11 +246,11 @@
 						</p>
 					</div>
 				</div>
-				<p id="verdict-headline" class="mt-4 mb-1 text-base leading-snug font-medium">{ruling.headline}</p>
-				<p class="m-0 text-sm text-subtle">{caveat}</p>
+				<p id="verdict-headline" class="mt-3 mb-1 text-[15px] leading-snug font-medium">{ruling.headline}</p>
+				<p class="m-0 text-[13px] text-subtle">{caveat}</p>
 			</div>
 
-			<blockquote class="m-0 border-l-2 pl-4 text-[15px] leading-snug break-words text-subtle italic">
+			<blockquote class="m-0 border-l-2 pl-3 text-sm leading-snug break-words text-subtle italic">
 				“{result.idea || ruling.rule_text}”
 			</blockquote>
 
@@ -270,10 +270,10 @@
 				</div>
 			{/if}
 		{:else}
-			<div class="grid gap-4 rounded-lg border p-5" aria-hidden="true">
-				<div class="flex items-center gap-4">
-					<Skeleton class="size-11 rounded-full" />
-					<div class="grid gap-2"><Skeleton class="h-3 w-14" /><Skeleton class="h-11 w-32" /></div>
+			<div class="grid gap-3 rounded-lg border p-4" aria-hidden="true">
+				<div class="flex items-center gap-3">
+					<Skeleton class="size-9 rounded-full" />
+					<div class="grid gap-2"><Skeleton class="h-3 w-14" /><Skeleton class="h-9 w-28" /></div>
 				</div>
 				<Skeleton class="h-4 w-4/5" />
 				<Skeleton class="h-3.5 w-full" />
@@ -281,7 +281,7 @@
 		{/if}
 
 		<div>
-			<div class="mb-3 flex items-center justify-between gap-2">
+			<div class="mb-2 flex items-center justify-between gap-2">
 				<h3 class="m-0 text-sm font-semibold tracking-tight">How the court ruled</h3>
 				<span class="num text-xs text-muted-foreground">
 					{session.elapsedMs !== null ? `Computed in ${int(session.elapsedMs)} ms` : session.running ? 'Running…' : ''}
@@ -289,12 +289,12 @@
 			</div>
 			<ol class="m-0 grid list-none p-0">
 				{#each steps as step, i (step.key)}
-					<li class="relative flex gap-3 pb-4 last:pb-0">
+					<li class="relative flex gap-3 pb-3 last:pb-0">
 						{#if i < steps.length - 1}
-							<span class="absolute top-7 bottom-0 left-[13px] w-px bg-border" aria-hidden="true"></span>
+							<span class="absolute top-6 bottom-0 left-[11.5px] w-px bg-border" aria-hidden="true"></span>
 						{/if}
 						<span
-							class="relative grid size-[27px] shrink-0 place-items-center rounded-full border
+							class="relative grid size-6 shrink-0 place-items-center rounded-full border
 								{step.mark === 'pass'
 								? 'border-transparent bg-success text-white dark:text-zinc-950'
 								: step.mark === 'fail'
@@ -316,12 +316,12 @@
 								<span class="size-1.5 rounded-full bg-neutral-mark"></span>
 							{/if}
 						</span>
-						<div class="min-w-0 flex-1 pt-0.5">
+						<div class="min-w-0 flex-1">
 							<div class="flex items-start justify-between gap-2">
 								<p class="m-0 text-sm font-medium">{step.title}</p>
 								<Badge variant={step.badge.variant} dot={step.badge.live ? 'info' : undefined} live={step.badge.live}>{step.badge.text}</Badge>
 							</div>
-							<p class="m-0 mt-1 text-[13px] leading-snug text-muted-foreground">{step.detail}</p>
+							<p class="m-0 mt-0.5 text-[13px] leading-snug text-muted-foreground">{step.detail}</p>
 							{#if step.mono}
 								<div class="mt-1.5 flex min-w-0 items-center gap-1.5">
 									<code class="truncate font-mono text-xs text-muted-foreground">{step.mono}</code>
@@ -342,7 +342,7 @@
 		</div>
 	</CardContent>
 
-	<CardFooter class="mt-auto grid gap-3 border-t pt-5 sm:pt-6">
+	<CardFooter class="mt-auto grid gap-2 border-t pt-3.5">
 		<div class="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
 			<Button variant="outline" onclick={copyCard} disabled={!result}>
 				<Icon name="image" />Verdict card

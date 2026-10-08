@@ -28,7 +28,7 @@
 	{#each KEYS as key (key)}
 		{@const t = tests?.[key]}
 		{@const info = markets?.tests[key]}
-		<article class="flex min-w-0 flex-col gap-3 p-5" aria-labelledby="test-{key}-name">
+		<article class="flex min-w-0 flex-col gap-2.5 p-4" aria-labelledby="test-{key}-name">
 			<div class="flex items-start justify-between gap-2">
 				<div>
 					<p class="m-0 text-xs font-medium text-muted-foreground">Test {key}</p>

@@ -82,14 +82,12 @@
 <div>
 	<TopBar {session} onhow={() => drawer?.open()} />
 
-	<main class="mx-auto max-w-[1600px] px-4 pt-4 pb-8 lg:px-6 lg:pt-5">
-		<div class="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-			<div class="grid gap-1.5">
-				<h1 class="m-0 text-2xl font-semibold tracking-tight sm:text-3xl">Strategy court</h1>
-				<p class="m-0 max-w-2xl text-sm text-muted-foreground sm:text-base">
-					Put a trading idea on trial against hourly Bitget stock-token prices. Three fixed tests decide if it is more than luck.
-				</p>
-			</div>
+	<main class="mx-auto max-w-[1600px] px-4 pt-3 pb-6 lg:px-6">
+		<div class="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+			<h1 class="m-0 shrink-0 text-xl font-semibold tracking-tight">Strategy court</h1>
+			<p class="m-0 min-w-[200px] max-w-2xl flex-1 text-sm text-muted-foreground">
+				Put a trading idea on trial against hourly Bitget stock-token prices. Three fixed tests decide if it is more than luck.
+			</p>
 		</div>
 		<div class="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-5 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_460px]">
 			<div class="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-5">
@@ -121,12 +119,12 @@
 								{#if result}
 									<TradeTable trades={result.chart.trades} {decimals} />
 								{:else}
-									<div class="grid gap-2 p-5 sm:p-6" aria-hidden="true">
+									<div class="grid gap-2 p-4" aria-hidden="true">
 										{#each [0, 1, 2, 3, 4] as i (i)}<Skeleton class="h-8" />{/each}
 									</div>
 								{/if}
 							{:else if id === 'words'}
-								<div class="grid gap-3 p-5 sm:p-6" aria-busy={!session.explanation}>
+								<div class="grid gap-3 p-4" aria-busy={!session.explanation}>
 									{#if session.explanation}
 										<div class="flex flex-wrap items-center gap-2">
 											<Badge variant={session.explanation.source === 'ai' ? 'info' : 'secondary'}>
@@ -171,7 +169,7 @@
 		</div>
 	</main>
 
-	<footer class="mx-auto max-w-[1600px] border-t px-4 pt-6 pb-10 text-[13px] text-muted-foreground lg:px-6">
+	<footer class="mx-auto max-w-[1600px] border-t px-4 pt-4 pb-6 text-[13px] text-muted-foreground lg:px-6">
 		<p class="m-0 max-w-4xl leading-relaxed">
 			<b class="font-medium text-foreground">Not financial advice.</b> A PASS means “not obviously luck on this history”, not that an idea
 			will make money. Lotcouncil never trades or holds money.
