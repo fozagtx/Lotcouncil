@@ -147,10 +147,14 @@ Keep `.env` private. It is already excluded from Git, so it won't be uploaded.
 
 ## 6. Update to the newest version
 
+First stop Lotcouncil if it is running (Ctrl+C in its terminal). Then:
+
 ```bash
 git pull
 python3 run.py --rebuild       # Windows: py run.py --rebuild
 ```
+
+`run.py` reinstalls the web page's packages when an update changes them, then rebuilds the page.
 
 ---
 
@@ -193,6 +197,7 @@ Then add a server to your AI app with the command `npx -y @bitget-ai/bitget-agen
 | `command not found: python` (Mac/Linux) | Use `python3`. |
 | `Node.js is not installed` or `too old` | Install the LTS version from <https://nodejs.org/>, reopen the terminal, run again. |
 | `Port 8000 is already in use` | Lotcouncil (or another app) is already running. Close it, or run `py run.py --port 8001` and open <http://localhost:8001>. |
+| You still see the old page after updating | Close every terminal window running Lotcouncil (Ctrl+C), then run `git pull` and `py run.py --rebuild` (Mac/Linux: `python3 run.py --rebuild`). In the browser, press Ctrl+F5 (Mac: Cmd+Shift+R). The new page has a black logo, a "Strategy court" heading and a dark glowing "Put it on trial" button. |
 | The page says it "has not been built yet" | Run `py run.py --rebuild` (Mac/Linux: `python3 run.py --rebuild`). |
 | `Couldn't load rAAPL prices from Bitget` | Your network can't reach Bitget right now (a VPN, firewall or regional block can cause this). Click **Try again** later, and run `scripts/fetch_candles.py` (section 4) to test the connection. |
 | `Too many rulings for now` | You hit the limit of 60 rulings per 10 minutes. Wait a few minutes, or add `COURT_RATE_LIMIT=500` to your `.env` and restart. |
