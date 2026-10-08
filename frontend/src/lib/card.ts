@@ -202,7 +202,7 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 		y += 34;
 	}
 	const meta = `${r.market.label} · ${r.market.days_available} days of hourly candles · fee ${feeLabel(100 * r.request.fee)}${
-		r.market.source === 'practice' ? ' · practice prices' : ''
+		r.market.source === 'saved' ? ' · saved Bitget candles' : ''
 	}`;
 	ctx.font = `500 20px ${SANS}`;
 	ctx.fillStyle = C.muted;

@@ -1,6 +1,5 @@
-"""Made-up price series for practice markets and tests.
+"""Made-up price series for the tests only (the app never uses them).
 
-These are never presented as Bitget data. The app labels them "practice".
 Both series are fully determined by their seed.
 """
 
@@ -10,9 +9,9 @@ import numpy as np
 import pandas as pd
 
 HOUR_MS = 3_600_000
-# Fixed so practice rulings never change: candles end 2026-10-01 00:00 UTC.
-PRACTICE_END_MS = 1_790_812_800_000
-PRACTICE_DAYS = 180
+# Fixed so test rulings never change: candles end 2026-10-01 00:00 UTC.
+END_MS = 1_790_812_800_000
+SERIES_DAYS = 180
 
 
 def _frame(time_ms: np.ndarray, close: np.ndarray, rng: np.random.Generator, vol: float) -> pd.DataFrame:
@@ -32,11 +31,11 @@ def _frame(time_ms: np.ndarray, close: np.ndarray, rng: np.random.Generator, vol
 
 
 def random_walk(
-    n: int = PRACTICE_DAYS * 24,
+    n: int = SERIES_DAYS * 24,
     seed: int = 12,
     vol: float = 0.0035,
     start_price: float = 180.0,
-    end_ms: int = PRACTICE_END_MS,
+    end_ms: int = END_MS,
 ) -> pd.DataFrame:
     """Hourly prices with no edge at all: independent returns, zero drift."""
     rng = np.random.default_rng(seed)
@@ -47,13 +46,13 @@ def random_walk(
 
 
 def trending(
-    n: int = PRACTICE_DAYS * 24,
+    n: int = SERIES_DAYS * 24,
     seed: int = 23,
     vol: float = 0.0035,
     persistence: float = 0.995,
     drift_vol: float = 0.00005,
     start_price: float = 240.0,
-    end_ms: int = PRACTICE_END_MS,
+    end_ms: int = END_MS,
 ) -> pd.DataFrame:
     """Hourly prices with a planted edge: the drift wanders slowly, so trends persist.
 
@@ -71,11 +70,11 @@ def trending(
 
 
 def clustered_walk(
-    n: int = PRACTICE_DAYS * 24,
+    n: int = SERIES_DAYS * 24,
     seed: int = 1,
     vol: float = 0.0035,
     start_price: float = 180.0,
-    end_ms: int = PRACTICE_END_MS,
+    end_ms: int = END_MS,
 ) -> pd.DataFrame:
     """No-edge prices that look more like real ones: fat tails and calm/busy spells.
 

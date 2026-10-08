@@ -16,7 +16,7 @@
 	let view: string | number = $state('candles');
 	const result = $derived(session.result);
 	const chart = $derived(result?.chart);
-	const pair = $derived(!result ? '' : result.market.source === 'practice' ? result.market.label : `${result.market.label}/USDT`);
+	const pair = $derived(result ? `${result.market.label}/USDT` : '');
 	const windows = $derived(
 		(session.markets?.windows_days ?? []).map((d) => ({ value: d, label: `${d}D`, description: `Re-run on the last ${d} days` }))
 	);
@@ -25,7 +25,7 @@
 		return h === 24 ? '1D candles' : `${h}H candles`;
 	});
 	const sourceLabel = $derived(
-		!result ? '' : result.market.source === 'practice' ? 'Practice prices (made up)' : result.market.source === 'saved' ? 'Saved Bitget spot' : 'Bitget spot'
+		!result ? '' : result.market.source === 'saved' ? 'Saved Bitget spot' : 'Bitget spot'
 	);
 </script>
 

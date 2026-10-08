@@ -67,7 +67,6 @@ Put these in `.env` or the environment.
 | `COURT_MODEL` | `Qwen/Qwen3-235B-A22B-Instruct-2507` | model name |
 | `COURT_TOKENS` | 8 large US stocks | Bitget symbols in the picker |
 | `COURT_RATE_LIMIT` / `COURT_AI_LIMIT` | 60 / 20 | rulings / AI calls per visitor per 10 minutes |
-| `COURT_PRACTICE` | `off` | `on` adds made-up practice markets (development only) |
 
 ## Development
 

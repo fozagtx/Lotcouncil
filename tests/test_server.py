@@ -19,7 +19,7 @@ def events(resp):
 
 
 def judge(client, **body):
-    payload = {"symbol": "PRACTICE-TREND", "days": 90, "fee_pct": 0.1, "idea": TREND_IDEA}
+    payload = {"symbol": "rAAPLUSDT", "days": 90, "fee_pct": 0.1, "idea": TREND_IDEA}
     payload.update(body)
     return events(client.post("/api/judge", json=payload))
 
@@ -29,7 +29,7 @@ def test_page_and_markets(client):
     assert page.status_code in (200, 503) and "Lotcouncil" in page.text  # 503 until the Svelte app is built
     m = client.get("/api/markets").json()
     symbols = [t["symbol"] for t in m["tokens"]]
-    assert "rAAPLUSDT" in symbols and "PRACTICE-TREND" in symbols
+    assert "rAAPLUSDT" in symbols and all(s.endswith("USDT") for s in symbols)
     assert m["fees_pct"] == [0.05, 0.1, 0.2] and m["ai_enabled"] is False
 
 
@@ -56,7 +56,6 @@ def test_rule_can_be_given_directly(client):
     [
         ({"idea": "make me rich"}, "couldn't find a rule"),
         ({"symbol": "NOPE"}, "not one of the tokens"),
-        ({"symbol": "rAAPLUSDT"}, "api.bitget.com"),
         ({"fee_pct": 1.5}, "fee"),
         ({"days": 10}, "at least 500"),
         ({"rule": {"type": "ma_cross", "fast": 50, "slow": 5}}, "shorter"),

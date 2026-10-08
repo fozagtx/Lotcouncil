@@ -68,7 +68,7 @@
 	}
 
 	const SOURCE_BADGE = { ai: 'AI', keywords: 'Keywords', user: 'Your numbers' } as const;
-	const MARKET_BADGE = { bitget: 'Live', saved: 'Saved', practice: 'Practice' } as const;
+	const MARKET_BADGE = { bitget: 'Live', saved: 'Saved' } as const;
 
 	function stateBadge(state: StepState, passed: boolean | undefined): Step['badge'] {
 		if (state === 'active') return { variant: 'info', text: 'Running', live: true };

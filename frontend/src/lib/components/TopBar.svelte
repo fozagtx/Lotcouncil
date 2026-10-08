@@ -13,8 +13,7 @@
 	const source = $derived.by((): { dot: DotTone; text: string } => {
 		if (!market) return { dot: 'neutral', text: session.running ? 'Loading prices' : 'Waiting for prices' };
 		if (market.source === 'bitget') return { dot: 'success', text: 'Live Bitget prices' };
-		if (market.source === 'saved') return { dot: 'warning', text: 'Saved Bitget prices' };
-		return { dot: 'warning', text: 'Practice prices (dev mode)' };
+		return { dot: 'warning', text: 'Saved Bitget prices' };
 	});
 </script>
 

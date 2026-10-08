@@ -31,8 +31,7 @@
 	];
 
 	const markets = $derived(session.markets);
-	const realTokens = $derived(markets?.tokens.filter((t) => !t.practice) ?? []);
-	const practiceTokens = $derived(markets?.tokens.filter((t) => t.practice) ?? []);
+	const tokens = $derived(markets?.tokens ?? []);
 	const windows = $derived(
 		(markets?.windows_days ?? []).map((d) => ({ value: d, label: `${d}D`, description: `Last ${d} days` }))
 	);
@@ -112,18 +111,9 @@
 				<div class="grid min-w-0 gap-2 sm:w-[210px]">
 					<label for="symbol" class="field-label">Token</label>
 					<select id="symbol" class="select" bind:value={session.symbol}>
-						<optgroup label="Bitget stock tokens">
-							{#each realTokens as t (t.symbol)}
-								<option value={t.symbol}>{t.label}/USDT{t.name ? ` · ${t.name}` : ''}</option>
-							{/each}
-						</optgroup>
-						{#if practiceTokens.length}
-							<optgroup label="Practice (made-up prices)">
-								{#each practiceTokens as t (t.symbol)}
-									<option value={t.symbol}>{t.label}</option>
-								{/each}
-							</optgroup>
-						{/if}
+						{#each tokens as t (t.symbol)}
+							<option value={t.symbol}>{t.label}/USDT{t.name ? ` · ${t.name}` : ''}</option>
+						{/each}
 					</select>
 				</div>
 				<div class="grid min-w-0 gap-2 sm:w-[120px]">

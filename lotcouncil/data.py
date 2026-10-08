@@ -6,10 +6,6 @@ Sources, in order of preference for a real token:
 2. A saved candle file in ``data/snapshots/<SYMBOL>.csv`` (written by
    ``scripts/fetch_candles.py``), used when Bitget cannot be reached.
 
-Practice markets are made-up series (see ``synthetic.py``) for offline
-development and tests. They are off unless ``COURT_PRACTICE=on`` and are always
-labelled as such.
-
 Only finished candles are used: the candle that is still forming is dropped,
 because its price keeps changing and would make rulings unrepeatable.
 """
@@ -27,8 +23,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import requests
-
-from . import synthetic
 
 log = logging.getLogger("lotcouncil.data")
 
@@ -60,30 +54,12 @@ TOKEN_NAMES = {
 }
 DEFAULT_TOKENS = ["rAAPLUSDT", "rTSLAUSDT", "rNVDAUSDT", "rMSFTUSDT", "rGOOGLUSDT", "rAMZNUSDT", "rMETAUSDT", "rCOINUSDT"]
 
-PRACTICE = {
-    "PRACTICE-TREND": {
-        "label": "Practice: trend",
-        "name": "Made-up prices with a planted trend",
-        "make": synthetic.trending,
-    },
-    "PRACTICE-RANDOM": {
-        "label": "Practice: random",
-        "name": "Made-up prices with no edge at all",
-        "make": synthetic.random_walk,
-    },
-}
-
 WINDOWS_DAYS = (30, 60, 90, 180)
 DEFAULT_DAYS = 90
 
 
 class DataError(ValueError):
     """Prices could not be loaded or are unusable. The message is shown to the user."""
-
-
-def practice_enabled() -> bool:
-    """Made-up practice markets are a developer tool (offline testing). Off unless COURT_PRACTICE=on."""
-    return os.environ.get("COURT_PRACTICE", "off").lower() == "on"
 
 
 def token_list() -> list[str]:
@@ -93,8 +69,6 @@ def token_list() -> list[str]:
 
 
 def token_label(symbol: str) -> str:
-    if symbol in PRACTICE:
-        return PRACTICE[symbol]["label"]
     return symbol[:-4] if symbol.endswith("USDT") else symbol
 
 
@@ -244,9 +218,6 @@ class CandleStore:
     _lock: threading.Lock = field(default_factory=threading.Lock)
 
     def _load(self, symbol: str) -> _Entry:
-        if symbol in PRACTICE:
-            df = clean_candles(PRACTICE[symbol]["make"]())
-            return _Entry(df, "practice", "Made-up practice prices, not real market data.", _time.time())
         fetch = self.fetcher or fetch_bitget
         try:
             df = fetch(symbol, MAX_DAYS)
@@ -275,7 +246,7 @@ class CandleStore:
     def get_all(self, symbol: str) -> _Entry:
         with self._lock:
             entry = self._cache.get(symbol)
-            fresh = entry and (entry.source == "practice" or _time.time() - entry.loaded_at < self.cache_seconds)
+            fresh = entry and _time.time() - entry.loaded_at < self.cache_seconds
         if fresh:
             return entry
         failed = self._failures.get(symbol)
@@ -294,10 +265,7 @@ class CandleStore:
 
     def window(self, symbol: str, days: int, end_ms: int | None = None) -> tuple[pd.DataFrame, dict]:
         """Candles for the ``days`` days ending at ``end_ms`` (default: the latest candle)."""
-        if symbol in PRACTICE:
-            if not practice_enabled():
-                raise DataError("Practice markets are turned off. Pick a Bitget stock token.")
-        elif symbol not in token_list():
+        if symbol not in token_list():
             raise DataError(f"{symbol} is not one of the tokens this court can judge.")
         if not (1 <= int(days) <= MAX_DAYS):
             raise DataError(f"The time window must be between 1 and {MAX_DAYS} days.")
@@ -313,7 +281,7 @@ class CandleStore:
         info = {
             "symbol": symbol,
             "label": token_label(symbol),
-            "name": PRACTICE[symbol]["name"] if symbol in PRACTICE else TOKEN_NAMES.get(symbol, ""),
+            "name": TOKEN_NAMES.get(symbol, ""),
             "source": entry.source,
             "source_note": entry.note,
             "granularity": "1h",

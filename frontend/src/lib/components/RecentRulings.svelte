@@ -60,10 +60,10 @@
 								{p.verdict === 'PASS' ? 'border-success/30 bg-success-muted text-success-foreground' : 'border-danger/30 bg-danger-muted text-danger-foreground'}"
 							aria-hidden="true"
 						>
-							{p.label.replace(/^r/, '').replace('Practice: ', '').slice(0, 2).toUpperCase()}
+							{p.label.replace(/^r/, '').slice(0, 2).toUpperCase()}
 						</span>
 						<span class="min-w-0">
-							<span class="block truncate text-sm font-medium">{p.label}{p.symbol.startsWith('PRACTICE') ? '' : '/USDT'}</span>
+							<span class="block truncate text-sm font-medium">{p.label}/USDT</span>
 							<span class="block truncate font-mono text-xs text-muted-foreground">{ruleCode(p)} · {p.days}D · {ago(p.at)}</span>
 						</span>
 						<Badge variant={p.verdict === 'PASS' ? 'success' : 'danger'}>{p.verdict}</Badge>

@@ -24,7 +24,8 @@ export class RulingHistory {
 	load() {
 		try {
 			const raw = JSON.parse(localStorage.getItem(KEY) ?? '[]');
-			if (Array.isArray(raw)) this.items = raw.slice(0, MAX);
+			// Drop rulings on the old made-up practice markets, which no longer exist.
+			if (Array.isArray(raw)) this.items = raw.filter((p) => !String(p?.symbol).startsWith('PRACTICE')).slice(0, MAX);
 		} catch {
 			this.items = [];
 		}

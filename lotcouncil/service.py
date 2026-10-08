@@ -17,17 +17,7 @@ import pandas as pd
 from .ai import AIHelper
 from .audit import _plain, build_audit
 from .court import DEFAULT_FEE, FEE_CHOICES, TEST_INFO, CourtError, iter_court, market_from_frame, public_ruling
-from .data import (
-    DEFAULT_DAYS,
-    PRACTICE,
-    TOKEN_NAMES,
-    WINDOWS_DAYS,
-    CandleStore,
-    DataError,
-    practice_enabled,
-    token_label,
-    token_list,
-)
+from .data import DEFAULT_DAYS, TOKEN_NAMES, WINDOWS_DAYS, CandleStore, DataError, token_label, token_list
 from .parse import ParseError
 from .rules import RuleError, describe_rule, validate_rule
 
@@ -152,17 +142,9 @@ class CourtService:
 
     # ---- listings -------------------------------------------------------
     def markets(self) -> dict:
-        tokens = [
-            {"symbol": s, "label": token_label(s), "name": TOKEN_NAMES.get(s, ""), "practice": False}
-            for s in token_list()
-        ]
-        practice = (
-            [{"symbol": s, "label": p["label"], "name": p["name"], "practice": True} for s, p in PRACTICE.items()]
-            if practice_enabled()
-            else []
-        )
+        tokens = [{"symbol": s, "label": token_label(s), "name": TOKEN_NAMES.get(s, "")} for s in token_list()]
         return {
-            "tokens": tokens + practice,
+            "tokens": tokens,
             "windows_days": list(WINDOWS_DAYS),
             "default_days": DEFAULT_DAYS,
             "fees_pct": [round(100 * f, 3) for f in FEE_CHOICES],

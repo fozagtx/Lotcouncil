@@ -114,7 +114,7 @@ export async function rerunAudit(fileText: string): Promise<RerunResult> {
 	return res.json();
 }
 
-/** Errors that mean "the prices could not be loaded", which a practice market can work around. */
+/** Errors that mean "the prices could not be loaded". */
 export function isDataProblem(message: string): boolean {
 	return /prices|Bitget|candles/i.test(message);
 }

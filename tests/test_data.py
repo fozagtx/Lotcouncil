@@ -146,16 +146,7 @@ def test_unknown_symbols_are_refused():
         CandleStore().window("DOGEUSDT", 30)
 
 
-def test_practice_markets_never_change():
-    a, ia = CandleStore().window("PRACTICE-TREND", 90)
-    b, ib = CandleStore().window("PRACTICE-TREND", 90)
-    assert ia["hash"] == ib["hash"] and ia["source"] == "practice"
-
-
-def test_practice_markets_are_off_unless_switched_on(monkeypatch, service):
-    monkeypatch.setenv("COURT_PRACTICE", "off")
-    with pytest.raises(DataError, match="turned off"):
+def test_only_bitget_tokens_are_offered(service):
+    assert all(t["symbol"].endswith("USDT") for t in service.markets()["tokens"])
+    with pytest.raises(DataError, match="not one of the tokens"):
         CandleStore().window("PRACTICE-TREND", 90)
-    assert not any(t["practice"] for t in service.markets()["tokens"])
-    monkeypatch.setenv("COURT_PRACTICE", "on")
-    assert any(t["practice"] for t in service.markets()["tokens"])
