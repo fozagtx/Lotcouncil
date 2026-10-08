@@ -1,0 +1,6 @@
+numpy>=1.26
+pandas>=2.1
+requests>=2.31
+tzdata
+mcp>=1.2
+gradio[mcp]>=5.28

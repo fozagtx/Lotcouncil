@@ -1,39 +1,76 @@
-# Lotcouncil
+---
+title: Lotcouncil
+emoji: ⚖️
+colorFrom: gray
+colorTo: red
+sdk: gradio
+sdk_version: 6.29.0
+app_file: app.py
+pinned: false
+---
 
-An agent skill that puts a trading idea on trial before anyone acts on it.
+# Lotcouncil — put a trading idea on trial
 
-Give an agent a sentence like *"buy when the 10 hour average crosses above the 40 hour
-average"*. With this skill it translates the sentence into one of three fixed rules,
-pulls real Bitget hourly candles, runs a fixed four-check procedure and answers
-**PASS** or **FAIL** in a set format. The agent never trades and never decides the
-verdict; the procedure does.
+Before an AI agent trades, its idea faces a court. Lotcouncil is an MCP server that
+translates a plain-English idea into one of three deterministic rules, runs fixed tests
+on real hourly Bitget tokenized-stock prices, and returns PASS or FAIL. The verdict
+always comes from fixed code, never from a model — PASS means "not obviously luck on
+this history", not a prediction. It never places trades.
 
-## Install
+## MCP tools
 
-```bash
-npx skills add fozagtx/Lotcouncil
+- `judge_strategy(idea, symbol, days, fee_pct, rule_json)` → the ruling: verdict,
+  headline, reasons, per-test results, market info and an explanation.
+- `list_markets()` → the tokens, windows and fees the court accepts.
+
+## Use it
+
+Hosted Space — add to any MCP client (replace `<user>`):
+
+```json
+{ "mcpServers": { "lotcouncil": { "url": "https://<user>-lotcouncil.hf.space/gradio_api/mcp/sse" } } }
 ```
 
-or clone this repo into your agent's skills directory (`~/.agents/skills/lotcouncil`,
-`.devin/skills/lotcouncil`, `.claude/skills/lotcouncil`, ...). The skill is
-`SKILL.md` plus `references/`; there is nothing to build or run.
+Local stdio:
 
-## What the agent does
+```bash
+pip install -r requirements.txt
+python -m lotcouncil mcp        # MCP over stdio
+python -m lotcouncil judge "buy when the 10 hour average crosses above the 40 hour average" --symbol rAAPLUSDT
+python -m lotcouncil rerun audit.json   # re-check a saved audit file
+```
 
-| Step | Reference |
+Run the Gradio app itself (UI + MCP endpoint on :7860):
+
+```bash
+python app.py
+```
+
+## The three rules it can judge
+
+| Rule | Shape |
 | --- | --- |
-| Translate the idea into `ma_cross`, `breakout` or `dip_buy`, or refuse | `references/rules.md` |
-| Fetch and clean Bitget 1h candles, hash them | `references/data.md` |
-| Gate (≥ 10 trades), A unseen data, B random timing, C stress | `references/court.md` |
-| Report in a fixed 20-line format, disclose every attempt | `SKILL.md` |
+| Average cross | `{"type":"ma_cross","fast":10,"slow":40}` — hold while the fast average is above the slow |
+| Breakout | `{"type":"breakout","lookback":48,"exit_lookback":24}` — buy the highest close of the last N hours, sell at a lower low |
+| Dip buy | `{"type":"dip_buy","lookback":24,"drop_pct":2,"max_hold":48}` — buy a dip below the average, sell back at it or after N hours |
 
-A **PASS** means *not obviously luck on this history*. It is not a prediction and not
-advice.
+## The tests every rule faces
 
-## Try it
+1. **Gate** — enough trades on real candles to mean anything.
+2. **A. Unseen data** — the rule is tuned on the first 60% of the window, then must score
+   on the last 40% it never saw.
+3. **B. Random timing** — the same trades at random times must do worse.
+4. **C. Stress** — the rule must survive 3× fees and weekend-only behaviour.
 
-> Put this on trial on Tesla over 90 days: buy when price breaks above its 3-day high,
-> sell when it drops below its 1-day low.
+## Environment
 
-The agent should restate the rule, fetch `rTSLAUSDT` candles, run the court with a real
-tool, and return the ruling in the report format.
+| Var | Default | Meaning |
+| --- | --- | --- |
+| `NEBIUS_API_KEY` | empty → AI off | optional Nebius key for idea translation and explanations — set it as a Space secret; the ruling is identical either way |
+| `COURT_MODEL` | `Qwen/Qwen3-235B-A22B-Instruct-2507` | model for translate + explain |
+
+## Data
+
+Hourly candles from Bitget's public spot API. When Bitget is unreachable, committed
+snapshots in `data/snapshots/` are used and labelled as such — no prices are ever made
+up. Refresh with `python scripts/fetch_candles.py`.
