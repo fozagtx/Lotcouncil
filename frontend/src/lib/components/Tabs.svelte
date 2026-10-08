@@ -23,9 +23,9 @@
 </script>
 
 <Card class={className} aria-label={label}>
-	<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b px-3 py-2.5 sm:px-4">
-		<SpotlightTabs {tabs} bind:selected {label} />
-		{#if actions}<div class="px-1">{@render actions()}</div>{/if}
+	<div class="flex flex-wrap items-end justify-between gap-x-3 border-b px-3 sm:px-4">
+		<SpotlightTabs {tabs} bind:selected {label} class="-mb-px" />
+		{#if actions}<div class="self-center px-1 py-1.5">{@render actions()}</div>{/if}
 	</div>
 	{#each tabs as tab (tab.id)}
 		{#if selected === tab.id}

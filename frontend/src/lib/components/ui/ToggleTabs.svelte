@@ -1,6 +1,6 @@
 <!--
-	VengeanceUI Tabs list styling (MIT, github.com/Ashutoshx7/VengeanceUI) on a radio group:
-	the muted track with a raised active pill. Arrow keys move between options.
+	Segmented choice control in the AlignUI style (alignui.com/docs): a muted track,
+	a raised active segment. Arrow keys move between options.
 -->
 <script lang="ts">
 	import { cn } from './utils.js';
@@ -56,7 +56,7 @@
 	aria-labelledby={labelledby}
 	aria-label={label}
 	aria-disabled={disabled || undefined}
-	class={cn('inline-flex h-10 w-fit shrink-0 items-center justify-center gap-0.5 rounded-lg bg-muted p-1 text-muted-foreground', className)}
+	class={cn('inline-flex h-9 w-fit shrink-0 items-center justify-center gap-1 rounded-[10px] bg-muted p-1 text-muted-foreground', className)}
 >
 	{#each options as option, i (option.value)}
 		{@const active = option.value === value}
@@ -69,8 +69,8 @@
 			tabindex={active ? 0 : -1}
 			{disabled}
 			class={cn(
-				'inline-flex h-full min-w-0 flex-1 items-center justify-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
-				active ? 'bg-card text-foreground shadow-sm dark:bg-zinc-700/80' : 'hover:text-foreground'
+				'inline-flex h-full min-w-0 flex-1 items-center justify-center rounded-lg px-3 text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50',
+				active ? 'bg-card text-foreground shadow-[0_1px_2px_0_rgb(0_0_0/0.06)] dark:bg-zinc-700/80' : 'hover:text-foreground'
 			)}
 			onclick={() => select(i)}
 			onkeydown={(e) => onkeydown(e, i)}

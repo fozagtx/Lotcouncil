@@ -9,7 +9,6 @@
 	import CardHeader from './ui/CardHeader.svelte';
 	import CardTitle from './ui/CardTitle.svelte';
 	import Kbd from './ui/Kbd.svelte';
-	import RadialGlowButton from './ui/RadialGlowButton.svelte';
 	import Spinner from './ui/Spinner.svelte';
 	import Textarea from './ui/Textarea.svelte';
 	import ToggleTabs from './ui/ToggleTabs.svelte';
@@ -81,10 +80,10 @@
 						class="min-h-14 flex-1 resize-none px-3 py-2.5 text-base leading-snug md:text-sm"
 						{onkeydown}
 					/>
-					<RadialGlowButton type="submit" class="w-full lg:w-fit" disabled={session.running} aria-busy={session.running}>
-						{#if session.running}<Spinner />{:else}<Icon name="gavel" class="size-[18px]" />{/if}
+					<Button type="submit" size="lg" class="w-full lg:w-fit lg:min-w-[180px]" disabled={session.running} aria-busy={session.running}>
+						{#if session.running}<Spinner />{:else}<Icon name="gavel" />{/if}
 						<span>{session.running ? 'Ruling…' : 'Put it on trial'}</span>
-					</RadialGlowButton>
+					</Button>
 				</div>
 				<p id="idea-help" class="m-0 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
 					Average crosses, breakouts and dip buys, in hours, days or weeks.

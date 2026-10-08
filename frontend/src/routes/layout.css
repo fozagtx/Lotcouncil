@@ -26,8 +26,8 @@
 	--vng-background: #fafafa;
 	--vng-foreground: #09090b;
 	--vng-border: #e4e4e7;
-	--vng-primary: #09090b;
-	--vng-primary-hover: #27272a;
+	--vng-primary: #2563eb;
+	--vng-primary-hover: #1d4ed8;
 	--vng-primary-foreground: #ffffff;
 	--vng-secondary: #f4f4f5;
 	--vng-secondary-foreground: #09090b;
@@ -47,7 +47,7 @@
 	--popover: #ffffff;
 	--subtle-foreground: #3f3f46;
 	--muted: #f4f4f5;
-	--muted-foreground: #63636b;
+	--muted-foreground: #52525b;
 	--accent: #f4f4f5;
 	--accent-foreground: #09090b;
 	--secondary: var(--vng-secondary);
@@ -60,7 +60,7 @@
 	--primary-foreground: var(--vng-primary-foreground);
 	--destructive: var(--vng-danger);
 	--destructive-foreground: #ffffff;
-	--ring: #09090b;
+	--ring: #2563eb;
 	--brand: #ea580c;
 	--brand-wash: rgb(234 88 12 / 0.09);
 	--link: #1d4ed8;
@@ -105,9 +105,9 @@
 		--vng-background: #09090b;
 		--vng-foreground: #fafafa;
 		--vng-border: #27272a;
-		--vng-primary: #fafafa;
-		--vng-primary-hover: #e4e4e7;
-		--vng-primary-foreground: #09090b;
+		--vng-primary: #3b82f6;
+		--vng-primary-hover: #60a5fa;
+		--vng-primary-foreground: #ffffff;
 		--vng-secondary: #27272a;
 		--vng-secondary-foreground: #fafafa;
 		--card: #0f0f11;
@@ -121,7 +121,7 @@
 		--accent-foreground: #fafafa;
 		--border-strong: #3f3f46;
 		--input: #27272a;
-		--ring: #fafafa;
+		--ring: #3b82f6;
 		--brand: #fb923c;
 		--brand-wash: rgb(251 146 60 / 0.12);
 		--link: #60a5fa;
@@ -158,9 +158,9 @@
 	--vng-background: #09090b;
 	--vng-foreground: #fafafa;
 	--vng-border: #27272a;
-	--vng-primary: #fafafa;
-	--vng-primary-hover: #e4e4e7;
-	--vng-primary-foreground: #09090b;
+	--vng-primary: #3b82f6;
+	--vng-primary-hover: #60a5fa;
+	--vng-primary-foreground: #ffffff;
 	--vng-secondary: #27272a;
 	--vng-secondary-foreground: #fafafa;
 	--card: #0f0f11;
@@ -174,7 +174,7 @@
 	--accent-foreground: #fafafa;
 	--border-strong: #3f3f46;
 	--input: #27272a;
-	--ring: #fafafa;
+	--ring: #3b82f6;
 	--brand: #fb923c;
 	--brand-wash: rgb(251 146 60 / 0.12);
 	--link: #60a5fa;

@@ -6,22 +6,25 @@
 	export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 
 	const BASE =
-		'cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,background-color,box-shadow,transform] duration-[var(--vng-transition-speed,150ms)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 motion-safe:active:translate-y-px [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4 pointer-coarse:min-h-10';
+		'cursor-pointer inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-[10px] text-sm font-medium transition-[color,background-color,box-shadow,transform] duration-200 ease-out outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground/50 disabled:shadow-none motion-safe:active:translate-y-px [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4 pointer-coarse:min-h-10';
 
+	// AlignUI button: primary/neutral/error x filled/stroke/lighter/ghost.
 	const VARIANTS: Record<ButtonVariant, string> = {
-		default: 'bg-primary text-primary-foreground shadow-sm shadow-black/20 hover:bg-primary-hover',
-		destructive: 'bg-destructive text-destructive-foreground shadow-md hover:bg-destructive/90',
-		outline: 'bg-card text-foreground shadow-sm shadow-black/15 ring-1 ring-foreground/10 hover:bg-muted/50 dark:ring-foreground/15',
-		secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-		ghost: 'hover:bg-accent hover:text-accent-foreground',
+		default: 'bg-primary text-primary-foreground hover:bg-primary-hover',
+		destructive: 'bg-destructive text-destructive-foreground hover:bg-red-700',
+		outline:
+			'bg-card text-subtle shadow-[0_1px_2px_0_rgb(0_0_0/0.05)] ring-1 ring-border ring-inset hover:bg-muted hover:text-foreground hover:shadow-none hover:ring-transparent dark:ring-border-strong',
+		secondary:
+			'bg-muted text-subtle hover:bg-card hover:text-foreground hover:shadow-[0_1px_2px_0_rgb(0_0_0/0.05)] hover:ring-1 hover:ring-border hover:ring-inset',
+		ghost: 'bg-transparent text-subtle hover:bg-muted hover:text-foreground',
 		link: 'text-primary underline-offset-4 hover:underline'
 	};
 
 	const SIZES: Record<ButtonSize, string> = {
-		default: 'h-8 px-3.5 py-1.5',
-		sm: 'h-7 px-2.5 text-xs',
-		lg: 'h-9 px-6',
-		icon: 'size-8'
+		default: 'h-9 px-3.5',
+		sm: 'h-8 rounded-lg px-2.5 text-xs',
+		lg: 'h-10 px-4',
+		icon: 'size-9 rounded-lg'
 	};
 
 	/** The class list for a button; also usable on links that should look like buttons. */

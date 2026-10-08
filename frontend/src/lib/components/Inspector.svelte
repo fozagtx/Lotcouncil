@@ -8,7 +8,6 @@
 	import Icon from './Icon.svelte';
 	import Alert from './ui/Alert.svelte';
 	import Badge, { type BadgeVariant } from './ui/Badge.svelte';
-	import BorderBeam from './ui/BorderBeam.svelte';
 	import Button from './ui/Button.svelte';
 	import Card from './ui/Card.svelte';
 	import CardContent from './ui/CardContent.svelte';
@@ -203,7 +202,6 @@
 </script>
 
 <Card class="relative flex flex-col {className}" aria-labelledby="ruling-title" aria-busy={session.running}>
-	{#if session.running}<BorderBeam size={160} duration={4} />{/if}
 	<CardHeader>
 		<CardTitle id="ruling-title">Ruling</CardTitle>
 		<CardDescription>
@@ -219,15 +217,8 @@
 			<ErrorBox failure={session.error} onretry={() => session.retry()} {onexample} />
 		{:else if ruling && result}
 			<div
-				class="verdict-block relative rounded-lg border p-4 {pass ? 'border-success/30 bg-success-muted' : 'border-danger/30 bg-danger-muted'}"
+				class="verdict-block relative overflow-hidden rounded-lg border p-4 {pass ? 'border-success/30 bg-success-muted' : 'border-danger/30 bg-danger-muted'}"
 			>
-				<BorderBeam
-					size={90}
-					duration={8}
-					borderWidth={1.5}
-					colorFrom={pass ? '#4ade80' : '#fb7185'}
-					colorTo={pass ? '#16a34a' : '#dc2626'}
-				/>
 				<div class="flex items-center gap-3">
 					<span
 						class="grid size-9 shrink-0 place-items-center rounded-full shadow-sm {pass ? 'bg-success text-white dark:text-zinc-950' : 'bg-danger text-white'}"
