@@ -79,22 +79,24 @@
 
 <a href="#inspector" class="absolute top-2 -left-[999px] z-40 rounded-md border bg-card px-3 py-2 text-sm font-medium shadow-sm focus:left-2">Skip to the ruling</a>
 
-<div>
+<div class="lg:flex lg:h-dvh lg:flex-col lg:overflow-hidden">
 	<TopBar {session} onhow={() => drawer?.open()} />
 
-	<main class="mx-auto max-w-[1600px] px-4 pt-3 pb-6 lg:px-6">
-		<div class="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-			<h1 class="m-0 shrink-0 text-xl font-semibold tracking-tight">Strategy court</h1>
-			<p class="m-0 min-w-[200px] max-w-2xl flex-1 text-sm text-muted-foreground">
+	<main class="mx-auto w-full max-w-[1760px] flex-1 px-4 pt-2 pb-4 lg:flex lg:min-h-0 lg:flex-col lg:gap-3 lg:px-5 lg:pb-3">
+		<div class="mb-3 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-4 lg:mb-0 lg:flex-none">
+			<h1 class="m-0 shrink-0 font-display text-lg font-semibold tracking-tight">Strategy court</h1>
+			<p class="m-0 max-w-2xl text-sm text-muted-foreground sm:min-w-[200px] sm:flex-1 lg:truncate" title="Put a trading idea on trial against hourly Bitget stock-token prices. Three fixed tests decide if it is more than luck.">
 				Put a trading idea on trial against hourly Bitget stock-token prices. Three fixed tests decide if it is more than luck.
 			</p>
 		</div>
-		<div class="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-5 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_460px]">
-			<div class="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-5">
+		<div class="flex flex-col gap-4 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[300px_minmax(0,1fr)_360px] lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-3 xl:grid-cols-[320px_minmax(0,1fr)_400px] 2xl:grid-cols-[340px_minmax(0,1fr)_440px]">
+			<KpiStrip {result} class="order-3 lg:order-1 lg:col-span-3" />
+			<div class="contents lg:order-2 lg:flex lg:min-h-0 lg:flex-col lg:min-w-0 lg:overflow-y-auto lg:overscroll-contain">
 				<TrialPanel {session} onrun={runIdea} class="order-1" />
-				<KpiStrip {result} class="order-3" />
-				<ChartPanel {session} class="order-4" />
-				<div id="evidence" class="order-5 min-w-0 scroll-mt-3 lg:scroll-mt-20">
+			</div>
+			<div class="contents lg:order-3 lg:flex lg:min-h-0 lg:min-w-0 lg:flex-col lg:gap-3 lg:overflow-hidden">
+				<ChartPanel {session} class="order-4 lg:flex-none" />
+				<div id="evidence" class="order-5 min-w-0 scroll-mt-3 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
 					<Tabs
 						label="Evidence"
 						bind:selected={tab}
@@ -160,8 +162,8 @@
 				</div>
 			</div>
 
-			<div class="contents lg:flex lg:flex-col lg:gap-5">
-				<div id="inspector" class="order-2 scroll-mt-3 lg:scroll-mt-20">
+			<div class="contents lg:order-4 lg:flex lg:min-h-0 lg:min-w-0 lg:flex-col lg:gap-3 lg:overflow-y-auto lg:overscroll-contain">
+				<div id="inspector" class="order-2 scroll-mt-3 lg:scroll-mt-2">
 					<Inspector {session} {maxDays} onedit={editNumbers} onwiden={widen} onexample={useExample} />
 				</div>
 				<RecentRulings {session} class="order-6" />
@@ -169,7 +171,7 @@
 		</div>
 	</main>
 
-	<footer class="mx-auto max-w-[1600px] border-t px-4 pt-4 pb-6 text-[13px] text-muted-foreground lg:px-6">
+	<footer class="mx-auto w-full max-w-[1760px] flex-none border-t px-4 pt-2.5 pb-4 text-xs text-muted-foreground lg:px-5 lg:pb-3">
 		<p class="m-0 max-w-4xl leading-relaxed">
 			<b class="font-medium text-foreground">Not financial advice.</b> A PASS means “not obviously luck on this history”, not that an idea
 			will make money. Lotcouncil never trades or holds money.

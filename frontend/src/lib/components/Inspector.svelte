@@ -214,7 +214,7 @@
 		{/snippet}
 	</CardHeader>
 
-	<CardContent class="grid gap-4">
+	<CardContent class="grid gap-3.5">
 		{#if session.error}
 			<ErrorBox failure={session.error} onretry={() => session.retry()} {onexample} />
 		{:else if ruling && result}
@@ -238,7 +238,7 @@
 					<div>
 						<p class="m-0 text-[11px] font-medium text-subtle">Verdict</p>
 						<p
-							class="m-0 text-4xl leading-none font-semibold tracking-tighter {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
+							class="m-0 font-display text-4xl leading-none font-semibold tracking-tighter {pass ? 'text-success-foreground' : 'text-danger-foreground'}"
 							aria-label="Verdict: {ruling.verdict}"
 							role="img"
 						>
@@ -250,7 +250,10 @@
 				<p class="m-0 text-[13px] text-subtle">{caveat}</p>
 			</div>
 
-			<blockquote class="m-0 border-l-2 pl-3 text-sm leading-snug break-words text-subtle italic">
+			<blockquote
+				class="m-0 truncate border-l-2 pl-3 text-sm leading-snug text-subtle italic"
+				title={result.idea || ruling.rule_text}
+			>
 				“{result.idea || ruling.rule_text}”
 			</blockquote>
 
@@ -289,7 +292,7 @@
 			</div>
 			<ol class="m-0 grid list-none p-0">
 				{#each steps as step, i (step.key)}
-					<li class="relative flex gap-3 pb-3 last:pb-0">
+					<li class="relative flex gap-3 pb-2.5 last:pb-0">
 						{#if i < steps.length - 1}
 							<span class="absolute top-6 bottom-0 left-[11.5px] w-px bg-border" aria-hidden="true"></span>
 						{/if}

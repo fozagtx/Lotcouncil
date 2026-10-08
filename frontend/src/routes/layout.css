@@ -249,6 +249,7 @@
 	--color-tooltip: var(--tooltip);
 	--color-tooltip-foreground: var(--tooltip-foreground);
 	--font-sans: 'IBM Plex Sans Variable', 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+	--font-display: 'Sora Variable', 'Sora', 'IBM Plex Sans Variable', ui-sans-serif, system-ui, sans-serif;
 	--font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	--radius-sm: var(--vng-radius-sm);
 	--radius-md: var(--vng-radius-md);

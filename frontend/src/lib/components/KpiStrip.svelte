@@ -59,14 +59,14 @@
 </script>
 
 <Card class={className} aria-label="Key numbers" aria-busy={!result}>
-	<dl class="m-0 grid grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6">
+	<dl class="m-0 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
 		{#if result}
 			{#each kpis as k, i (k.label)}
 				<div
 					class="min-w-0 px-4 py-3
 						{i % 2 === 1 ? 'border-l' : ''} {i >= 2 ? 'border-t' : ''}
 						sm:border-t-0 sm:border-l-0 {i % 3 !== 0 ? 'sm:border-l' : ''} {i >= 3 ? 'sm:border-t' : ''}
-						2xl:border-t-0 {i !== 0 ? '2xl:border-l' : '2xl:border-l-0'}"
+						lg:border-l-0 lg:border-t-0 {i !== 0 ? 'lg:border-l' : ''}"
 				>
 					<dt class="truncate text-[13px] text-muted-foreground">{k.label}</dt>
 					<dd class="m-0 mt-1 flex items-center gap-1.5 {TONE[k.tone]}">

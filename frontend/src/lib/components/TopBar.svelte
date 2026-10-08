@@ -30,7 +30,7 @@
 	<div class="mx-auto flex h-11 max-w-[1600px] items-center gap-3 px-4 lg:gap-4 lg:px-6">
 		<a href="./" class="flex shrink-0 items-center gap-2 rounded-md" aria-label="Lotcouncil home">
 			<BrandMark class="size-6" />
-			<span class="text-sm font-semibold tracking-tight">Lotcouncil</span>
+			<span class="font-display text-sm font-semibold tracking-tight">Lotcouncil</span>
 		</a>
 		<span class="hidden h-5 w-px bg-border sm:block" aria-hidden="true"></span>
 		<p class="m-0 hidden min-w-0 flex-1 truncate text-sm text-muted-foreground sm:block">Put a trading idea on trial</p>

@@ -65,10 +65,10 @@
 		<CardDescription>Describe a trading idea in one sentence. Fixed code rules PASS or FAIL; the AI only translates.</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<form class="grid gap-4" onsubmit={submit} autocomplete="off">
+		<form class="grid gap-3" onsubmit={submit} autocomplete="off">
 			<div class="grid gap-2">
 				<label for="idea" class="field-label">Your idea</label>
-				<div class="flex flex-col gap-3 xl:flex-row xl:items-stretch">
+				<div class="flex flex-col gap-3">
 					<Textarea
 						id="idea"
 						bind:ref={textarea}
@@ -78,10 +78,10 @@
 						required
 						aria-describedby="idea-help"
 						placeholder="buy when the 10 hour average crosses above the 40 hour average"
-						class="min-h-20 flex-1 resize-none px-3 py-2.5 text-base leading-snug md:text-sm"
+						class="min-h-14 flex-1 resize-none px-3 py-2.5 text-base leading-snug md:text-sm"
 						{onkeydown}
 					/>
-					<RadialGlowButton type="submit" class="w-full xl:w-auto xl:min-w-[200px]" disabled={session.running} aria-busy={session.running}>
+					<RadialGlowButton type="submit" class="w-full" disabled={session.running} aria-busy={session.running}>
 						{#if session.running}<Spinner />{:else}<Icon name="gavel" class="size-[18px]" />{/if}
 						<span>{session.running ? 'Ruling…' : 'Put it on trial'}</span>
 					</RadialGlowButton>
@@ -107,8 +107,8 @@
 				</div>
 			</div>
 
-			<div class="grid grid-cols-2 gap-4 border-t pt-4 sm:flex sm:flex-wrap sm:items-end">
-				<div class="grid min-w-0 gap-2 sm:w-[210px]">
+			<div class="grid grid-cols-2 gap-4 border-t pt-4">
+				<div class="grid min-w-0 gap-2">
 					<label for="symbol" class="field-label">Token</label>
 					<select id="symbol" class="select" bind:value={session.symbol}>
 						{#each tokens as t (t.symbol)}
@@ -116,7 +116,7 @@
 						{/each}
 					</select>
 				</div>
-				<div class="grid min-w-0 gap-2 sm:w-[120px]">
+				<div class="grid min-w-0 gap-2">
 					<label for="fee" class="field-label">Fee / trade</label>
 					<select id="fee" class="select" bind:value={session.feePct}>
 						{#each markets?.fees_pct ?? [] as f (f)}
@@ -126,7 +126,7 @@
 				</div>
 				<div class="col-span-2 grid gap-2">
 					<span id="days-label" class="field-label">History</span>
-					<ToggleTabs options={windows} bind:value={session.days} labelledby="days-label" class="w-full sm:w-fit" />
+					<ToggleTabs options={windows} bind:value={session.days} labelledby="days-label" class="w-full" />
 				</div>
 			</div>
 		</form>

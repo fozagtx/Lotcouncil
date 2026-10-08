@@ -30,5 +30,8 @@
 	},
 	"imports": {
 		"#lib/*": "./src/lib/*"
+	},
+	"dependencies": {
+		"@fontsource-variable/sora": "^5.3.0"
 	}
 }

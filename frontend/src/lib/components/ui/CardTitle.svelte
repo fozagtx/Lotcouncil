@@ -13,7 +13,7 @@
 <svelte:element
 	this={`h${level}`}
 	data-slot="card-title"
-	class={cn('m-0 text-base leading-none font-semibold tracking-tight', className as string)}
+	class={cn('m-0 font-display text-base leading-none font-semibold tracking-tight', className as string)}
 	{...rest}
 >
 	{@render children?.()}
