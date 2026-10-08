@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: lotcouncil
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/markets
+    autoDeploy: true
+    envVars:
+      - key: NEBIUS_API_KEY
+        sync: false
+      - key: COURT_MODEL
+        value: Qwen/Qwen3-235B-A22B-Instruct-2507
+      - key: COURT_TRUST_PROXY
+        value: "on"

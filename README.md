@@ -41,7 +41,7 @@ The score is an annualised Sharpe ratio of hourly returns. Rules are long-only, 
 
 It reads three kinds of idea: an **average cross** ("buy when the 10 hour average crosses above the 40 hour average"), a **breakout** ("buy when the price breaks above its 48 hour high, sell at its 24 hour low") and a **dip buy** ("buy when the price drops 1.5% below its 24 hour average, sell after 24 hours").
 
-Prices are finished hourly candles from Bitget's public spot API. If Bitget can't be reached, saved candles from `data/snapshots/` are used and labelled; the app never shows made-up prices. Save candles with `python scripts/fetch_candles.py`.
+Prices are finished hourly candles from Bitget's public spot API. If Bitget can't be reached, saved candles from `data/snapshots/` are used and labelled; the app never shows made-up prices. Saved candles for the eight default tokens are included; refresh them with `python scripts/fetch_candles.py`.
 
 Each ruling can be shared as an image or a link, or downloaded as an audit file with the exact candles and their fingerprint. Re-check one with `python -m lotcouncil rerun file.json`.
 
@@ -77,7 +77,7 @@ cd frontend && npm ci && npm run check                # types and accessibility
 npm run dev                                           # page with hot reload; API on :8000
 ```
 
-Other commands: `python -m lotcouncil judge "<idea>" --symbol rAAPLUSDT`, `python -m lotcouncil serve`. API docs are at `/api/docs`. The `Dockerfile` builds and runs everything for hosting.
+Other commands: `python -m lotcouncil judge "<idea>" --symbol rAAPLUSDT`, `python -m lotcouncil serve`. API docs are at `/api/docs`. The `Dockerfile` builds and runs everything for hosting; `render.yaml` deploys it on Render.
 
 The page is SvelteKit with Svelte ports of [VengeanceUI](https://www.vengenceui.com) components (MIT, notice in `frontend/src/lib/components/ui/`).
 
