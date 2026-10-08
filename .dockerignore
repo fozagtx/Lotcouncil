@@ -1,8 +1,6 @@
 .git
 .github
 tests
-docs
-.brand-preview
 **/__pycache__
 .pytest_cache
 .ruff_cache

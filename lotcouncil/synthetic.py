@@ -1,4 +1,4 @@
-"""Made-up price series for practice markets, tests and calibration.
+"""Made-up price series for practice markets and tests.
 
 These are never presented as Bitget data. The app labels them "practice".
 Both series are fully determined by their seed.

@@ -90,7 +90,7 @@ def install_python_packages() -> None:
     if result.returncode != 0:
         stop(
             "Installing the Python packages failed.",
-            "Try in a virtual environment (see docs/GETTING-STARTED.md), or run: "
+            "Try in a virtual environment (python -m venv .venv), or run: "
             f"{Path(sys.executable).name} -m pip install -r requirements.txt",
         )
 
