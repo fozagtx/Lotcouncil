@@ -5,10 +5,10 @@ Design contract for Lotcouncil. Written by design-promax. Agents read this first
 ## Theme
 - HeroUI Pro theme: Default
 - data-theme: light / dark (existing attribute on `<html>`, chosen per user, not flipped)
-- CSS: tokens live in `frontend/src/routes/layout.css`; motion tokens in `frontend/src/routes/motion.css` (copied from design-promax `motion/_root.css`)
+- CSS: tokens live in `frontend/src/index.css` (Tailwind 4 `@theme`, Maia preset overridden to brand.md); motion keyframes live in the same file
 - Style preset: workstation_dense (surface F, trading desk / ops console)
 - Routes: `/` is the desk. There is no landing route. One page, one job.
-- Stack note: SvelteKit + Tailwind 4, not React/HeroUI. The recipe, tokens and bans apply; HeroUI component props translate to the `.btn`, `.chip`, `.panel` classes below.
+- Stack note: React + Vite + shadcn (Radix base, Maia preset) + Tailwind 4. The recipe, tokens and bans apply; HeroUI component props translate to the shadcn primitives in `frontend/src/components/ui` and the `.btn`, `.chip`, `.panel` patterns below.
 
 ## Colors
 Brand colors from `brand.md` are kept. Primary is burnt orange, not HeroUI blue.
@@ -79,7 +79,7 @@ flex row, h-screen, overflow-hidden
 - KPI "Result after fees" and "Just holding" as stats (they move to the inspector summary line).
 
 ## Motion
-- Tokens: `frontend/src/routes/motion.css` (copy of design-promax motion/_root.css), imported after layout.css.
+- Tokens: `frontend/src/index.css` (`.reveal`, `.swap`, `.pop` classes built from design-promax motion/_root.css).
 - Moments on this screen (cap 3):
   1. Skeleton reveal (snippet 14) when a result replaces skeletons: opacity + 2px blur, var(--duration-slow), var(--ease-in-out).
   2. Text swap (snippet 04) on the verdict word and status chips when state changes: 4px y + 2px blur, var(--duration-quick).

@@ -1,4 +1,4 @@
-"""The web app: a JSON API plus the Svelte site built into ``frontend/build``.
+"""The web app: a JSON API plus the web app built into ``frontend/build``.
 
 Run locally with ``uvicorn lotcouncil.server:app --reload`` (or ``python -m lotcouncil serve``)
 after ``cd frontend && npm ci && npm run build``. For frontend work, run ``npm run dev`` in

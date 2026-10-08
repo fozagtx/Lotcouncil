@@ -9,7 +9,6 @@ export interface Token {
 	symbol: string;
 	label: string;
 	name: string;
-	practice: boolean;
 }
 
 export interface Markets {
@@ -27,7 +26,7 @@ export interface MarketInfo {
 	symbol: string;
 	label: string;
 	name: string;
-	source: 'bitget' | 'saved' | 'practice';
+	source: 'bitget' | 'saved';
 	source_note: string;
 	granularity: string;
 	days_requested: number;

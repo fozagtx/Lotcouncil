@@ -140,8 +140,8 @@ The `Dockerfile` and `Procfile` also work on Fly.io, Railway, Hugging Face Space
 
 ```bash
 pip install -r requirements-dev.txt
-pytest -q                                   # 131 tests
-(cd frontend && npm run check)              # svelte-check
+pytest -q                                   # 129 tests
+(cd frontend && npm run check)              # tsc typecheck (React + Vite + shadcn)
 python scripts/calibrate.py --real --out docs/calibration.md
 ```
 

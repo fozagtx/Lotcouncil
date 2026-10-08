@@ -3,11 +3,10 @@ import type { CourtEvent, Markets, RerunResult, Rule } from './types';
 export type ErrorKind = 'idea' | 'data' | 'network' | 'rate' | 'server' | 'cut';
 
 export class CourtApiError extends Error {
-	constructor(
-		message: string,
-		public kind: ErrorKind
-	) {
+	kind: ErrorKind;
+	constructor(message: string, kind: ErrorKind) {
 		super(message);
+		this.kind = kind;
 	}
 }
 
@@ -114,7 +113,7 @@ export async function rerunAudit(fileText: string): Promise<RerunResult> {
 	return res.json();
 }
 
-/** Errors that mean "the prices could not be loaded", which a practice market can work around. */
+/** Errors that mean "the prices could not be loaded". */
 export function isDataProblem(message: string): boolean {
 	return /prices|Bitget|candles/i.test(message);
 }

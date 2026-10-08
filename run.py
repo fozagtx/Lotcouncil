@@ -96,9 +96,9 @@ def install_python_packages() -> None:
 
 
 def newest_source_time() -> float:
-    files = [FRONTEND / "package.json", FRONTEND / "package-lock.json", FRONTEND / "vite.config.ts"]
+    files = [FRONTEND / "package.json", FRONTEND / "package-lock.json", FRONTEND / "vite.config.ts", FRONTEND / "index.html"]
     files += [p for p in (FRONTEND / "src").rglob("*") if p.is_file()]
-    files += [p for p in (FRONTEND / "static").rglob("*") if p.is_file()]
+    files += [p for p in (FRONTEND / "public").rglob("*") if p.is_file()]
     return max((p.stat().st_mtime for p in files if p.exists()), default=0.0)
 
 

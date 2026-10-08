@@ -1,4 +1,4 @@
-# 1. Build the Svelte app into static files.
+# 1. Build the React app (Vite + shadcn) into static files.
 FROM node:22-slim AS web
 WORKDIR /web
 COPY frontend/package.json frontend/package-lock.json frontend/.npmrc ./

@@ -1,6 +1,6 @@
 // The shareable verdict card: a 1200x630 image drawn on a canvas.
 import { feeLabel, fmtLongDate, pct, score } from './format';
-import type { CourtResult } from './court.svelte';
+import type { CourtResult } from './court';
 
 const W = 1200;
 const H = 630;
@@ -204,9 +204,7 @@ export function drawCard(r: CourtResult): HTMLCanvasElement {
 		ctx.fillText(l, tx, y);
 		y += 34;
 	}
-	const meta = `${r.market.label} · ${r.market.days_available} days of hourly candles · fee ${feeLabel(100 * r.request.fee)}${
-		r.market.source === 'practice' ? ' · practice prices' : ''
-	}`;
+	const meta = `${r.market.label} · ${r.market.days_available} days of hourly candles · fee ${feeLabel(100 * r.request.fee)}`;
 	ctx.font = `500 20px ${SANS}`;
 	ctx.fillStyle = C.muted;
 	y = Math.max(y + 8, 320);

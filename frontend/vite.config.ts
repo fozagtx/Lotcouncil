@@ -1,23 +1,21 @@
-import tailwindcss from '@tailwindcss/vite';
-import adapter from '@sveltejs/adapter-static';
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { resolve } from "node:path"
+import tailwindcss from "@tailwindcss/vite"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
 
-// During `npm run dev`, API calls go to the Python court on port 8000.
-const API = process.env.LOTCOUNCIL_API ?? 'http://127.0.0.1:8000';
-
+// https://vite.dev/config/
 export default defineConfig({
-	plugins: [
-		tailwindcss(),
-		sveltekit({
-			compilerOptions: {
-				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
-				runes: ({ filename }) => (filename.split(/[/\\]/).includes('node_modules') ? undefined : true)
-			},
-			adapter: adapter({ pages: 'build', assets: 'build', strict: true })
-		})
-	],
-	server: {
-		proxy: { '/api': API }
-	}
-});
+  plugins: [react(), tailwindcss()],
+  // lotcouncil/server.py serves this folder (WEB_DIR = frontend/build).
+  build: { outDir: "build" },
+  server: {
+    proxy: {
+      "/api": "http://localhost:8000",
+    },
+  },
+  resolve: {
+    alias: {
+      "@": resolve(import.meta.dirname, "./src"),
+    },
+  },
+})
