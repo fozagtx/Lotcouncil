@@ -102,6 +102,15 @@ def newest_source_time() -> float:
     return max((p.stat().st_mtime for p in files if p.exists()), default=0.0)
 
 
+def packages_outdated() -> bool:
+    """True when the web packages were never installed, or package-lock.json changed since (e.g. after git pull)."""
+    installed = FRONTEND / "node_modules" / ".package-lock.json"
+    lock = FRONTEND / "package-lock.json"
+    if not installed.exists():
+        return True
+    return lock.exists() and lock.stat().st_mtime > installed.stat().st_mtime
+
+
 def build_page(force: bool) -> None:
     if BUILT_PAGE.exists() and not force and BUILT_PAGE.stat().st_mtime >= newest_source_time():
         print("    The web page is already built and up to date.")
@@ -115,8 +124,8 @@ def build_page(force: bool) -> None:
         )
     if node_major(node) < 20:
         stop("Your Node.js is too old.", "Install Node.js 20 or newer (the LTS version) from https://nodejs.org/.")
-    if not (FRONTEND / "node_modules").exists():
-        print("    Installing the web page's packages (first time only, about a minute)…")
+    if packages_outdated():
+        print("    Installing the web page's packages (first time or after an update, about a minute)…")
         if subprocess.run([npm, "ci"], cwd=FRONTEND).returncode != 0:
             stop("Installing the web page's packages failed.", "Check your internet connection and run this again.")
     print("    Building the web page…")
