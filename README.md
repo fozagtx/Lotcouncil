@@ -61,8 +61,8 @@ python app.py
 ## The tests every rule faces
 
 1. **Gate** — enough trades on real candles to mean anything.
-2. **A. Unseen data** — the rule is tuned on the first 60% of the window, then must score
-   on the last 40% it never saw.
+2. **A. Unseen data** — the window is split 60/40; the rule's score on the last 40% of
+   candles, which played no part in writing it, must be above 0.5.
 3. **B. Random timing** — the same trades at random times must do worse.
 4. **C. Stress** — the rule must survive 3× fees and weekend-only behaviour.
 
