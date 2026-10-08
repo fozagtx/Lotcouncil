@@ -83,10 +83,10 @@
 	<TopBar {session} onhow={() => drawer?.open()} />
 
 	<main class="mx-auto w-full max-w-[1760px] flex-1 px-4 pt-2 pb-4 lg:flex lg:min-h-0 lg:flex-col lg:gap-3 lg:px-5 lg:pb-3">
-		<div class="mb-3 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-4 lg:mb-0 lg:flex-none">
-			<h1 class="m-0 shrink-0 font-display text-lg font-semibold tracking-tight">Strategy court</h1>
-			<p class="m-0 max-w-2xl text-sm text-muted-foreground sm:min-w-[200px] sm:flex-1 lg:truncate" title="Put a trading idea on trial against hourly Bitget stock-token prices. Three fixed tests decide if it is more than luck.">
-				Put a trading idea on trial against hourly Bitget stock-token prices. Three fixed tests decide if it is more than luck.
+		<div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 lg:mb-0 lg:flex-none">
+			<h1 class="m-0 font-display text-lg font-semibold tracking-tight">Strategy court</h1>
+			<p class="m-0 text-sm text-muted-foreground">
+				Type a trading idea; the court tests it on Bitget stock-token prices and rules PASS or FAIL.
 			</p>
 		</div>
 		<div class="flex flex-col gap-4 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[300px_minmax(0,1fr)_360px] lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-3 xl:grid-cols-[320px_minmax(0,1fr)_400px] 2xl:grid-cols-[340px_minmax(0,1fr)_440px]">

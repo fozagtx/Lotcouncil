@@ -32,9 +32,7 @@
 			<BrandMark class="size-6" />
 			<span class="font-display text-sm font-semibold tracking-tight">Lotcouncil</span>
 		</a>
-		<span class="hidden h-5 w-px bg-border sm:block" aria-hidden="true"></span>
-		<p class="m-0 hidden min-w-0 flex-1 truncate text-sm text-muted-foreground sm:block">Put a trading idea on trial</p>
-		<span class="flex-1 sm:hidden"></span>
+		<span class="flex-1"></span>
 
 		<div class="hidden items-center gap-2 lg:flex" role="group" aria-label="Status">
 			{@render chips()}
