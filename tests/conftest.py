@@ -5,10 +5,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from lotcouncil import synthetic  # noqa: E402
 from lotcouncil.ai import AIHelper  # noqa: E402
 from lotcouncil.data import CandleStore  # noqa: E402
 from lotcouncil.service import CourtService  # noqa: E402
+from tests import synthetic  # noqa: E402
 
 TREND_IDEA = "buy when the 10 hour average crosses above the 40 hour average"
 

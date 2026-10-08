@@ -24,9 +24,9 @@ sys.path.insert(0, str(ROOT))
 
 import numpy as np  # noqa: E402
 
-from lotcouncil import synthetic  # noqa: E402
 from lotcouncil.court import DEFAULT_THRESHOLDS, CourtError, market_from_frame, public_ruling, run_court  # noqa: E402
 from lotcouncil.data import SNAPSHOT_DIR, load_snapshot  # noqa: E402
+from tests import synthetic  # noqa: E402
 
 RULES = {
     "average cross 10/40": {"type": "ma_cross", "fast": 10, "slow": 40},

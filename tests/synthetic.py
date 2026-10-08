@@ -1,6 +1,6 @@
-"""Made-up price series for practice markets, tests and calibration.
+"""Made-up price series for tests and calibration only. Never served to users.
 
-These are never presented as Bitget data. The app labels them "practice".
+Not part of the lotcouncil package.
 Both series are fully determined by their seed.
 """
 
