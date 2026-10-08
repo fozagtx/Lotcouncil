@@ -64,7 +64,7 @@
 		<CardDescription>Describe a trading idea in one sentence. Fixed code rules PASS or FAIL; the AI only translates.</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<form class="grid gap-3" onsubmit={submit} autocomplete="off">
+		<form class="grid gap-3" onsubmit={submit} autocomplete="off" novalidate>
 			<div class="grid gap-2">
 				<label for="idea" class="field-label">Your idea</label>
 				<div class="flex flex-col gap-3">
@@ -74,7 +74,7 @@
 						bind:value={session.idea}
 						rows={2}
 						maxlength={400}
-						required
+						aria-required="true"
 						aria-describedby="idea-help"
 						placeholder="buy when the 10 hour average crosses above the 40 hour average"
 						class="min-h-14 flex-1 resize-none px-3 py-2.5 text-base leading-snug md:text-sm"
