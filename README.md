@@ -25,11 +25,15 @@ this history", not a prediction. It never places trades.
 
 ## Use it
 
-Hosted Space — add to any MCP client (replace `<user>`):
+Hosted on Hugging Face: https://huggingface.co/spaces/pima5/lotcouncil
+
+MCP endpoint: `https://pima5-lotcouncil.hf.space/gradio_api/mcp/sse` — add it to any MCP client:
 
 ```json
-{ "mcpServers": { "lotcouncil": { "url": "https://<user>-lotcouncil.hf.space/gradio_api/mcp/sse" } } }
+{ "mcpServers": { "lotcouncil": { "url": "https://pima5-lotcouncil.hf.space/gradio_api/mcp/sse" } } }
 ```
+
+Tools appear as `lotcouncil_judge_strategy` and `lotcouncil_list_markets`.
 
 Local stdio:
 
