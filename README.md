@@ -116,3 +116,63 @@ Inputs: `symbol` from `list_markets` (`rAAPLUSDT`, `rTSLAUSDT`, `rNVDAUSDT`, ...
 
 Snapshots in `data/snapshots/` are used only when Bitget is unreachable, and the result
 says so. Refresh them with `python scripts/fetch_candles.py`.
+
+## Project description
+
+### 1. Thesis
+
+Agents now write trading rules in seconds, and most of them are luck dressed up as
+logic. The usual check is a single backtest, which the same agent can tune until it
+looks good. Lotcouncil separates the two jobs: the model may translate and explain, but
+only fixed code decides. Every idea must clear four checks that are hard to fake:
+enough trades, a score on data that played no part in writing the rule, timing that
+beats 500 random copies of itself, and survival at 3x fees and across weekend candles.
+Hypothesis: if an idea cannot pass this on 90 days of real rToken prices, no agent
+should act on it, and the agent can be told so in one tool call.
+
+### 2. Target user and product value
+
+Retail swing traders on Bitget tokenized US stocks (rTSLAUSDT, rNVDAUSDT, rAAPLUSDT and
+similar), $1k to $20k capital, a few trades per week, holding hours to days, who now
+build or ask an AI agent for their rules. Their pain: the agent sounds confident and the
+backtest it shows was made by the same agent. Existing fixes are either a full quant
+stack they will not run, or an LLM "review" that is one more opinion. Lotcouncil gives
+them a yes/no from code they did not write and cannot bend, with the reasons in plain
+sentences, before any order exists.
+
+### 3. Validation data and key metrics
+
+Observed, from `docs/calibration.md` (`scripts/calibrate.py`, 90 day windows, 0.1% fee):
+
+- False pass rate on 800 series of random prices with no edge: 2.1% (target under 5%).
+- Pass rate on 400 series with a planted trend: 17% overall, 29% to 34% for the trend
+  rules it should catch, 0% for the dip-buy rule that bets against the trend.
+- Same input, same ruling: 12 of 12 repeats identical.
+- Time to ruling: median 6 ms on 2160 candles; 0.3 s to 3.5 s end to end through the
+  hosted MCP endpoint including the Bitget fetch.
+- Live run record: `docs/walkthrough.md`, one task on real Tesla data, reproduced from
+  the audit file with matching hash.
+
+No external users yet. Targeted for the first month after listing: 50 agents or clients
+connected to the MCP endpoint, 500 rulings served, share of ideas that FAIL (the number
+of bad trades not placed), and repeat use by the same client. The product places no
+orders, so volume and AUM are not its metrics; avoided losses and retention are.
+
+### 4. Progress
+
+Built: three rule types, the four-test court, Bitget hourly data with labelled snapshot
+fallback, audit files with `rerun`, MCP over SSE on Hugging Face and over stdio, Gradio
+demo, CLI, 111 tests, calibration script. Not built: more rule types (RSI, volume,
+shorting), per-user rule history, Playbook or Agentic account integration.
+
+Problems and fixes: Bitget's symbol list no longer flags rTokens, so discovery is by
+explicit symbol; the first UI hid the ruling under the chart on small screens, so the
+whole web app was dropped in favour of an MCP server, which is what agents actually
+call; the AI explanation sometimes added numbers the court never produced, so every
+explanation is checked against the ruling and replaced by a template if it fails.
+
+Next: strict rejection of non-listed windows, more rule shapes, a signed audit log.
+
+Stack: Python, numpy, pandas, Gradio (MCP server), Hugging Face Spaces, Bitget public
+spot API v2 (`/api/v2/spot/market/candles`), Qwen3-235B-A22B-Instruct via Nebius for
+translation and explanation only.
