@@ -147,8 +147,30 @@ Targeted, first month: 50 connected MCP clients, 500 rulings, FAIL share tracked
 
 ### 4. Progress
 
-- Built: 3 rule types, 4-test court, Bitget hourly data, audit files + `rerun`, MCP over SSE (Hugging Face) and stdio, Gradio demo, CLI, 111 tests, calibration script.
-- Not built: RSI/volume/short rules, per-user history, Playbook or Agentic account integration.
-- Problems fixed: Bitget stopped flagging rTokens in its symbol list (use explicit symbols); web UI hid the ruling on phones (dropped the UI, shipped MCP); AI explanations invented numbers (now checked against the ruling, template if it fails).
-- Next: reject non-listed windows, more rule shapes, signed audit log.
-- Stack: Python, numpy, pandas, Gradio MCP, Hugging Face Spaces, Bitget spot API v2 `/api/v2/spot/market/candles`, Qwen3-235B-A22B-Instruct via Nebius (translate and explain only).
+What is built:
+
+- Three rule types and the four-test court.
+- Hourly price data from Bitget.
+- Audit files and a `rerun` command that checks a past ruling.
+- MCP server over SSE on Hugging Face, and over stdio for local use.
+- Gradio demo, command line, 111 tests, calibration script.
+
+What is not built yet:
+
+- Rules based on RSI, volume or short selling.
+- Saved history per user.
+- Playbook or Agentic account integration.
+
+Problems we hit and how we fixed them:
+
+- Bitget's symbol list stopped marking which tokens are rTokens. We now name the symbols directly.
+- The first web UI hid the ruling below the chart on phones. We dropped the UI and shipped an MCP server, which is what agents call anyway.
+- The AI explanation sometimes quoted numbers the court never produced. Every explanation is now checked against the ruling, and a plain template is used if the check fails.
+
+Next steps:
+
+- Reject time windows that are not in the list.
+- Add more rule shapes.
+- Sign the audit log.
+
+Stack: Python, numpy, pandas, Gradio as the MCP server, Hugging Face Spaces, Bitget spot API v2 (`/api/v2/spot/market/candles`), and Qwen3-235B-A22B-Instruct through Nebius for translation and explanation only.
