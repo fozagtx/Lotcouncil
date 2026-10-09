@@ -121,56 +121,24 @@ says so. Refresh them with `python scripts/fetch_candles.py`.
 
 ### 1. Thesis
 
-- Problem: agents write trading rules fast, and the only check is a backtest tuned by the same agent.
-- Fix: the model translates and explains; fixed code decides.
-- Four checks, all on real Bitget hourly candles: 10+ trades, score > 0.5 on the last 40% of data, beats 95% of 500 random-timing copies, survives 3x fees and weekend candles.
-- Hypothesis: an idea that fails this should not be traded, and an agent should learn that in one tool call.
+AI agents now write trading rules in seconds, and the only check most of them get is a backtest run by the same agent that wrote the rule. Lotcouncil splits those two jobs. The model may translate the idea and explain the result, but fixed code decides. Every idea must make at least 10 trades, score above 0.5 on the last 40% of the data, beat 95% of 500 random-timing copies of itself, and still hold up at 3x fees and across weekend candles, all on real Bitget hourly prices. If an idea cannot pass that, it should not be traded, and an agent should find that out in one tool call.
 
 ### 2. Target user and product value
 
-- Retail swing traders on Bitget rTokens (rTSLAUSDT, rNVDAUSDT, rAAPLUSDT), $1k to $20k, a few trades a week, hours-to-days holds, building rules with an AI agent.
-- Pain: the agent's confidence and its backtest come from the same place.
-- Why not existing tools: quant stacks are too heavy for them; an LLM review is one more opinion.
-- Value: a PASS/FAIL from code they cannot bend, with reasons in plain sentences, before any order exists.
+The user is a retail swing trader on Bitget rTokens such as rTSLAUSDT, rNVDAUSDT and rAAPLUSDT, with $1k to $20k, making a few trades a week and holding for hours to days, who now builds rules with an AI agent. The problem is that the agent's confidence and its backtest come from the same place. A full quant stack is too heavy for this trader, and asking another LLM to review the idea is just one more opinion. Lotcouncil gives a PASS or FAIL from code the trader cannot bend, with the reasons in plain sentences, before any order exists.
 
 ### 3. Validation data and key metrics
 
-Observed (`docs/calibration.md`, 90 day windows, 0.1% fee):
+All figures below are observed and come from `docs/calibration.md`, run on 90 day windows with a 0.1% fee. On 800 series of random prices with no edge, the court passed 2.1% of rulings. On series with a planted trend, the trend rules passed 29% to 34% of the time and the dip-buy rule, which bets against the trend, passed 0%. Twelve repeated rulings on the same input were identical. A ruling takes 6 ms on average, and 0.3 to 3.5 seconds end to end through the hosted MCP endpoint. A live run on real Tesla data, including the audit file and a rerun with a matching hash, is in `docs/walkthrough.md`.
 
-- False pass on 800 random no-edge series: 2.1%
-- Planted trend: 29% to 34% pass for trend rules, 0% for dip buy
-- Determinism: 12/12 repeats identical
-- Latency: 6 ms median per ruling; 0.3 to 3.5 s via the hosted MCP endpoint
-- Live run record: `docs/walkthrough.md` (Tesla, FAIL, rerun hash matches)
-
-Targeted, first month: 50 connected MCP clients, 500 rulings, FAIL share tracked, repeat clients. No orders are placed, so the metrics are avoided bad trades and retention, not volume or AUM.
+There are no external users yet. The targets for the first month are 50 connected MCP clients, 500 rulings served, the share of ideas that FAIL, and the number of clients that come back. Lotcouncil places no orders, so volume and AUM are not its metrics; bad trades avoided and retention are.
 
 ### 4. Progress
 
-What is built:
+Built so far: three rule types, the four-test court, hourly price data from Bitget, audit files with a `rerun` command, an MCP server over SSE on Hugging Face and over stdio for local use, a Gradio demo, a command line, 111 tests and a calibration script. Not built yet: rules based on RSI, volume or short selling, saved history per user, and Playbook or Agentic account integration.
 
-- Three rule types and the four-test court.
-- Hourly price data from Bitget.
-- Audit files and a `rerun` command that checks a past ruling.
-- MCP server over SSE on Hugging Face, and over stdio for local use.
-- Gradio demo, command line, 111 tests, calibration script.
+Three problems came up during development. Bitget's symbol list stopped marking which tokens are rTokens, so the symbols are now named directly. The first web UI hid the ruling below the chart on phones, so the UI was dropped in favour of an MCP server, which is what agents call anyway. The AI explanation sometimes quoted numbers the court never produced, so every explanation is now checked against the ruling and replaced by a plain template if it fails.
 
-What is not built yet:
+Next: reject time windows that are not in the list, add more rule shapes, and sign the audit log.
 
-- Rules based on RSI, volume or short selling.
-- Saved history per user.
-- Playbook or Agentic account integration.
-
-Problems we hit and how we fixed them:
-
-- Bitget's symbol list stopped marking which tokens are rTokens. We now name the symbols directly.
-- The first web UI hid the ruling below the chart on phones. We dropped the UI and shipped an MCP server, which is what agents call anyway.
-- The AI explanation sometimes quoted numbers the court never produced. Every explanation is now checked against the ruling, and a plain template is used if the check fails.
-
-Next steps:
-
-- Reject time windows that are not in the list.
-- Add more rule shapes.
-- Sign the audit log.
-
-Stack: Python, numpy, pandas, Gradio as the MCP server, Hugging Face Spaces, Bitget spot API v2 (`/api/v2/spot/market/candles`), and Qwen3-235B-A22B-Instruct through Nebius for translation and explanation only.
+Stack: Python, numpy, pandas, Gradio as the MCP server, Hugging Face Spaces, the Bitget spot API v2 (`/api/v2/spot/market/candles`), and Qwen3-235B-A22B-Instruct through Nebius for translation and explanation only.
