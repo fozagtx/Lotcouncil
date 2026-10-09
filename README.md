@@ -81,6 +81,8 @@ python -m lotcouncil judge "buy when the 10 hour average crosses above the 40 ho
 python -m lotcouncil rerun out.json
 ```
 
+A complete worked example with real outputs is in [docs/walkthrough.md](docs/walkthrough.md).
+
 ### Rules
 
 | Type | Rule | Meaning |
